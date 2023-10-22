@@ -2,16 +2,16 @@ import java.time.*;
 import java.time.temporal.*;
 
 public class Camp {
-	String name;
-	String faculty;
-	int id; //identifier for camp 
-	int maxSize;
-	LocalDate startDate;
-	LocalDate endDate;
-	String inCharge; //creator of camp
+	private String name;
+	private String faculty;
+	private int id; //identifier for camp 
+	private int maxSize;
+	private LocalDate startDate;
+	private LocalDate endDate;
+	private String inCharge; //creator of camp
 	
-	String location;
-	String description;
+	private String location;
+	private String description;
 	//TODO implement committee and attendee slots
 	
 	
@@ -25,5 +25,11 @@ public class Camp {
 		this.endDate = end;
 		this.inCharge = creator;
 	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	
 
 }
