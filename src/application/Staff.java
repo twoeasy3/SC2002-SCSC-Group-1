@@ -1,5 +1,5 @@
 package application;
-public class Staff extends Person{ //TODO make this generic so Staff and Student can inherit
+public class Staff extends User{ //TODO make this generic so Staff and Student can inherit
 	int inCharge; //-1 if not In Char, otherwise put camp.id
 	
 	public Staff(String name, String id, String faculty,String password) {

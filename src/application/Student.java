@@ -1,5 +1,5 @@
 package application;
-public class Student extends Person{ 
+public class Student extends User{ 
 	int committee; //-1 if not committee member, otherwise put camp.id
 	
 	public Student(String name, String id, String faculty,String password) {

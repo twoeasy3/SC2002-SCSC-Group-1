@@ -2,7 +2,7 @@ package application;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class Person {
+public class User {
 	private String name;
 	private String id;
 	private String faculty;
@@ -39,7 +39,7 @@ public class Person {
            return "default_value";} //have to return a string here, not too sure what to do
 	}	
 	public boolean matchPass(String attempt) {
-		if(hash(attempt) == this.password) {
+		if(hash(attempt).equals(this.password)) {
 			return true;
 		}
 		else {

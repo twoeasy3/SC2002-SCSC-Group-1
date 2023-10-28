@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataHandler {
-	public static List<Person> Initialise() {
+	public static List<User> Initialise() {
 		String studentFile = "data/student_list.csv";
 		String staffFile = "data/staff_list.csv";// Replace with your CSV file path
         String line = "";
         String csvSeparator = ",";
         //Creating Students
-		List<Person> schoolList = new ArrayList<>();
+		List<User> schoolList = new ArrayList<>();
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(studentFile))){
 			line = br.readLine();
@@ -53,8 +53,8 @@ public class DataHandler {
 			e.printStackTrace();
 		}
 		//DEBUG
-		for (Person person : schoolList) {
-            System.out.println(person.getID() + " " + person.getName());
+		for (User User : schoolList) {
+            System.out.println(User.getID() + " " + User.getName());
         }
 		return schoolList;
 	}
