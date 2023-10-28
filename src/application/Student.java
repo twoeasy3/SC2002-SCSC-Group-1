@@ -7,6 +7,10 @@ public class Student extends User{
 		this.fillDetails(name, id, faculty, password);
 		this.committee = -1;		
 	}
+	
+	public boolean checkStaff() {
+		return false;
+	}
 
 
 }

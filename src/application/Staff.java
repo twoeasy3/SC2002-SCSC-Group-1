@@ -7,6 +7,10 @@ public class Staff extends User{ //TODO make this generic so Staff and Student c
 		this.fillDetails(name, id, faculty, password);
 		this.inCharge = -1;
 	}
+	
+	public boolean checkStaff() {
+		return true;
+	}
 
 
 }

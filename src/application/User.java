@@ -56,6 +56,9 @@ public class User {
 			System.out.println("Current password is incorrect.");
 		}
 	}
+	public boolean checkStaff() { //TODO implement this correctly to be overriden
+		return false;
+	}
 
 		
 
