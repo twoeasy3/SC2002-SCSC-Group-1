@@ -7,8 +7,19 @@ import java.util.List;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Responsible for reading files from data/ into the program state.
+ * Called by CAMs.main().
+ *
+ */
 public class DataHandler {
-	public static List<User> Initialise() {
+	/**
+	 * Reads both student_list and staff_list CSVs
+	 * Builds the appropriate objects (Student/Staff)
+	 *
+	 * @return List of all User objects described in the CSVs.
+	 */
+	public static List<User> getUsers() {
 		String studentFile = "data/student_list.csv";
 		String staffFile = "data/staff_list.csv";
         String line = "";
@@ -60,8 +71,14 @@ public class DataHandler {
             System.out.println(User.getID() + " " + User.getName());
         }
 		return schoolList;
-	}	
-	
+	}
+
+	/**
+	 * Reads data/camps.csv
+	 * Builds Camp objects described in camps.csv
+	 *
+	 * @return List of all Camp objects described in the CSV.
+	 */
 	public static List<Camp> getCamps(){
 		 //Creating Camps
 		List<Camp> campList = new ArrayList<>();
@@ -102,7 +119,12 @@ public class DataHandler {
         }*/
 		return campList;
 	}
-
+	/**
+	 * Reads data/signups.csv
+	 * Builds Signup objects described in signups.csv
+	 *
+	 * @return List of all Signup objects described in the CSV.
+	 */
 	public static List<Signup> getSignups(List<User> schoolList, List<Camp> campList){
 		//Creating Signup
 		List<Signup> signupList = new ArrayList<>();
@@ -157,6 +179,12 @@ public class DataHandler {
         }
 		return signupList;
 	}
+	/**
+	 * Returns the correct format for userID from the .csv
+	 * CSVs have emails instead of userID as per format.
+	 *
+	 * @return Preceding string before the "@" symbol.
+	 */
 	private static String getIDFromEmail(String email) {
 		int atPosition = email.indexOf("@");
 		if (atPosition != -1) {

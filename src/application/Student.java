@@ -35,6 +35,11 @@ public class Student extends User{
 		System.out.println("Unimplemented. ");
 	}
 
+
+	public boolean isCommittee(){
+		return (!this.committee = -1);
+	}
+
 	public List<Camp> signUpCamp(List<Camp> campList, List<Signup> signupList) { //TODO disallow when camp is full & clashes
 		System.out.println("Showing events you are eligible for as a student of " + this.getFaculty() + " and have never signed up for...");
 		int i = 0;
