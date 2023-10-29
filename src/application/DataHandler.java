@@ -10,9 +10,10 @@ import java.time.format.DateTimeFormatter;
 public class DataHandler {
 	public static List<User> Initialise() {
 		String studentFile = "data/student_list.csv";
-		String staffFile = "data/staff_list.csv";// Replace with your CSV file path
+		String staffFile = "data/staff_list.csv";
         String line = "";
         String csvSeparator = ",";
+
         //Creating Students
 		List<User> schoolList = new ArrayList<>();
 		
@@ -72,18 +73,20 @@ public class DataHandler {
 			line = br.readLine();
 			while((line!= null && line.length()>1)) {
 				String[] lineData = line.split(csvSeparator);
-				if (lineData.length>=2) {
-					String name = lineData[0];
-					String faculty = lineData[1];
-					LocalDate startDate = LocalDate.parse(lineData[2], formatter);
-					LocalDate endDate = LocalDate.parse(lineData[3], formatter);
-					LocalDate regEnd =  LocalDate.parse(lineData[4], formatter);
-					String loc = lineData[5];
-					String desc =  lineData[6];
-					int maxSlots = Integer.parseInt(lineData[7]);
-					int maxComm = Integer.parseInt(lineData[8]);
-					String inCharge =  lineData[9];
-					Camp newCamp = new Camp(name,faculty,startDate,endDate,regEnd,loc,desc,maxSlots,maxComm,inCharge);
+				if (lineData.length>=10) {
+					int ID = Integer.parseInt(lineData[0].replace("\uFEFF", "")); //Invisible characters in the CSV for some reason
+					String name = lineData[1];
+					String faculty = lineData[2];
+					LocalDate startDate = LocalDate.parse(lineData[3], formatter);
+					LocalDate endDate = LocalDate.parse(lineData[4], formatter);
+					LocalDate regEnd =  LocalDate.parse(lineData[5], formatter);
+					String loc = lineData[6];
+					String desc =  lineData[7];
+					int maxSlots = Integer.parseInt(lineData[8]);
+					int maxComm = Integer.parseInt(lineData[9]);
+					String inCharge =  lineData[10];
+					int visible = Integer.parseInt(lineData[11]);
+					Camp newCamp = new Camp(ID,name,faculty,startDate,endDate,regEnd,loc,desc,maxSlots,maxComm,inCharge,visible);
 					campList.add(newCamp);
 					line = br.readLine();
 					
@@ -93,14 +96,67 @@ public class DataHandler {
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
-		//DEBUG
+		/*DEBUG
 		for (Camp camp : campList) {
             System.out.println(camp.getName() + " " + camp.getFaculty());
-        }
+        }*/
 		return campList;
 	}
-	
-	
+
+	public static List<Signup> getSignups(List<User> schoolList, List<Camp> campList){
+		//Creating Signup
+		List<Signup> signupList = new ArrayList<>();
+		String campFile = "data/signups.csv";
+		String line = "";
+		String csvSeparator = ",";
+		String userID;
+		boolean studentExists = false;
+		boolean campExists = false;
+		int campID;
+		User foundStudent = null;
+		Camp foundCamp = null;
+		try (BufferedReader br = new BufferedReader(new FileReader(campFile))){
+			line = br.readLine();
+			while((line!= null && line.length()>1)) {
+				String[] lineData = line.split(csvSeparator);
+				if (lineData.length>2) {
+					userID = lineData[0];
+					studentExists = false;
+					for (User user : schoolList) {
+						if (user.getID().equals(userID)) {
+							foundStudent = user;
+							studentExists = true;
+							break;
+						}
+					}
+					if (studentExists) {
+						campID = Integer.parseInt(lineData[1]);
+						campExists = false;
+						for (Camp camp : campList) {
+							if (camp.getID() == campID) {
+								foundCamp = camp;
+								campExists = true;
+							}
+						}
+					}
+				}
+				if(studentExists && campExists){
+					boolean status = (1==Integer.parseInt(lineData[2]));
+					Signup newSignup = new Signup(foundStudent,foundCamp,status);
+					signupList.add(newSignup);
+
+				}
+				line = br.readLine();
+			}
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		for (Signup signup : signupList) {
+            System.out.println(signup.getCamp().getName() + " " + signup.getStudent().getName());
+        }
+		return signupList;
+	}
 	private static String getIDFromEmail(String email) {
 		int atPosition = email.indexOf("@");
 		if (atPosition != -1) {

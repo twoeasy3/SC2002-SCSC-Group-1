@@ -1,6 +1,7 @@
 package application;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class User {
 	private String name;
@@ -56,10 +57,20 @@ public class User {
 			System.out.println("Current password is incorrect.");
 		}
 	}
-	public boolean checkStaff() { //TODO implement this correctly to be overriden
+	public boolean checkStaff() { //overriden
 		return false;
 	}
-
+	public void printMenu(){
+		System.out.println("printMenu() for <User>");
+	}
+	public void viewCamps(List<Camp> campList){
+		System.out.println("viewCamps() for <User>");
+	}
+	public void viewOwnedCamps(List<Camp> campList){System.out.println("viewOwnedCamps() for <User>");}
+	public List<Camp> signUpCamp(List<Camp> campList, List<Signup> signupList){
+		System.out.println("signUpCamp() for <User>");
+		return campList;
+	}
 		
 
 }

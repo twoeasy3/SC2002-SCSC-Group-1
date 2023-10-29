@@ -17,14 +17,16 @@ public class Camp {
 	private List<Student> committeeList;
 	private String location;
 	private String description;
+	private boolean visible;
 	//TODO implement committee and attendee slots
 	
 	
-	public Camp(String name, String faculty, LocalDate start, LocalDate end, LocalDate regEnd,String desc, String loc, int maxSlots, int maxComm, String creator) {
+	public Camp(int ID, String name, String faculty, LocalDate start, LocalDate end, LocalDate regEnd,
+				String desc, String loc, int maxSlots, int maxComm, String creator, int visible) {
+		this.id = ID;
 		this.name = name;
 		this.faculty = faculty; //Let's use this field =ALL to indicate no faculty restrictions
 		//TODO code an index for campID
-		this.id = 0; //placeholder
 		this.startDate = start;
 		this.endDate = end;
 		this.regEnd = regEnd;
@@ -33,6 +35,7 @@ public class Camp {
 		this.maxSize = maxSlots;
 		this.maxComm = maxComm;
 		this.inCharge = creator;
+		this.visible = (visible==1);
 	}
 	
 	public String getName() {
@@ -50,6 +53,8 @@ public class Camp {
 	public String getFaculty() {
 		return this.faculty;
 	}
+	public boolean isVisible(){return this.visible;}
+	public String getInCharge(){return this.inCharge;}
 	
 	public boolean checkEligibility(String faculty) {
 		if(this.faculty.equals(faculty) || this.faculty.equals("ALL")) {
@@ -57,11 +62,14 @@ public class Camp {
 		}
 		return false;
 	}
-	public boolean checkClash(LocalDate start1, LocalDate end1) {
-		if(start1.isAfter(this.endDate) || end1.isBefore(this.startDate)) {
-			return false;
+	public boolean checkClash(LocalDate start1, LocalDate end1) { //TODO check if this is correct
+		if(start1.isBefore(this.endDate.plusDays(1)) && //if either start date falls between the duration of the other event
+				start1.isAfter(this.startDate.plusDays(-1))||
+				this.startDate.isBefore(end1.plusDays(1))&&
+						this.startDate.isAfter(this.startDate.plusDays(-1))){
+			return true; //this is clash
 		}
-		return true;
+		return false;
 	}
 	
 	
