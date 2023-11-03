@@ -112,24 +112,24 @@ public abstract class User {
 	 *
 	 * @return Boolean on whether User is a Staff.
 	 */
-	public boolean checkStaff()
+	public boolean checkStaff(){return true;}
 	/**
 	 * Used to determine and generate the menu of options in CAMs.
 	 */
-	public void printMenu()
+	public void printMenu(){}
 
 	/**
 	 * Used to generate the list of camps that should be visible to the user.
 	 * @param campList List of all Camp objects.
 	 */
-	public void viewCamps(List<Camp> campList)
+	public void viewCamps(List<Camp> campList){}
 
 	/**
 	 * Used to view the list of camps where the User can meaningfully interact with.
 	 * Behaviour changes based on whether the User is a Student or Staff.
 	 * @param campList List of all Camp objects.
 	 */
-	public void viewOwnedCamps(List<Camp> campList)
+	public void viewOwnedCamps(List<Camp> campList){}
 
 	/**
 	 * Unimplemented.
@@ -137,7 +137,7 @@ public abstract class User {
 	 * @param signupList
 	 * @return
 	 */
-	public List<Camp> signUpCamp(List<Camp> campList,  List<Signup> signupList)
+	public List<Camp> signUpCamp(List<Camp> campList,  List<Signup> signupList){return 1;}
 		
 
 }

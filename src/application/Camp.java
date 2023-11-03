@@ -79,6 +79,8 @@ public class Camp {
 	 * All Staff are still free to view.
 	 */
 	private boolean visible;
+	// this is a list of enquiries associated with this camp
+	private ArrayList<Enquiry> enquiry_list;
 
 	/**
 	 *
@@ -110,6 +112,7 @@ public class Camp {
 		this.maxComm = maxComm;
 		this.inCharge = creator;
 		this.visible = (visible==1);
+		this.enquiry_list = new ArrayList<Enquiry>(0);
 	}
 
 	public String getName() {
@@ -149,6 +152,10 @@ public class Camp {
 		return false;
 	}
 	
-	
+	// access enquiry list
 
+
+	public ArrayList<Enquiry> getEnquiry_list() {
+		return enquiry_list;
+	}
 }
