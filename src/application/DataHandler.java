@@ -1,7 +1,5 @@
 package application;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
@@ -22,7 +20,7 @@ public class DataHandler {
 	public static List<User> getUsers() {
 		String studentFile = "data/student_list.csv";
 		String staffFile = "data/staff_list.csv";
-        String line = "";
+        String line;
         String csvSeparator = ",";
 
         //Creating Students
@@ -84,7 +82,7 @@ public class DataHandler {
 		List<Camp> campList = new ArrayList<>();
 		String campFile = "data/camps.csv";
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-		String line = "";
+		String line;
         String csvSeparator = ",";
 		try (BufferedReader br = new BufferedReader(new FileReader(campFile))){
 			line = br.readLine();
@@ -129,7 +127,7 @@ public class DataHandler {
 		//Creating Signup
 		List<Signup> signupList = new ArrayList<>();
 		String campFile = "data/signups.csv";
-		String line = "";
+		String line;
 		String csvSeparator = ",";
 		String userID;
 		boolean studentExists = false;
@@ -179,6 +177,78 @@ public class DataHandler {
         }
 		return signupList;
 	}
+	/**
+	 * In implementation
+	 */
+	public static void saveUsers(List<User> userList){
+		String studentFile = "data/student_list.csv";
+		String staffFile = "data/staff_list.csv";
+		String line;
+		String csvSeparator = ",";
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(staffFile))) {
+			for (User staff : userList) {
+				if (staff.checkStaff()) { // If the user is staff
+					line = staff.getName() + csvSeparator
+							+ staff.getID() + "@e.ntu.edu.sg" + csvSeparator
+							+ staff.getFaculty() + csvSeparator
+							+ staff.getPassword();
+					writer.write(line);
+					writer.newLine();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(studentFile))) {
+			for(User student : userList){
+				if (!student.checkStaff()){ //if user is student
+					line = student.getName() + csvSeparator
+							+ student.getID() + "@e.ntu.edu.sg" + csvSeparator
+							+ student.getFaculty() + csvSeparator
+							+ student.getPassword();
+					writer.write(line);
+					writer.newLine();
+				}
+
+			}
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public static void saveCamps(List<Camp> campList){
+		String campFile = "data/camps.csv";
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		String line;
+		String csvSeparator = ",";
+		String visible;
+
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(campFile))) {
+			for (Camp camp : campList) {
+				if (camp.isVisible()){visible = "1";}else{visible="0";}
+				line = camp.getID()+ csvSeparator
+						+ camp.getName() + csvSeparator
+						+ camp.getFaculty() + csvSeparator
+						+ camp.getStart().format(formatter) + csvSeparator
+						+ camp.getEnd().format(formatter) + csvSeparator
+						+ camp.getRegEnd().format(formatter) + csvSeparator
+						+ camp.getLocation() + csvSeparator
+						+ camp.getDescription() + csvSeparator
+						+ camp.getMaxSize() + csvSeparator
+						+ camp.getMaxComm() + csvSeparator
+						+ camp.getInCharge() + csvSeparator
+						+ visible;
+
+					writer.write(line);
+					writer.newLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+
 	/**
 	 * Returns the correct format for userID from the .csv
 	 * CSVs have emails instead of userID as per format.

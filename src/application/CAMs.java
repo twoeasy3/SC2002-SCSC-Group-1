@@ -26,29 +26,44 @@ public class CAMs {
                 System.out.println("User not found!");} else {
                     userFound = true;}
         }
-		System.out.println("Please enter your password: ");
-		response = sc.nextLine();
-		
-		if (activeUser.matchPass(response)) {
-			System.out.println("Welcome, " + activeUser.getName() + " (" + activeUser.getFaculty() + ")!");
-		}
-		else {
-			System.out.println("Password Incorrect");
-		}
+		boolean passwordMatch = false;
+		while (!passwordMatch) {
+			System.out.println("Please enter your password: ");
+			response = sc.nextLine();
 
+			if (activeUser.matchPass(response)) {
+				passwordMatch = true;
+				System.out.println("Welcome, " + activeUser.getName() + " (" + activeUser.getFaculty() + ")!");
+				activeUser.checkForDefaultPass();
+				DataHandler.saveUsers(schoolList);
+			} else {
+				System.out.println("Password Incorrect");
+			}
+		}
 		activeUser.printMenu();
 		int choice = sc.nextInt();
 		switch(choice){
 			case 1:
-				activeUser.viewCamps(campList);
+				activeUser.changePass();
+				DataHandler.saveUsers(schoolList);
 				break;
 			case 2:
-				activeUser.viewOwnedCamps(campList);
+				activeUser.viewCamps(campList);
 				break;
 			case 3:
+				activeUser.viewOwnedCamps(campList);
+				break;
+			case 4:
 				if (!activeUser.checkStaff()){
 					List<Camp> eligibleCamps;
 					eligibleCamps = activeUser.signUpCamp(campList,signupList);}
+			case 5:
+				if (activeUser.checkStaff()){
+					campList.add(activeUser.createCamp());
+					DataHandler.saveCamps(campList);
+					System.out.println("Camp successfully created!");
+
+				}
 
 			default:
 				System.out.println("Invalid Choice");

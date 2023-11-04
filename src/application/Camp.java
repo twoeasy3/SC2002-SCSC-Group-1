@@ -127,6 +127,12 @@ public class Camp {
 	public LocalDate getEnd() {
 		return this.endDate;
 	}
+
+	public LocalDate getRegEnd() {return regEnd;}
+	public String getLocation()	{return location;}
+	public String getDescription(){return description;}
+	public int getMaxSize(){return maxSize;}
+	public int getMaxComm(){return maxComm;}
 	public String getFaculty() {
 		return this.faculty;
 	}

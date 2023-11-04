@@ -1,7 +1,10 @@
 package application;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Superclass intended to be used in CAMs interface.
@@ -55,6 +58,12 @@ public abstract class User {
 	public String getFaculty() {
 		return(this.faculty);
 	}
+
+	/**
+	 * Used to write the hashes back to save the program state.
+	 * @return The hash of the user's password.
+	 */
+	public String getPassword() { return(this.password);}
 	/**
 	 * Boilerplate code to avoid storing passwords in plaintext in the .csv files at the very minimum.
 	 *
@@ -62,6 +71,7 @@ public abstract class User {
 	 * @return Hashed String intended to be stored.
 	 * If an Exception happens it will return the default password, but should be exceedingly rare.
 	 */
+
 	public String hash(String password) { //not required by the document but seems extremely silly to keep plaintext passwords
 		try {
 		MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -83,7 +93,7 @@ public abstract class User {
 	 * @return Boolean whether the attempt is the correct password.
 	 */
 	public boolean matchPass(String attempt) {
-		if(hash(attempt).equals(this.password)) {
+		if(this.password.equals(hash(attempt))) {
 			return true;
 		}
 		else {
@@ -91,14 +101,28 @@ public abstract class User {
 		}
 	}
 
+	public void checkForDefaultPass(){
+		if(hash("password").equals(this.password)){
+			System.out.println("Welcome to CAMs. We require you to change your password.");
+			this.changePass();
+		}
+	}
+
 	/**
-	 * Unimplemented. Used to update the password of User.
+	 * Called when user requests or after checkForDefaultPass() finds a default password.
+	 * Asks user for current password, then a new password.
+	 * Current password must be correct.
+	 * New password is hashed then stored in User.password
+	 * After this is called, main() should call DataHandler.saveUsers() to update program state.
 	 *
-	 * @param lastpass
-	 * @param newpass
 	 */
-	public void changePass(String lastpass, String newpass) {		 
+	public void changePass() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Please enter your current password:");
+		String lastpass = sc.nextLine();
 		if(matchPass(lastpass)) {
+			System.out.println("Please enter your new password.");
+			String newpass = sc.nextLine();
 			this.password = hash(newpass);
 			System.out.println("Password successfully updated.");
 		}
@@ -106,30 +130,97 @@ public abstract class User {
 			System.out.println("Current password is incorrect.");
 		}
 	}
+	public boolean checkInputDateValidity(String input) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		if (input.length() != 8) {
+			System.out.println("Input date must be 8 digits only!");
+			return false;
+		}
+		for (char c : input.toCharArray()) {
+			if (!Character.isDigit(c)) {
+				System.out.println("Input date must be digits only!");
+				return false;
+			}
+		}
+		try {
+			LocalDate date = LocalDate.parse(input, formatter);
+			if (date.isBefore(LocalDate.now()) ){
+				System.out.println("Input date is in the past!");
+				return false;
+			}
+			if (date.isAfter(LocalDate.of(2024, 12, 31))) {
+				System.out.println("Input date is too far in the future! (Dates in 2023 and 2024 allowed)");
+				return false;
+			}
+			return true;
+		}catch(Exception e){
+			System.out.println("Input date is not a valid date!");
+			return false;
+		}
+
+
+	}
+	public boolean checkInputIntValidity(String input){
+		int test;
+		try{
+			test = Integer.parseInt(input);
+			return true;
+		} catch (NumberFormatException e) {
+			System.out.println("The input is not a valid integer.");
+			return false;
+		}
+
+	}
+
+	/**
+	 * Helper method to parse Y/N user input responses.
+	 * Supports lower and uppercase letters.
+	 *
+	 * @param input User text input when prompted Y/N
+	 * @return Returns 1 for true, 0 for false and -1 for invalid response.
+	 */
+	public int parseUserBoolInput(String input){
+		if (input.equals("Y") || input.equals("y")){
+			return 1; // true input
+		}
+		else if (input.equals("N")|| input.equals("n")){
+			return 0; // false input
+		}
+		else{
+			System.out.println("Bad response. Y/N only!");
+			return -1;} //invalid input
+	}
+
 
 	/**
 	 * Checks if User is a Staff or not. Used to allow certain privileges.
 	 *
 	 * @return Boolean on whether User is a Staff.
 	 */
-	public boolean checkStaff()
+	public abstract boolean checkStaff();
 	/**
 	 * Used to determine and generate the menu of options in CAMs.
 	 */
-	public void printMenu()
+	public abstract void printMenu();
 
 	/**
 	 * Used to generate the list of camps that should be visible to the user.
 	 * @param campList List of all Camp objects.
 	 */
-	public void viewCamps(List<Camp> campList)
+	public abstract void viewCamps(List<Camp> campList);
+
+	/**
+	 * To be overriden for camp creation privileges
+	 * @return New camp
+	 */
+	public abstract Camp createCamp();
 
 	/**
 	 * Used to view the list of camps where the User can meaningfully interact with.
 	 * Behaviour changes based on whether the User is a Student or Staff.
 	 * @param campList List of all Camp objects.
 	 */
-	public void viewOwnedCamps(List<Camp> campList)
+	public abstract void viewOwnedCamps(List<Camp> campList);
 
 	/**
 	 * Unimplemented.
@@ -137,7 +228,7 @@ public abstract class User {
 	 * @param signupList
 	 * @return
 	 */
-	public List<Camp> signUpCamp(List<Camp> campList,  List<Signup> signupList)
+	public abstract List<Camp> signUpCamp(List<Camp> campList,  List<Signup> signupList);
 		
 
 }

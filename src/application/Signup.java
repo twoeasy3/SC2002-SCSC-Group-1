@@ -3,7 +3,7 @@ package application;
 /**
  * Represents the many-to-many relations between Student and Camp.
  * A signup is a persistent record and can never be deleted.
- * Only 1 signup between any unqiue Student and Camp is allowed.
+ * Only 1 signup between any unique Student and Camp is allowed.
  */
 public class Signup {
 	/**
