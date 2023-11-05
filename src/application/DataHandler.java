@@ -35,7 +35,8 @@ public class DataHandler {
 					String id = getIDFromEmail(lineData[1]);
 					String faculty = lineData[2];
 					String passwordHash = lineData[3];
-					Student newStudent = new Student(name,id,faculty,passwordHash);
+					int committee = Integer.valueOf(lineData[4]);
+					Student newStudent = new Student(name,id,faculty,passwordHash,committee);
 					schoolList.add(newStudent);
 					line = br.readLine();
 					
@@ -55,6 +56,7 @@ public class DataHandler {
 					String id = getIDFromEmail(lineData[1]);
 					String faculty = lineData[2];
 					String passwordHash = lineData[3];
+					//committee field ignored for Staff
 					Staff newStaff = new Staff(name,id,faculty,passwordHash);
 					schoolList.add(newStaff);
 					line = br.readLine();
@@ -178,41 +180,32 @@ public class DataHandler {
 		return signupList;
 	}
 	/**
-	 * In implementation
+	 *Writes the current state of all User objects into their respective CSVs.
+	 *Currently only required for password updates.
 	 */
 	public static void saveUsers(List<User> userList){
 		String studentFile = "data/student_list.csv";
 		String staffFile = "data/staff_list.csv";
 		String line;
 		String csvSeparator = ",";
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(staffFile))) {
-			for (User staff : userList) {
-				if (staff.checkStaff()) { // If the user is staff
-					line = staff.getName() + csvSeparator
-							+ staff.getID() + "@e.ntu.edu.sg" + csvSeparator
-							+ staff.getFaculty() + csvSeparator
-							+ staff.getPassword();
-					writer.write(line);
-					writer.newLine();
+		try (BufferedWriter writerStaff = new BufferedWriter(new FileWriter(staffFile));
+			BufferedWriter writerStudent = new BufferedWriter(new FileWriter(studentFile))) {
+			for (User user : userList) {
+				line = user.getName() + csvSeparator
+						+ user.getID() + "@e.ntu.edu.sg" + csvSeparator
+						+ user.getFaculty() + csvSeparator
+						+ user.getPassword();
+				if(user instanceof Student) {
+					line += csvSeparator + ((Student) user).getCommittee();
+					writerStudent.write(line);
+					writerStudent.newLine();
+				}
+				else{
+					writerStaff.write(line);
+					writerStaff.newLine();
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(studentFile))) {
-			for(User student : userList){
-				if (!student.checkStaff()){ //if user is student
-					line = student.getName() + csvSeparator
-							+ student.getID() + "@e.ntu.edu.sg" + csvSeparator
-							+ student.getFaculty() + csvSeparator
-							+ student.getPassword();
-					writer.write(line);
-					writer.newLine();
-				}
-
-			}
-		}catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -248,7 +241,41 @@ public class DataHandler {
 
 	}
 
+	/**
+	 * Saves all student-camp attendee relationships to csv.
+	 * Called in signUpCamp(), so non-signups don't cause a write to file.
+	 * @param signupList List of all Signup objects.
+	 */
+	public static void saveSignups(List<Signup> signupList){
+		String signupFile = "data/signups.csv";
+		String line;
+		String csvSeparator = ",";
+		String status = "";
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(signupFile))) {
+			for (Signup signup : signupList) {
+				if (signup.getStatus()){status = "1";}else{status="0";}
+				line = signup.getStudent().getID() + csvSeparator
+						+ signup.getCamp().getID() + csvSeparator
+						+ status;
+				writer.write(line);
+				writer.newLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
+	}
+
+
+
+	public static Camp getCampfromID(int id, List<Camp> campList){
+		for(Camp camp : campList){
+			if (camp.getID() == id){
+				return camp;
+			}
+		}
+		return null;
+	}
 	/**
 	 * Returns the correct format for userID from the .csv
 	 * CSVs have emails instead of userID as per format.

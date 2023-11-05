@@ -1,6 +1,7 @@
 package application;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 public class Staff extends User {
@@ -24,6 +25,7 @@ public class Staff extends User {
 		System.out.println("3. Edit your camps.");
 		System.out.println("4. Camp enquiry hub.");
 		System.out.println("5. Create a camp");
+		System.out.println("0. Quit CAMs");
 	}
 
 	public void viewCamps(List<Camp> campList) {
@@ -32,6 +34,8 @@ public class Staff extends User {
 			System.out.println(camp.getName() + " (" + camp.getFaculty() + ")");
 		}
 	}
+
+
 
 	public void viewOwnedCamps(List<Camp> campList) {
 		boolean campFound = false;
@@ -66,7 +70,7 @@ public class Staff extends User {
 					break;
 			}
 		}
-		Boolean dateCheck = false;
+		boolean dateCheck = false;
 		String dateString = " ";
 		while (!dateCheck) {
 			System.out.println("Enter start date for camp (yyyyMMdd): ");
@@ -147,10 +151,7 @@ public class Staff extends User {
 	}
 
 
-	public List<Camp> signUpCamp(List<Camp> campList, List<Signup> signupList){
-		System.out.println("Unimplemented");
-		return campList;
-	}
+
 }
 
 

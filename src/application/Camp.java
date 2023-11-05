@@ -96,7 +96,7 @@ public class Camp {
 	 * @param visible
 	 */
 	public Camp(int ID, String name, String faculty, LocalDate start, LocalDate end, LocalDate regEnd,
-				String desc, String loc, int maxSlots, int maxComm, String creator, int visible) {
+				String loc, String desc, int maxSlots, int maxComm, String creator, int visible) {
 		this.id = ID;
 		this.name = name;
 		this.faculty = faculty;

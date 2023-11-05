@@ -210,12 +210,6 @@ public abstract class User {
 	public abstract void viewCamps(List<Camp> campList);
 
 	/**
-	 * To be overriden for camp creation privileges
-	 * @return New camp
-	 */
-	public abstract Camp createCamp();
-
-	/**
 	 * Used to view the list of camps where the User can meaningfully interact with.
 	 * Behaviour changes based on whether the User is a Student or Staff.
 	 * @param campList List of all Camp objects.
@@ -228,7 +222,5 @@ public abstract class User {
 	 * @param signupList
 	 * @return
 	 */
-	public abstract List<Camp> signUpCamp(List<Camp> campList,  List<Signup> signupList);
-		
 
 }

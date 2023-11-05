@@ -52,6 +52,8 @@ public class Signup {
 	 * Changes the status of a signup from active to inactive.
 	 * Then, prints a confirmation message and information to User about rescinding the signup.
 	 */
+
+	public boolean getStatus() {return status;}
 	public void cancelSignup() {
 		this.status = false;
 		System.out.println("You have successfully cancelled your attendance for " + this.camp.getName());
