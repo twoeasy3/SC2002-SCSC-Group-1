@@ -98,7 +98,7 @@ public class Camp {
 	 * @param visible
 	 */
 	public Camp(int ID, String name, String faculty, LocalDate start, LocalDate end, LocalDate regEnd,
-				String desc, String loc, int maxSlots, int maxComm, String creator, int visible) {
+				String loc, String desc, int maxSlots, int maxComm, String creator, int visible) {
 		this.id = ID;
 		this.name = name;
 		this.faculty = faculty;
@@ -130,6 +130,12 @@ public class Camp {
 	public LocalDate getEnd() {
 		return this.endDate;
 	}
+
+	public LocalDate getRegEnd() {return regEnd;}
+	public String getLocation()	{return location;}
+	public String getDescription(){return description;}
+	public int getMaxSize(){return maxSize;}
+	public int getMaxComm(){return maxComm;}
 	public String getFaculty() {
 		return this.faculty;
 	}

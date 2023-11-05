@@ -1,4 +1,5 @@
 package application;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 public class CAMs {
@@ -8,50 +9,75 @@ public class CAMs {
 	 * @param args Unused.
 	 */
 	public static void main(String[] args) {
-		
+
 		List<User> schoolList = DataHandler.getUsers();
 		List<Camp> campList = DataHandler.getCamps();
 		List<Signup> signupList = DataHandler.getSignups(schoolList,campList);
 		Scanner sc = new Scanner(System.in);
 		String response;
 		boolean userFound = false;
-		User activeUser = new Student("ERRORUSER","ERROR@","ERR","ERROR");
+		User activeUser = null;
 		
 		
 		while (!userFound) {
 			System.out.println("Please enter your username to login: ");
 			response = sc.nextLine();
 			activeUser = getUserObject(response,schoolList);
-            if (activeUser.getName().equals("ERRORUSER")) {
+            if (activeUser == null) {
                 System.out.println("User not found!");} else {
                     userFound = true;}
         }
-		System.out.println("Please enter your password: ");
-		response = sc.nextLine();
-		
-		if (activeUser.matchPass(response)) {
-			System.out.println("Welcome, " + activeUser.getName() + " (" + activeUser.getFaculty() + ")!");
-		}
-		else {
-			System.out.println("Password Incorrect");
-		}
+		boolean passwordMatch = false;
+		while (!passwordMatch) {
+			System.out.println("Please enter your password: ");
+			response = sc.nextLine();
 
-		activeUser.printMenu();
-		int choice = sc.nextInt();
-		switch(choice){
-			case 1:
-				activeUser.viewCamps(campList);
-				break;
-			case 2:
-				activeUser.viewOwnedCamps(campList);
-				break;
-			case 3:
-				if (!activeUser.checkStaff()){
-					List<Camp> eligibleCamps;
-					eligibleCamps = activeUser.signUpCamp(campList,signupList);}
+			if (activeUser.matchPass(response)) {
+				passwordMatch = true;
+				System.out.println("Welcome, " + activeUser.getName() + " (" + activeUser.getFaculty() + ")!");
+				activeUser.checkForDefaultPass(); //first time login prompt
+				DataHandler.saveUsers(schoolList);
+			} else {
+				System.out.println("Password Incorrect");
+			}
+		}
+		boolean quitCAMs = false;
+		while(!quitCAMs) {
+			activeUser.printMenu();
+			int choice = sc.nextInt();
+			switch (choice) {
+				case 1:
+					activeUser.changePass();
+					DataHandler.saveUsers(schoolList);
+					break;
+				case 2:
+					activeUser.viewCamps(campList);
+					break;
+				case 3:
+					activeUser.viewOwnedCamps(campList);
+					break;
+				case 4:
+					if (activeUser instanceof Student) {
+						signupList = ((Student) activeUser).signUpCamp(campList, signupList);
+					}
+					break;
+				case 5:
+					if (activeUser instanceof Staff){
+						campList.add(((Staff) activeUser).createCamp());
+						DataHandler.saveCamps(campList);
+						System.out.println("Camp successfully created!");
 
-			default:
-				System.out.println("Invalid Choice");
+					}
+					break;
+				case 0:
+					System.out.println("Quitting CAMs...");
+					quitCAMs = true;
+					break;
+
+				default:
+					System.out.println("Invalid Choice");
+					break;
+			}
 		}
 		
 	}
@@ -70,7 +96,7 @@ public class CAMs {
 				return user;
 			}
 		}
-        return new Student("ERRORUSER","ERROR@","ERR","ERROR");
+        return null;
 		}
 	}
 	
