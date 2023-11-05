@@ -37,7 +37,7 @@ public class Staff extends User {
 
 
 
-	public void viewOwnedCamps(List<Camp> campList) {
+	public void viewOwnedCamps(List<Camp> campList, List<Signup> signupList) {
 		boolean campFound = false;
 		System.out.println("Showing all camps created by you:");
 		for (Camp camp : campList) {

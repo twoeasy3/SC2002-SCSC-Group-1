@@ -54,7 +54,7 @@ public class CAMs {
 					activeUser.viewCamps(campList);
 					break;
 				case 3:
-					activeUser.viewOwnedCamps(campList);
+					activeUser.viewOwnedCamps(campList,signupList);
 					break;
 				case 4:
 					if (activeUser instanceof Student) {

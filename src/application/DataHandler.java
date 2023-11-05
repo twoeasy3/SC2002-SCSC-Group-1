@@ -66,10 +66,10 @@ public class DataHandler {
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
-		//DEBUG
+		/*DEBUG
 		for (User User : schoolList) {
             System.out.println(User.getID() + " " + User.getName());
-        }
+        } */
 		return schoolList;
 	}
 
@@ -173,10 +173,10 @@ public class DataHandler {
 		}catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		/*DEBUG
 		for (Signup signup : signupList) {
             System.out.println(signup.getCamp().getName() + " " + signup.getStudent().getName());
-        }
+        }*/
 		return signupList;
 	}
 	/**

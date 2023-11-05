@@ -118,17 +118,20 @@ public abstract class User {
 	 */
 	public void changePass() {
 		Scanner sc = new Scanner(System.in);
+		String lastpass = "";
+		while(!matchPass(lastpass)){
 		System.out.println("Please enter your current password:");
-		String lastpass = sc.nextLine();
+		lastpass = sc.nextLine();
+		if(!matchPass(lastpass)){
+			System.out.println("Current password is incorrect.");}
+		}
 		if(matchPass(lastpass)) {
 			System.out.println("Please enter your new password.");
 			String newpass = sc.nextLine();
 			this.password = hash(newpass);
 			System.out.println("Password successfully updated.");
 		}
-		else {
-			System.out.println("Current password is incorrect.");
-		}
+
 	}
 	public boolean checkInputDateValidity(String input) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -171,7 +174,6 @@ public abstract class User {
 		}
 
 	}
-
 	/**
 	 * Helper method to parse Y/N user input responses.
 	 * Supports lower and uppercase letters.
@@ -214,7 +216,7 @@ public abstract class User {
 	 * Behaviour changes based on whether the User is a Student or Staff.
 	 * @param campList List of all Camp objects.
 	 */
-	public abstract void viewOwnedCamps(List<Camp> campList);
+	public abstract void viewOwnedCamps(List<Camp> campList,List<Signup> signupList);
 
 	/**
 	 * Unimplemented.
