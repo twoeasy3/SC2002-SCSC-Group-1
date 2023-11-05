@@ -82,6 +82,8 @@ public class Camp {
 	// this is a list of enquiries associated with this camp
 	private ArrayList<Enquiry> enquiry_list;
 
+	private ArrayList<Suggestion> suggestions_list;
+
 	/**
 	 *
 	 * @param ID
@@ -117,6 +119,42 @@ public class Camp {
 
 	public String getName() {
 		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public void setFaculty(String faculty) {
+		this.faculty = faculty;
+	}
+
+	public ArrayList<Suggestion> getSuggestions_list() {
+		return suggestions_list;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public void setMaxSize(int maxSize) {
+		this.maxSize = maxSize;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 
 	public int getID() {
