@@ -43,8 +43,20 @@ public class Student extends User{
 		}
 	}
 
-	public void viewOwnedCamps(List<Camp> campList){ //TODO
-		System.out.println("Unimplemented. ");
+	public void viewOwnedCamps(List<Camp> campList,List<Signup> signupList){ //TODO
+		List<Camp> attendingCamps = this.getAttendingCamps(campList,signupList);
+		StringBuilder sb = new StringBuilder();
+		String listMenu = "";
+		int i = 0;
+		System.out.println("Showing events you are currently signed up for:" );
+		for(Camp camp : attendingCamps){
+			i++;
+			listMenu = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(")").toString();
+			if(camp.getID()==this.getCommittee()){
+				listMenu = sb.append(" [COMMITTEE]").toString();}
+			listMenu = sb.append("\n").toString();
+		}
+		System.out.println(listMenu.substring(0,listMenu.length()-1));
 	}
 
 	public List<Camp> getAttendingCamps(List<Camp> campList, List<Signup> signupList){
