@@ -34,7 +34,12 @@ public class Signup {
 		this.student = student;
 		this.camp = camp;
 		this.status = status;
-		this.camp.addAttendee((Student) student);
+		if(this.status){
+			this.camp.addAttendee((Student) student);
+		}
+		else{
+			this.camp.addToBlackList((Student) student);
+		}
 	}
 
 	/**

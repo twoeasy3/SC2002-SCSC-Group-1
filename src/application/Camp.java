@@ -167,6 +167,25 @@ public class Camp {
 		}
 		return false;
 	}
+
+	/**
+	 * Returns a status for the camp relative to the date today.
+	 * @return 0 for Open registration, 1 for Closed, 2 for Ongoing and 3 for Ended
+	 */
+	public int checkCampStatus(){
+		if(LocalDate.now().isBefore(this.regEnd)){ //Open for Registration
+			return 0;
+		}
+		else if(LocalDate.now().isAfter(this.regEnd) && LocalDate.now().isBefore(this.startDate)){ //Closed for registration but not started
+			return 1;
+		}
+		else if(!LocalDate.now().isBefore(this.startDate)&&!LocalDate.now().isAfter(this.endDate)){ //Camp ongoing
+			return 2;
+		}
+		else{
+			return 3; //Camp ended
+		}
+	}
 	/**
 	 * Appends a student to the internal list of attendee members for the camp.
 	 * Conditions to do so should be checked elsewhere.
@@ -186,6 +205,7 @@ public class Camp {
 	}
 	/**
 	 * Removes a student from the internal list of attendees for the camp.
+	 * Adds student to blacklist.
 	 * Conditions to do so should be checked elsewhere.
 	 * @param student Student to be removed
 	 */
@@ -194,6 +214,15 @@ public class Camp {
 		attendeeList.remove(student);
 		blackList.add(student);
 		}
+	}
+
+	/**
+	 * Only adds student to blacklist.
+	 * Used when loading program state from files.
+	 * @param student Student who already has a cancelled signup from file.
+	 */
+	public void addToBlackList(Student student){
+		blackList.add(student);
 	}
 	public boolean isAttending(Student student){
 		return(attendeeList.contains(student));

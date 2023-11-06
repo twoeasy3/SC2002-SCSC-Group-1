@@ -43,6 +43,10 @@ public class Helper {
             System.out.println("Sorting by faculty");
             campList.sort(Comparator.comparing(Camp::getFaculty));
         }
+        else if(arg.equals("o")){
+            System.out.println("Sorting by status, then by earliest registration close");
+            campList.sort(Comparator.comparing(Camp::checkCampStatus).thenComparing(Camp::getRegEnd));
+        }
         else{
             System.out.println("Unrecognised command, sorting by default");
             campList.sort(Comparator.comparing(Camp::getName,String.CASE_INSENSITIVE_ORDER));
@@ -50,7 +54,7 @@ public class Helper {
         return campList;
     }
 
-    public static String createNumberedCampList(List<Camp> selectCamps){
+    public static String createNumberedCampList(List<Camp> selectCamps,User user){
         DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         int i=0;
         StringBuilder sb = new StringBuilder();
@@ -64,7 +68,37 @@ public class Helper {
                     (camp.getMaxSize()- camp.getMaxComm()));
             //listMenu = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") ").append(camp.getLocation()).append(" [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("] ").toString();
             if (!camp.isVisible()){
-                lineString = lineString + " {HIDDEN}";
+                lineString = lineString + " |HIDDEN|";
+            }
+            int status = camp.checkCampStatus();
+            switch(status){
+                case 1:
+                    lineString = lineString + " <CLOSED>";
+                    break;
+                case 2:
+                    lineString = lineString + " <ONGOING>";
+                    break;
+                case 3:
+                    lineString = lineString + " <ENDED>";
+                    break;
+                default:
+                    break;
+            }
+            if (user instanceof Student){
+                if (((Student) user).getCommittee() == camp.getID()){
+                    lineString = lineString + " {COMMITTEE}";
+                }
+                if (camp.isAttending(((Student) user))){
+                    lineString = lineString + " {ATTENDING}";
+                }
+                if (camp.isBlacklisted(((Student) user))){
+                    lineString = lineString + " {BANNED}";
+                }
+            }
+            if (user instanceof Staff){
+                if (user.getID().equals(camp.getInCharge())){
+                    lineString = lineString + " {INCHARGE}";
+                }
             }
             lineString = lineString + ("\n");
             listMenu = sb.append(lineString).toString();

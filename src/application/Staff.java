@@ -22,8 +22,8 @@ public class Staff extends User {
 		System.out.println("Staff Portal");
 		System.out.println("You have XX new queries."); //TODO 	A staff can view and reply to enquiries from students to the camp(s) his/her has created
 		System.out.println("1. Change your password.");
-		System.out.println("2. View all active camps. (-l,-s,-r,-p,-f)");
-		System.out.println("3. View and Edit your camps. (-l,-s,-r,-p,-f)");
+		System.out.println("2. View all active camps. (-o,-l,-s,-r,-p,-f)");
+		System.out.println("3. View and Edit your camps. (-o,-l,-s,-r,-p,-f)");
 		System.out.println("4. Camp enquiry hub.");
 		System.out.println("5. Create a camp");
 		System.out.println("9. Log out");
@@ -32,7 +32,7 @@ public class Staff extends User {
 
 	public void viewCamps(List<Camp> campList) {
 		System.out.println("Staff privilege; showing all open events ");
-		String listMenu = Helper.createNumberedCampList(campList);
+		String listMenu = Helper.createNumberedCampList(campList,this);
 
 		boolean endLoop = false;
 		while (!endLoop){
@@ -79,7 +79,7 @@ public class Staff extends User {
 		}
 
 		boolean endLoop = false;
-		String listMenu = Helper.createNumberedCampList(ownedCamps);
+		String listMenu = Helper.createNumberedCampList(ownedCamps,this);
 		while(!endLoop){
 		System.out.println(listMenu);
 		System.out.println("0: Back to CAMs main menu ");
