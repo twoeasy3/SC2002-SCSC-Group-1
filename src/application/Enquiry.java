@@ -17,7 +17,7 @@ public class Enquiry {
     /**
      * unique ID whenever the Enquiry is generated
      */
-    private int en_ID;
+    private int enquiryID;
     /**
      * status of the enquiry. Should change to ENUM?
      */
@@ -27,19 +27,25 @@ public class Enquiry {
      */
     private Student author;
     /**
+     * Author of the reply
+     */
+    private User replyAuthor;
+    /**
      * Camp associated with the enquiry
      */
     private Camp camp;
 
     // Constructor
-    public Enquiry(String description, Student author, Camp camp) {
-        this.description = description;
-        this.author = author;
+    public Enquiry(int enquiryID, Camp camp, Student author, String description, User replyAuthor,
+                    String reply, boolean status) {
+        this.enquiryID = enquiryID;
         this.camp = camp;
-
-        this.resolved = false;
-        en_NUM++;
-        this.en_ID = en_NUM;
+        this.author = author;
+        this.description = description;
+        this.replyAuthor = replyAuthor;
+        this.reply = reply;
+        this.resolved = status;
+        //en_NUM++;
     }
 
     public String getDescription() {
@@ -58,12 +64,21 @@ public class Enquiry {
         this.reply = reply;
     }
 
-    public int getEn_ID() {
-        return en_ID;
+    public int getEnquiryID() {
+        return enquiryID;
     }
 
     public Camp getCamp() {
         return camp;
+    }
+    public Student getAuthor(){
+        return author;
+    }
+    public User getReplyAuthor(){
+        return replyAuthor;
+    }
+    public boolean getResolved(){
+        return resolved;
     }
 
     // functions to create

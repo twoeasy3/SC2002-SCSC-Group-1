@@ -137,6 +137,7 @@ public class Student extends User{
 									signupList.remove(signup);
 									DataHandler.saveSignups(signupList);
 									this.committee = selectedCamp.getID();
+									selectedCamp.promoteToComittee(this); //this only matters for memory
 									DataHandler.saveUsers(schoolList);
 									endLoop = true;
 									break;

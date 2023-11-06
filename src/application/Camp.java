@@ -203,6 +203,10 @@ public class Camp {
 	public void addCommittee(Student student){
 		this.committeeList.add(student);
 	}
+	public void promoteToComittee(Student student){
+		this.attendeeList.remove(student);
+		this.committeeList.add(student);
+	}
 	/**
 	 * Removes a student from the internal list of attendees for the camp.
 	 * Adds student to blacklist.
@@ -231,6 +235,7 @@ public class Camp {
 		return(blackList.contains(student));
 	}
 	public void showSummary(){
+		System.out.println("=============================================");
 		System.out.println(this.name + " (" + this.faculty + ")");
 		System.out.println("Registration End Date: " + this.regEnd.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
 		System.out.println("Start Date: " + this.startDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
@@ -239,6 +244,32 @@ public class Camp {
 		System.out.println("Current committee strength: " + this.getCommitteeCount() + "/" + this.maxComm);
 		System.out.println("Venue: " + this.location);
 		System.out.println(this.description);
+		System.out.println("=============================================");
+		this.printEnquiries();
+	}
+	public void printEnquiries(){
+		System.out.println("Enquiries: ");
+		if(enquiryList.size()==0){
+			System.out.println("No enquiries for this camp yet.");
+			return;
+		}
+		for(Enquiry enquiry:enquiryList){
+			System.out.println(enquiry.getAuthor().getName()+ " (" + enquiry.getAuthor().getFaculty() +"): ");
+			System.out.println(enquiry.getDescription());
+			if(enquiry.getResolved()){
+				if(enquiry.getReplyAuthor() instanceof Staff){
+					System.out.println(enquiry.getReplyAuthor().getName()+ " (" + enquiry.getReplyAuthor().getFaculty() +") [INCHARGE]: ");
+				}
+				else{
+					System.out.println(enquiry.getReplyAuthor().getName()+ " (" + enquiry.getReplyAuthor().getFaculty() +") [COMMITTEE]: ");
+				}
+				System.out.println(enquiry.getReply());
+			}
+			else{
+				System.out.println("No reply yet.");
+			}
+			System.out.println("-----------------------");
+		}
 	}
 
 	public boolean tryEditCamp(int category, String change) { //true for success, false for failure
@@ -376,5 +407,8 @@ public class Camp {
 
 	public ArrayList<Enquiry> getEnquiryList() {
 		return enquiryList;
+	}
+	public void addEnquiry(Enquiry enquiry){
+		enquiryList.add(enquiry);
 	}
 }

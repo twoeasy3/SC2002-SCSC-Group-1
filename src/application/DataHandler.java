@@ -128,7 +128,7 @@ public class DataHandler {
 	public static List<Signup> getSignups(List<User> schoolList, List<Camp> campList){
 		//Creating Signup
 		List<Signup> signupList = new ArrayList<>();
-		String campFile = "data/signups.csv";
+		String signupFile = "data/signups.csv";
 		String line;
 		String csvSeparator = ",";
 		String userID;
@@ -137,7 +137,7 @@ public class DataHandler {
 		int campID;
 		User foundStudent = null;
 		Camp foundCamp = null;
-		try (BufferedReader br = new BufferedReader(new FileReader(campFile))){
+		try (BufferedReader br = new BufferedReader(new FileReader(signupFile))){
 			line = br.readLine();
 			while((line!= null && line.length()>1)) {
 				String[] lineData = line.split(csvSeparator);
@@ -178,6 +178,77 @@ public class DataHandler {
             System.out.println(signup.getCamp().getName() + " " + signup.getStudent().getName());
         }*/
 		return signupList;
+	}
+	public static List<Enquiry> getEnquiries(List<User> schoolList, List<Camp> campList) {
+		List<Enquiry> enquiryList = new ArrayList<>();
+		String enquiryFile = "data/enquiries.csv";
+		String line;
+		String csvSeparator = "\\|";
+		int enquiryID = 0;
+		int campID;
+		String userID;
+		String replyUserID;
+		boolean studentExists = false;
+		boolean campExists = false;
+		Enquiry enquiry = null;
+		User foundStudent = null;
+		Camp foundCamp = null;
+		User foundReplyAuthor = null;
+		try (BufferedReader br = new BufferedReader(new FileReader(enquiryFile))) {
+			line = br.readLine();
+			while ((line != null && line.length() > 1)) {
+				String[] lineData = line.split(csvSeparator);
+				if (lineData.length > 2) {
+					enquiryID = Integer.parseInt(lineData[0]);
+					userID = lineData[2];
+					studentExists = false;
+					for (User user : schoolList) {
+						if (user.getID().equals(userID)) {
+							foundStudent = user;
+							studentExists = true;
+							break;
+						}
+					}
+					if (studentExists) {
+						campID = Integer.parseInt(lineData[1]);
+						campExists = false;
+						for (Camp camp : campList) {
+							if (camp.getID() == campID) {
+								foundCamp = camp;
+								campExists = true;
+							}
+						}
+					}
+				}
+				if (studentExists && campExists) {
+					boolean status = (1 == Integer.parseInt(lineData[6]));
+					if (status) {
+						replyUserID = lineData[4];
+						for (User user : schoolList) {
+							if (user.getID().equals(replyUserID)) {
+								foundReplyAuthor = user;
+								enquiry = new Enquiry(enquiryID,foundCamp,(Student) foundStudent, lineData[3],
+										foundReplyAuthor, lineData[5],true);
+								enquiryList.add(enquiry);
+								enquiry.getCamp().addEnquiry(enquiry);
+								break;
+							}
+						}
+
+
+					} else {
+						enquiry = new Enquiry(enquiryID, foundCamp,(Student) foundStudent, lineData[3],
+								null, "", false);
+						enquiryList.add(enquiry);
+						enquiry.getCamp().addEnquiry(enquiry);
+					}
+				}
+				line = br.readLine();
+			}
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		return enquiryList;
 	}
 	/**
 	 *Writes the current state of all User objects into their respective CSVs.

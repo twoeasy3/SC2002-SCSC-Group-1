@@ -14,6 +14,7 @@ public class CAMs {
 		List<Camp> campList = DataHandler.getCamps();
 		Helper.populateCommittees(schoolList,campList);
 		List<Signup> signupList = DataHandler.getSignups(schoolList, campList);
+		List<Enquiry> enquiryList = DataHandler.getEnquiries(schoolList,campList);
 		Scanner sc = new Scanner(System.in);
 		boolean quitCAMs = false;
 		while (!quitCAMs) {
@@ -41,7 +42,6 @@ public class CAMs {
 						DataHandler.saveUsers(schoolList);
 						break;
 					case 2:
-
 						campList = Helper.sortCampList(campList,response);
 						activeUser.viewCamps(campList);
 						break;
