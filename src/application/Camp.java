@@ -202,7 +202,7 @@ public class Camp {
 	// access enquiry list
 
 
-	public ArrayList<Enquiry> getenquiryList() {
+	public ArrayList<Enquiry> getEnquiryList() {
 		return enquiryList;
 	}
 }
