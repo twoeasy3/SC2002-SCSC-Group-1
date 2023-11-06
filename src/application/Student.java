@@ -27,9 +27,9 @@ public class Student extends User{
 			System.out.println("You are currently a committee member of XX camp.");//TODO
 		}
 		System.out.println("1. Change your password.");
-		System.out.println("2. View eligible camps.");
+		System.out.println("2. View eligible camps. (-l,-s,-r,-p,-f)");
 		System.out.println("3. View your signups.");
-		System.out.println("4. Sign up for camp.");
+		System.out.println("4. Sign up for camp. (-l,-s,-r,-p,-f)" );
 		System.out.println("5. Camp Enquiry Hub");
 		System.out.println("6. Camp Committee Hub");
 		System.out.println("9. Log out");
@@ -46,6 +46,7 @@ public class Student extends User{
 				listMenu = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("]\n").toString();
 			}
 		}
+		System.out.println(listMenu);
 	}
 
 	public void viewOwnedCamps(List<Camp> campList,List<Signup> signupList){ //TODO
@@ -76,7 +77,7 @@ public class Student extends User{
 				attendingCamps.add(signup.getCamp());
 			}
 		}
-		committeeCamp = DataHandler.getCampfromID(this.getCommittee(),campList);
+		committeeCamp = Helper.getCampfromID(this.getCommittee(),campList);
 		if (committeeCamp != null){
 			attendingCamps.add(committeeCamp);
 		}
@@ -126,7 +127,7 @@ public class Student extends User{
 			System.out.println("0: Quit to menu. ");
 			System.out.println("Enter the number corresponding to the camp you wish to learn more about: ");
 			String response = sc.nextLine();
-			if (checkInputIntValidity(response)) {
+			if (Helper.checkInputIntValidity(response)) {
 				int selection = Integer.parseInt(response);
 				if (selection < 0 || selection > eligibleCamps.size()) {
 					System.out.println("Choice does not correspond to any camp on the list!");
@@ -136,16 +137,11 @@ public class Student extends User{
 				}
 				else {
 					Camp selectedCamp = eligibleCamps.get(selection - 1);
-					System.out.println(selectedCamp.getName() + " (" + selectedCamp.getFaculty() + ")");
-					System.out.println("Registration End Date: " + selectedCamp.getRegEnd().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
-					System.out.println("Start Date: " + selectedCamp.getStart().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
-					System.out.println("End Date: " + selectedCamp.getEnd().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
-					System.out.println("Venue: " + selectedCamp.getLocation());
-					System.out.println(selectedCamp.getDescription());
+					selectedCamp.showSummary();
 					System.out.println("Join Camp as attendee? Y/N");
 					int input = -1;
 					while (input == -1) {
-						input = parseUserBoolInput(sc.nextLine());
+						input = Helper.parseUserBoolInput(sc.nextLine());
 					}
 					if (input == 1) {
 						signupList.add(new Signup(this,selectedCamp,true));

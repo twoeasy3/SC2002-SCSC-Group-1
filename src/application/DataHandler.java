@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 
 /**
  * Responsible for reading files from data/ into the program state.
@@ -265,28 +266,7 @@ public class DataHandler {
 		}
 
 	}
-	public static void populateCommittees(List<User> userList,List<Camp> campList){
-		Camp campObject = null;
-		for(User user : userList){
-			if(user instanceof Student){
-				if(((Student) user).getCommittee() != 1){
-					campObject = getCampfromID(((Student) user).getCommittee(),campList);
-					if(campObject!= null){
-						campObject.addCommittee(((Student) user));
-					}
-				}
-			}
-		}
-	}
 
-	public static Camp getCampfromID(int id, List<Camp> campList){
-		for(Camp camp : campList){
-			if (camp.getID() == id){
-				return camp;
-			}
-		}
-		return null;
-	}
 	/**
 	 * Returns the correct format for userID from the .csv
 	 * CSVs have emails instead of userID as per format.

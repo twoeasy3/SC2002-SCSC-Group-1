@@ -12,7 +12,7 @@ public class CAMs {
 
 		List<User> schoolList = DataHandler.getUsers();
 		List<Camp> campList = DataHandler.getCamps();
-		DataHandler.populateCommittees(schoolList,campList);
+		Helper.populateCommittees(schoolList,campList);
 		List<Signup> signupList = DataHandler.getSignups(schoolList, campList);
 		Scanner sc = new Scanner(System.in);
 		boolean quitCAMs = false;
@@ -22,21 +22,38 @@ public class CAMs {
 			boolean activeSession = true;
 			while (activeSession) {
 				activeUser.printMenu();
-				int choice = sc.nextInt();
-				String response ="";
+				//This entire portion allows for arguments in the options like 2-f
+				String response = sc.nextLine();
+				int choice = -619;
+				try{
+					choice = Integer.parseInt(response.substring(0,1));
+					response = response.replaceAll("[-\\s]+", "");
+					response = response.substring(1);
+				}
+				catch (NumberFormatException e) {
+					choice = 619;
+
+				}
+
+				//
+				 //TODO determine if this breaks anything
 				switch (choice) {
 					case 1:
 						activeUser.changePass();
 						DataHandler.saveUsers(schoolList);
 						break;
 					case 2:
+
+						campList = Helper.sortCampList(campList,response);
 						activeUser.viewCamps(campList);
 						break;
 					case 3:
+						campList = Helper.sortCampList(campList,response);
 						activeUser.viewOwnedCamps(campList, signupList);
 						break;
 					case 4:
 						if (activeUser instanceof Student) {
+							campList = Helper.sortCampList(campList,response);
 							signupList = ((Student) activeUser).signUpCamp(campList, signupList);
 						}
 						break;

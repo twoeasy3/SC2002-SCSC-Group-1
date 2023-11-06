@@ -2,6 +2,7 @@ package application;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 public class Staff extends User {
@@ -21,8 +22,8 @@ public class Staff extends User {
 		System.out.println("Staff Portal");
 		System.out.println("You have XX new queries."); //TODO 	A staff can view and reply to enquiries from students to the camp(s) his/her has created
 		System.out.println("1. Change your password.");
-		System.out.println("2. View all active camps.");
-		System.out.println("3. Edit your camps.");
+		System.out.println("2. View all active camps. (-l,-s,-r,-p,-f)");
+		System.out.println("3. View and Edit your camps. (-l,-s,-r,-p,-f)");
 		System.out.println("4. Camp enquiry hub.");
 		System.out.println("5. Create a camp");
 		System.out.println("9. Log out");
@@ -30,6 +31,7 @@ public class Staff extends User {
 	}
 
 	public void viewCamps(List<Camp> campList) {
+		//campList.sort((o1,o2) -> o1.getName().compareTo(o2.getName()));
 		StringBuilder sb = new StringBuilder();
 		String listMenu = "";
 		int i = 0;
@@ -49,17 +51,106 @@ public class Staff extends User {
 
 
 	public void viewOwnedCamps(List<Camp> campList, List<Signup> signupList) {
-		boolean campFound = false;
+		int i= 0;
+		List<Camp> ownedCamps = new ArrayList<>();
+		StringBuilder sb = new StringBuilder();
+		String listMenu = "";
+		Scanner sc = new Scanner(System.in);
 		System.out.println("Showing all camps created by you:");
 		for (Camp camp : campList) {
 			if (camp.getInCharge().equals(this.getID())) {
-				System.out.println(camp.getName() + " (" + camp.getFaculty() + ")");
-				campFound = true;
+				i++;
+				ownedCamps.add(camp);
+				listMenu = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("] ").toString();
+				if (!camp.isVisible()){
+					listMenu = sb.append("{HIDDEN}").toString();
+				}
+				listMenu = sb.append("\n").toString();
 			}
 		}
-		if (!campFound) {
-			System.out.println("No active camps created by you found.");
+		if (i == 0) {
+			System.out.println("No active camps created by you found. Press enter to continue.");
+			String continueInput = sc.nextLine();
+			return;
 		}
+
+		boolean endLoop = false;
+
+		while(!endLoop){
+		System.out.println(listMenu);
+		System.out.println("0: Back to CAMs main menu ");
+		System.out.println("Enter the number corresponding to the camp to view/edit: ");
+		String response = sc.nextLine();
+		if (Helper.checkInputIntValidity(response)) {
+			int selection = Integer.parseInt(response);
+			if (selection < 0 || selection > ownedCamps.size()) {
+				System.out.println("Choice does not correspond to any camp on the list!");
+			} else if (selection == 0){
+				System.out.println("Quitting View Camp menu...");
+				endLoop = true;
+			}
+			else {
+				Camp selectedCamp = ownedCamps.get(selection - 1);
+				selectedCamp.showSummary();
+				System.out.println("Edit Camp? Y/N");
+				int input = -1;
+				while (input == -1) {
+					input = Helper.parseUserBoolInput(sc.nextLine());
+				}
+				if (input == 1) {
+					this.staffEditCamp(selectedCamp, campList);
+					endLoop = true;
+				} else {
+					System.out.println("Backing out and showing you all created camps again...");
+				}
+			}
+		}
+		}
+	}
+
+	public void staffEditCamp(Camp camp, List<Camp> campList){
+		Scanner sc = new Scanner(System.in);
+		int maxOptions = 5;
+		System.out.println("Edit Menu:");
+		System.out.println("1:Name");
+		System.out.println("2:Venue");
+		System.out.println("3:Description");
+		System.out.println("4:Maximum Slots");
+		System.out.println("5:Maximum Committee");
+		if(camp.getCommitteeCount() + camp.getAttendeeCount() == 0) {
+			System.out.println("6:Start Date");
+			System.out.println("7:End Date");
+			System.out.println("8:Registration End Date");
+			System.out.println("9:Set Visibility");
+			System.out.println("0:Delete Camp");
+			maxOptions = 9;
+		}
+		System.out.println("Select component to edit:");
+		String response = sc.nextLine();
+		if (Helper.checkInputIntValidity(response)) {
+			int selection = Integer.parseInt(response);
+			if (selection < 0 || selection > maxOptions) {
+				System.out.println("Choice does not correspond to any camp on the list!");
+			}
+			else if(selection >=1 && selection <= 5){
+				System.out.println("Enter the new value to change to:");
+			}
+			else if(selection >=6 && selection <=8){
+				System.out.println("Enter the new date, 8 digits in yyyyMMdd format.");
+			}
+			else if(selection == 9){
+				System.out.println("Do you want this camp to be visible to students? Y/N");
+			}
+			else if(selection == 0){
+				System.out.println("Are you sure you want to delete this camp? Y/N");
+				System.out.println("DEV ----- UNIMPLEMENTED"); //TODO
+			}
+			response = sc.nextLine();
+			if(camp.tryEditCamp(selection,response)){
+				DataHandler.saveCamps(campList);
+			}
+		}
+
 	}
 	public Camp createCamp() {
 		String response;
@@ -70,7 +161,7 @@ public class Staff extends User {
 		String faculty = "None";
 		System.out.println("Camp open to all? Y/N (If N, camp will be " + this.getFaculty() + " only.)");
 		while (faculty.equals("None")) {
-			switch (this.parseUserBoolInput(sc.nextLine())) {
+			switch (Helper.parseUserBoolInput(sc.nextLine())) {
 				case 0:
 					faculty = this.getFaculty();
 					break;
@@ -86,7 +177,7 @@ public class Staff extends User {
 		while (!dateCheck) {
 			System.out.println("Enter start date for camp (yyyyMMdd): ");
 			dateString = sc.nextLine();
-			dateCheck = this.checkInputDateValidity(dateString);
+			dateCheck = Helper.checkInputDateValidity(dateString);
 		}
 		LocalDate startDate = LocalDate.parse(dateString, formatter);
 		LocalDate endDate = LocalDate.of(2024, 12, 31); //default value
@@ -94,7 +185,7 @@ public class Staff extends User {
 		while (!dateCheck) {
 			System.out.println("Enter end date for camp (yyyyMMdd): ");
 			dateString = sc.nextLine();
-			if (!checkInputDateValidity(dateString)){
+			if (!Helper.checkInputDateValidity(dateString)){
 				continue;
 			}
 			endDate = LocalDate.parse(dateString, formatter);
@@ -110,7 +201,7 @@ public class Staff extends User {
 		while (!dateCheck) {
 			System.out.println("Enter registration end date for camp (yyyyMMdd): ");
 			dateString = sc.nextLine();
-			if (!checkInputDateValidity(dateString)){
+			if (!Helper.checkInputDateValidity(dateString)){
 				continue;
 			}
 			regEnd = LocalDate.parse(dateString, formatter);
@@ -125,7 +216,7 @@ public class Staff extends User {
 		while (maxSize < 10 || maxSize > 24757) {
 			System.out.println("Enter maximum number of camp attendees: ");
 			response = sc.nextLine();
-			if (this.checkInputIntValidity(response)) {
+			if (Helper.checkInputIntValidity(response)) {
 				maxSize = Integer.parseInt(response);
 				if (maxSize < 10) {
 					System.out.println("Camps in CAMs must have at least 10 open slots!");
@@ -138,7 +229,7 @@ public class Staff extends User {
 		while (maxComm < 0 || maxComm > 10) {
 			System.out.println("Enter maximum number of camp committee members: ");
 			response = sc.nextLine();
-			if (this.checkInputIntValidity(response)) {
+			if (Helper.checkInputIntValidity(response)) {
 				maxComm = Integer.parseInt(response);
 				if (maxComm < 0) {
 					System.out.println("You can't have a negative number of committee members!");
@@ -155,7 +246,7 @@ public class Staff extends User {
 		int visibility = -1;
 		while (visibility == -1) {
 			System.out.println("Set camp to be visible to students now? Y/N");
-			visibility = this.parseUserBoolInput(sc.nextLine());
+			visibility = Helper.parseUserBoolInput(sc.nextLine());
 		}
 		return (new Camp(-1, name, faculty, startDate, endDate, regEnd,
 				description, location, maxSize, maxComm, this.getID(), visibility));
