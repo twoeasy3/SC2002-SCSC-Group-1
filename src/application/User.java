@@ -144,7 +144,7 @@ public abstract class User {
 	/**
 	 * Used to determine and generate the menu of options in CAMs.
 	 */
-	public abstract void printMenu();
+	public abstract void printMenu(List<Camp> campList);
 
 	/**
 	 * Used to generate the list of camps that should be visible to the user.
@@ -157,7 +157,7 @@ public abstract class User {
 	 * Behaviour changes based on whether the User is a Student or Staff.
 	 * @param campList List of all Camp objects.
 	 */
-	public abstract void viewOwnedCamps(List<Camp> campList,List<Signup> signupList);
+	public abstract void viewOwnedCamps(List<Camp> campList,List<Signup> signupList, List<User> schoolList);
 
 	/**
 	 * Unimplemented.

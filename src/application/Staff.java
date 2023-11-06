@@ -18,7 +18,7 @@ public class Staff extends User {
 		return true;
 	}
 
-	public void printMenu() {
+	public void printMenu(List<Camp> campList) {
 		System.out.println("Staff Portal");
 		System.out.println("You have XX new queries."); //TODO 	A staff can view and reply to enquiries from students to the camp(s) his/her has created
 		System.out.println("1. Change your password.");
@@ -61,7 +61,7 @@ public class Staff extends User {
 
 
 
-	public void viewOwnedCamps(List<Camp> campList, List<Signup> signupList) {
+	public void viewOwnedCamps(List<Camp> campList, List<Signup> signupList, List<User> schoolList) {
 		int i= 0;
 		List<Camp> ownedCamps = new ArrayList<>();
 		Scanner sc = new Scanner(System.in);

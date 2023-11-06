@@ -19,12 +19,12 @@ public class Student extends User{
 		return false;
 	}
 
-	public void printMenu(){
+	public void printMenu(List<Camp> campList){
 		System.out.println("Student Portal");
 		if(this.getCommittee() == -1){
 			System.out.println("You are not currently a committee member of any camp.");}
 		else{
-			System.out.println("You are currently a committee member of XX camp.");//TODO
+			System.out.println("You are currently a committee member of " + Helper.getCampfromID(this.committee, campList).getName());//dangerous error possible
 		}
 		System.out.println("1. Change your password.");
 		System.out.println("2. View eligible camps. (-o,-l,-s,-r,-p,-f)");
@@ -69,11 +69,10 @@ public class Student extends User{
 	}
 
 
-	public void viewOwnedCamps(List<Camp> campList,List<Signup> signupList){ //TODO
+	public void viewOwnedCamps(List<Camp> campList,List<Signup> signupList,List<User> schoolList){ //TODO
 		Scanner sc = new Scanner(System.in);
 		String response = "";
 		List<Camp> attendingCamps = this.getAttendingCamps(campList,signupList);
-		StringBuilder sb = new StringBuilder();
 		System.out.println("Showing events you are currently signed up for:" );
 		if(attendingCamps.size() ==0){
 			System.out.println("You are not registered for any camps.");
@@ -99,9 +98,14 @@ public class Student extends User{
 				else {
 					Camp selectedCamp = attendingCamps.get(selection - 1);
 					selectedCamp.showSummary();
-					System.out.println("Press Enter to go back, or to cancel this signup type 'cancel'");
+					System.out.println("Press Enter to go back.");
+					if(this.committee != selectedCamp.getID()) {
+						System.out.println("To cancel this signup type 'cancel'");
+					}
+					if(!selectedCamp.isFullCommittee() && this.committee == -1){
+						System.out.println("To upgrade to Committee member type 'committee'"); }//TODO check for slots
 					response = sc.nextLine();
-					if(response.equals("cancel")){
+					if(response.equals("cancel") && this.committee != selectedCamp.getID()){
 						System.out.println("Once you cancel, you will not be able to sign up for this camp again! Are you sure? Y/N");
 						int input = -1;
 						while (input == -1) {
@@ -112,6 +116,28 @@ public class Student extends User{
 								if(signup.getStudent() == this && signup.getCamp() == selectedCamp){
 									signup.cancelSignup();
 									DataHandler.saveSignups(signupList);
+									endLoop = true;
+									break;
+								}
+							}
+							endLoop = true;
+						} else {
+							System.out.println("Backing out and showing you your signups...");
+						}
+					}
+					else if(response.equals("committee") && !selectedCamp.isFullCommittee() && this.committee == -1){
+						System.out.println("Once you change your role, you will not be able to cancel or join another committee! Are you sure? Y/N");
+						int input = -1;
+						while (input == -1) {
+							input = Helper.parseUserBoolInput(sc.nextLine());
+						}
+						if (input == 1) {
+							for(Signup signup : signupList){
+								if(signup.getStudent() == this && signup.getCamp() == selectedCamp){
+									signupList.remove(signup);
+									DataHandler.saveSignups(signupList);
+									this.committee = selectedCamp.getID();
+									DataHandler.saveUsers(schoolList);
 									endLoop = true;
 									break;
 								}
@@ -144,13 +170,14 @@ public class Student extends User{
 	}
 	public List<Signup> signUpCamp(List<Camp> campList, List<Signup> signupList) { //TODO disallow when camp is full & clashes
 		System.out.println("Showing events you are eligible for as a student of " + this.getFaculty() + " and have never signed up for...");
+		List<Camp> campListCopy = new ArrayList<>(campList);
 		List<Camp> attendingCamps = this.getAttendingCamps(campList,signupList);
-		campList.removeAll(attendingCamps); //remove all camps that student is already attending/committee-ing
+		campListCopy.removeAll(attendingCamps); //remove all camps that student is already attending/committee-ing
 		int i = 0;
 		List<Camp> eligibleCamps = new ArrayList<>();
 		boolean signUpExists;
 		boolean clashExists;
-		for (Camp camp : campList) {
+		for (Camp camp : campListCopy) {
 			signUpExists = false;
 			if (camp.checkEligibility(this.getFaculty()) && camp.isVisible() && !camp.isFull()) {//camp eligibility check
 				if(camp.isAttending(this) || camp.isBlacklisted(this)){

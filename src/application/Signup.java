@@ -3,7 +3,7 @@ package application;
 /**
  * Represents the many-to-many relations between Student and Camp.
  * It only keeps track of ATTENDEES. Committees are tracked under the User class.
- * A signup is a persistent record and can never be deleted.
+ * A signup will be deleted if someone elevates from Attendee to Committee.
  * These records are then saved to keep CAMs' persistent state.
  * All Student-Camp changes are to be interfaced from Signup, not by manipulating Camp's internal lists.
  * Only 1 signup between any unique Student and Camp is allowed.

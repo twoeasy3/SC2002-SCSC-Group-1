@@ -21,7 +21,7 @@ public class CAMs {
 
 			boolean activeSession = true;
 			while (activeSession) {
-				activeUser.printMenu();
+				activeUser.printMenu(campList);
 				//This entire portion allows for arguments in the options like 2-f
 				String response = sc.nextLine();
 				int choice = -619;
@@ -47,7 +47,7 @@ public class CAMs {
 						break;
 					case 3:
 						campList = Helper.sortCampList(campList,response);
-						activeUser.viewOwnedCamps(campList, signupList);
+						activeUser.viewOwnedCamps(campList, signupList,schoolList);
 						break;
 					case 4:
 						if (activeUser instanceof Student) {
