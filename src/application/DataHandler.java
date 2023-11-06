@@ -35,7 +35,7 @@ public class DataHandler {
 					String id = getIDFromEmail(lineData[1]);
 					String faculty = lineData[2];
 					String passwordHash = lineData[3];
-					int committee = Integer.valueOf(lineData[4]);
+					int committee = Integer.parseInt(lineData[4]);
 					Student newStudent = new Student(name,id,faculty,passwordHash,committee);
 					schoolList.add(newStudent);
 					line = br.readLine();
@@ -250,7 +250,7 @@ public class DataHandler {
 		String signupFile = "data/signups.csv";
 		String line;
 		String csvSeparator = ",";
-		String status = "";
+		String status;
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(signupFile))) {
 			for (Signup signup : signupList) {
 				if (signup.getStatus()){status = "1";}else{status="0";}
@@ -265,8 +265,19 @@ public class DataHandler {
 		}
 
 	}
-
-
+	public static void populateCommittees(List<User> userList,List<Camp> campList){
+		Camp campObject = null;
+		for(User user : userList){
+			if(user instanceof Student){
+				if(((Student) user).getCommittee() != 1){
+					campObject = getCampfromID(((Student) user).getCommittee(),campList);
+					if(campObject!= null){
+						campObject.addCommittee(((Student) user));
+					}
+				}
+			}
+		}
+	}
 
 	public static Camp getCampfromID(int id, List<Camp> campList){
 		for(Camp camp : campList){

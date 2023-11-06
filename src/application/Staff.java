@@ -25,14 +25,25 @@ public class Staff extends User {
 		System.out.println("3. Edit your camps.");
 		System.out.println("4. Camp enquiry hub.");
 		System.out.println("5. Create a camp");
-		System.out.println("0. Quit CAMs");
+		System.out.println("9. Log out");
+		System.out.println("0. Terminate CAMs");
 	}
 
 	public void viewCamps(List<Camp> campList) {
+		StringBuilder sb = new StringBuilder();
+		String listMenu = "";
+		int i = 0;
 		System.out.println("Staff privilege; showing all open events ");
 		for (Camp camp : campList) {
-			System.out.println(camp.getName() + " (" + camp.getFaculty() + ")");
+			i++;
+			listMenu = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("] ").toString();
+			if (!camp.isVisible()){
+				listMenu = sb.append("{HIDDEN}").toString();
+			}
+			listMenu = sb.append("\n").toString();
 		}
+		System.out.println(listMenu);
+
 	}
 
 

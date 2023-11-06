@@ -12,21 +12,75 @@ public class CAMs {
 
 		List<User> schoolList = DataHandler.getUsers();
 		List<Camp> campList = DataHandler.getCamps();
-		List<Signup> signupList = DataHandler.getSignups(schoolList,campList);
+		DataHandler.populateCommittees(schoolList,campList);
+		List<Signup> signupList = DataHandler.getSignups(schoolList, campList);
 		Scanner sc = new Scanner(System.in);
+		boolean quitCAMs = false;
+		while (!quitCAMs) {
+			User activeUser = resolveLogin(schoolList); //login user
+
+			boolean activeSession = true;
+			while (activeSession) {
+				activeUser.printMenu();
+				int choice = sc.nextInt();
+				String response ="";
+				switch (choice) {
+					case 1:
+						activeUser.changePass();
+						DataHandler.saveUsers(schoolList);
+						break;
+					case 2:
+						activeUser.viewCamps(campList);
+						break;
+					case 3:
+						activeUser.viewOwnedCamps(campList, signupList);
+						break;
+					case 4:
+						if (activeUser instanceof Student) {
+							signupList = ((Student) activeUser).signUpCamp(campList, signupList);
+						}
+						break;
+					case 5:
+						if (activeUser instanceof Staff) {
+							campList.add(((Staff) activeUser).createCamp());
+							DataHandler.saveCamps(campList);
+							System.out.println("Camp successfully created!");
+
+						}
+						break;
+					case 9:
+						System.out.println("Logging out from CAMs...");
+						activeSession = false;
+						break;
+					case 0:
+						System.out.println("Logging out and terminating CAMs...");
+						activeSession = false;
+						quitCAMs = true;
+						break;
+
+					default:
+						System.out.println("Invalid Choice");
+						break;
+				}
+			}
+
+		}
+	}
+	public static User resolveLogin(List<User> schoolList){
 		String response;
 		boolean userFound = false;
 		User activeUser = null;
-		
-		
+		Scanner sc = new Scanner(System.in);
+
+
 		while (!userFound) {
 			System.out.println("Please enter your username to login: ");
 			response = sc.nextLine();
 			activeUser = getUserObject(response,schoolList);
-            if (activeUser == null) {
-                System.out.println("User not found!");} else {
-                    userFound = true;}
-        }
+			if (activeUser == null) {
+				System.out.println("User not found!");} else {
+				userFound = true;}
+		}
 		boolean passwordMatch = false;
 		while (!passwordMatch) {
 			System.out.println("Please enter your password: ");
@@ -41,47 +95,9 @@ public class CAMs {
 				System.out.println("Password Incorrect");
 			}
 		}
-		boolean quitCAMs = false;
-		while(!quitCAMs) {
-			activeUser.printMenu();
-			int choice = sc.nextInt();
-			switch (choice) {
-				case 1:
-					activeUser.changePass();
-					DataHandler.saveUsers(schoolList);
-					break;
-				case 2:
-					activeUser.viewCamps(campList);
-					break;
-				case 3:
-					activeUser.viewOwnedCamps(campList,signupList);
-					break;
-				case 4:
-					if (activeUser instanceof Student) {
-						signupList = ((Student) activeUser).signUpCamp(campList, signupList);
-					}
-					break;
-				case 5:
-					if (activeUser instanceof Staff){
-						campList.add(((Staff) activeUser).createCamp());
-						DataHandler.saveCamps(campList);
-						System.out.println("Camp successfully created!");
-
-					}
-					break;
-				case 0:
-					System.out.println("Quitting CAMs...");
-					quitCAMs = true;
-					break;
-
-				default:
-					System.out.println("Invalid Choice");
-					break;
-			}
-		}
 		
+		return activeUser;
 	}
-
 	/**
 	 * Finds a User object and returns it.
 	 * Used in login screen, object is selected as the active user.

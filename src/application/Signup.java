@@ -2,7 +2,10 @@ package application;
 
 /**
  * Represents the many-to-many relations between Student and Camp.
+ * It only keeps track of ATTENDEES. Committees are tracked under the User class.
  * A signup is a persistent record and can never be deleted.
+ * These records are then saved to keep CAMs' persistent state.
+ * All Student-Camp changes are to be interfaced from Signup, not by manipulating Camp's internal lists.
  * Only 1 signup between any unique Student and Camp is allowed.
  */
 public class Signup {
@@ -31,6 +34,7 @@ public class Signup {
 		this.student = student;
 		this.camp = camp;
 		this.status = status;
+		this.camp.addAttendee((Student) student);
 	}
 
 	/**
@@ -58,6 +62,7 @@ public class Signup {
 		this.status = false;
 		System.out.println("You have successfully cancelled your attendance for " + this.camp.getName());
 		System.out.println("You may not sign up for this event again.");
+		this.camp.removeAttendee((Student) student);
 	}
 
 	/**

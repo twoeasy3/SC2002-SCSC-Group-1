@@ -61,10 +61,6 @@ public class Camp {
 	 */
 	private String inCharge; //creator of camp
 	/**
-	 * Unused.
-	 */
-	private List<Student> committeeList;
-	/**
 	 * A String of the location name the camp is held at.
 	 * Due to current implementation, no commas in this field are allowed.
 	 */
@@ -79,8 +75,13 @@ public class Camp {
 	 * All Staff are still free to view.
 	 */
 	private boolean visible;
-	// this is a list of enquiries associated with this camp
-	private ArrayList<Enquiry> enquiry_list;
+	/**
+	 * A list of enquiries associated with this camp
+ 	 */ 
+	private ArrayList<Enquiry> enquiryList;
+	private List<Student> attendeeList;
+	private List<Student> blackList;
+	private List<Student> committeeList;
 
 	/**
 	 *
@@ -112,7 +113,10 @@ public class Camp {
 		this.maxComm = maxComm;
 		this.inCharge = creator;
 		this.visible = (visible==1);
-		this.enquiry_list = new ArrayList<Enquiry>(0);
+		this.enquiryList = new ArrayList<Enquiry>(0);
+		this.attendeeList = new ArrayList<>();
+		this.blackList = new ArrayList<>();
+		this.committeeList = new ArrayList<>();
 	}
 
 	public String getName() {
@@ -141,6 +145,10 @@ public class Camp {
 	}
 	public boolean isVisible(){return this.visible;}
 	public String getInCharge(){return this.inCharge;}
+	public int getAttendeeCount(){return attendeeList.size();}
+	public int getCommitteeCount(){return committeeList.size();}
+	public boolean isFull(){return (attendeeList.size()>= this.maxSize - this.maxComm);};
+	public boolean isFullCommittee(){return (committeeList.size() >= this.maxComm);}
 	
 	public boolean checkEligibility(String faculty) {
 		if(this.faculty.equals(faculty) || this.faculty.equals("ALL")) {
@@ -157,11 +165,44 @@ public class Camp {
 		}
 		return false;
 	}
-	
+	/**
+	 * Appends a student to the internal list of attendee members for the camp.
+	 * Conditions to do so should be checked elsewhere.
+	 * @param student Student appended to list
+	 */
+	public void addAttendee(Student student){
+		this.attendeeList.add(student);
+	}
+
+	/**
+	 * Appends a student to the internal list of committee members for the camp.
+	 * Conditions to do so should be checked elsewhere.
+	 * @param student Student appended to list
+	 */
+	public void addCommittee(Student student){
+		this.committeeList.add(student);
+	}
+	/**
+	 * Removes a student from the internal list of attendees for the camp.
+	 * Conditions to do so should be checked elsewhere.
+	 * @param student Student to be removed
+	 */
+	public void removeAttendee(Student student){
+		if(attendeeList.contains(student)){
+		attendeeList.remove(student);
+		blackList.add(student);
+		}
+	}
+	public boolean isAttending(Student student){
+		return(attendeeList.contains(student));
+	}
+	public boolean isBlacklisted(Student student){
+		return(blackList.contains(student));
+	}
 	// access enquiry list
 
 
-	public ArrayList<Enquiry> getEnquiry_list() {
-		return enquiry_list;
+	public ArrayList<Enquiry> getenquiryList() {
+		return enquiryList;
 	}
 }

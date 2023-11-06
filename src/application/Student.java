@@ -32,13 +32,18 @@ public class Student extends User{
 		System.out.println("4. Sign up for camp.");
 		System.out.println("5. Camp Enquiry Hub");
 		System.out.println("6. Camp Committee Hub");
-		System.out.println("0. Quit CAMs");
+		System.out.println("9. Log out");
+		System.out.println("0. Terminate CAMs");
 	}
 	public void viewCamps(List<Camp> campList){
+		StringBuilder sb = new StringBuilder();
+		String listMenu = "";
+		int i = 0;
 		System.out.println("Showing events you are eligible for as a student of " + this.getFaculty() );
 		for(Camp camp : campList){
 			if(camp.checkEligibility(this.getFaculty())&& camp.isVisible()){
-				System.out.println(camp.getName() + " (" + camp.getFaculty() +")");
+				i++;
+				listMenu = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("]\n").toString();
 			}
 		}
 	}
@@ -56,7 +61,11 @@ public class Student extends User{
 				listMenu = sb.append(" [COMMITTEE]").toString();}
 			listMenu = sb.append("\n").toString();
 		}
-		System.out.println(listMenu.substring(0,listMenu.length()-1));
+		if(i!=0){
+			System.out.println(listMenu);}
+		else{
+			System.out.println("You are not registered for any camps.");
+		}
 	}
 
 	public List<Camp> getAttendingCamps(List<Camp> campList, List<Signup> signupList){
@@ -85,12 +94,9 @@ public class Student extends User{
 		boolean clashExists;
 		for (Camp camp : campList) {
 			signUpExists = false;
-			if (camp.checkEligibility(this.getFaculty()) && camp.isVisible()) {//camp eligibility check
-				for (Signup signup : signupList) {//checking for existing signups
-					if (signup.matchStudent(this.getID()) && signup.matchCamp(camp)) {//previous signup found
-						signUpExists = true;
-						break;
-					}
+			if (camp.checkEligibility(this.getFaculty()) && camp.isVisible() && !camp.isFull()) {//camp eligibility check
+				if(camp.isAttending(this) || camp.isBlacklisted(this)){
+					signUpExists = true;
 				}
 				if(!signUpExists){//Now check for clashes
 					clashExists = false;
@@ -103,7 +109,7 @@ public class Student extends User{
 					if (!clashExists){
 						i++;
 						eligibleCamps.add(camp);
-						repeatList = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(")").append("\n").toString();
+						repeatList = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("]\n").toString();
 					}
 				}
 			}

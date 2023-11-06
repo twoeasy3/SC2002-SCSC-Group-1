@@ -1,20 +1,34 @@
 package application;
 
 public class Enquiry {
-    // static variable to keep track of en_ID
+    /**
+     * static variable to keep track of en_ID
+     */
     static int en_NUM = 1;
 
-    // description of the enquiry. Usually a question
+    /**
+     * description of the enquiry. Usually a question
+     */
     private String description;
-    // reply of the enquiry. Usually an answer
+    /**
+     * reply of the enquiry. Usually an answer
+     */
     private String reply;
-    // unique ID whenever the Enquiry is generated
+    /**
+     * unique ID whenever the Enquiry is generated
+     */
     private int en_ID;
-    // status of the enquiry. Should change to ENUM?
+    /**
+     * status of the enquiry. Should change to ENUM?
+     */
     private boolean resolved;
-    // author of the Enquiry
+    /**
+     * author of the Enquiry
+     */
     private Student author;
-    // Camp associated with the enquiry
+    /**
+     * Camp associated with the enquiry
+     */
     private Camp camp;
 
     // Constructor
