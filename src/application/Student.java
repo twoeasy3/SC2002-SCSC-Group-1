@@ -36,18 +36,38 @@ public class Student extends User{
 		System.out.println("0. Terminate CAMs");
 	}
 	public void viewCamps(List<Camp> campList){
-		StringBuilder sb = new StringBuilder();
-		String listMenu = "";
-		int i = 0;
-		System.out.println("Showing events you are eligible for as a student of " + this.getFaculty() );
-		for(Camp camp : campList){
-			if(camp.checkEligibility(this.getFaculty())&& camp.isVisible()){
-				i++;
-				listMenu = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("]\n").toString();
+		List<Camp> eligibleCamps = new ArrayList<>();
+		for (Camp camp : campList){
+			if(camp.checkEligibility(this.getFaculty()) && camp.isVisible()){
+				eligibleCamps.add(camp);
 			}
 		}
-		System.out.println(listMenu);
+		String listMenu = Helper.createNumberedCampList(eligibleCamps);
+		boolean endLoop = false;
+		while (!endLoop){
+			System.out.println(listMenu);
+			Scanner sc = new Scanner(System.in);
+			System.out.println("0: Back to CAMs main menu ");
+			System.out.println("Enter the number corresponding to the camp to view more: ");
+			String response = sc.nextLine();
+			if (Helper.checkInputIntValidity(response)) {
+				int selection = Integer.parseInt(response);
+				if (selection < 0 || selection > campList.size()) {
+					System.out.println("Choice does not correspond to any camp on the list!");
+				} else if (selection == 0) {
+					System.out.println("Quitting View Camp menu...");
+					endLoop = true;
+				} else {
+					Camp selectedCamp = campList.get(selection - 1);
+					selectedCamp.showSummary();
+					System.out.println("Press enter to continue.");
+					response = sc.nextLine();
+
+				}
+			}
+		}
 	}
+
 
 	public void viewOwnedCamps(List<Camp> campList,List<Signup> signupList){ //TODO
 		List<Camp> attendingCamps = this.getAttendingCamps(campList,signupList);
@@ -85,8 +105,6 @@ public class Student extends User{
 	}
 	public List<Signup> signUpCamp(List<Camp> campList, List<Signup> signupList) { //TODO disallow when camp is full & clashes
 		System.out.println("Showing events you are eligible for as a student of " + this.getFaculty() + " and have never signed up for...");
-		StringBuilder sb = new StringBuilder(); //better performance
-		String repeatList = "" ;//used to save and spit the list out again
 		List<Camp> attendingCamps = this.getAttendingCamps(campList,signupList);
 		campList.removeAll(attendingCamps); //remove all camps that student is already attending/committee-ing
 		int i = 0;
@@ -110,7 +128,6 @@ public class Student extends User{
 					if (!clashExists){
 						i++;
 						eligibleCamps.add(camp);
-						repeatList = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("]\n").toString();
 					}
 				}
 			}
@@ -120,10 +137,11 @@ public class Student extends User{
 			System.out.println("No camps are currently open for you :(");
 			return signupList;
 		}
+		String menuList = Helper.createNumberedCampList(eligibleCamps);
 		Scanner sc = new Scanner(System.in);
 		boolean endLoop = false; //Flag to end looping menu; end when joined a camp or choosing to exit
 		while(!endLoop) {//start of loop
-			System.out.println(repeatList); //eligible camps list
+			System.out.println(menuList); //eligible camps list
 			System.out.println("0: Quit to menu. ");
 			System.out.println("Enter the number corresponding to the camp you wish to learn more about: ");
 			String response = sc.nextLine();

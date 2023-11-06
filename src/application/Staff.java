@@ -31,21 +31,32 @@ public class Staff extends User {
 	}
 
 	public void viewCamps(List<Camp> campList) {
-		//campList.sort((o1,o2) -> o1.getName().compareTo(o2.getName()));
-		StringBuilder sb = new StringBuilder();
-		String listMenu = "";
-		int i = 0;
 		System.out.println("Staff privilege; showing all open events ");
-		for (Camp camp : campList) {
-			i++;
-			listMenu = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("] ").toString();
-			if (!camp.isVisible()){
-				listMenu = sb.append("{HIDDEN}").toString();
-			}
-			listMenu = sb.append("\n").toString();
-		}
-		System.out.println(listMenu);
+		String listMenu = Helper.createNumberedCampList(campList);
 
+		boolean endLoop = false;
+		while (!endLoop){
+			System.out.println(listMenu);
+			Scanner sc = new Scanner(System.in);
+			System.out.println("0: Back to CAMs main menu ");
+			System.out.println("Enter the number corresponding to the camp to view more: ");
+			String response = sc.nextLine();
+			if (Helper.checkInputIntValidity(response)) {
+				int selection = Integer.parseInt(response);
+				if (selection < 0 || selection > campList.size()) {
+					System.out.println("Choice does not correspond to any camp on the list!");
+				} else if (selection == 0) {
+					System.out.println("Quitting View Camp menu...");
+					endLoop = true;
+				} else {
+					Camp selectedCamp = campList.get(selection - 1);
+					selectedCamp.showSummary();
+					System.out.println("Press enter to continue.");
+					response = sc.nextLine();
+
+				}
+			}
+		}
 	}
 
 
@@ -53,19 +64,12 @@ public class Staff extends User {
 	public void viewOwnedCamps(List<Camp> campList, List<Signup> signupList) {
 		int i= 0;
 		List<Camp> ownedCamps = new ArrayList<>();
-		StringBuilder sb = new StringBuilder();
-		String listMenu = "";
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Showing all camps created by you:");
 		for (Camp camp : campList) {
 			if (camp.getInCharge().equals(this.getID())) {
 				i++;
 				ownedCamps.add(camp);
-				listMenu = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("] ").toString();
-				if (!camp.isVisible()){
-					listMenu = sb.append("{HIDDEN}").toString();
-				}
-				listMenu = sb.append("\n").toString();
 			}
 		}
 		if (i == 0) {
@@ -75,7 +79,7 @@ public class Staff extends User {
 		}
 
 		boolean endLoop = false;
-
+		String listMenu = Helper.createNumberedCampList(ownedCamps);
 		while(!endLoop){
 		System.out.println(listMenu);
 		System.out.println("0: Back to CAMs main menu ");
@@ -108,7 +112,7 @@ public class Staff extends User {
 		}
 	}
 
-	public void staffEditCamp(Camp camp, List<Camp> campList){
+	public void staffEditCamp(Camp camp, List<Camp> campList) {
 		Scanner sc = new Scanner(System.in);
 		int maxOptions = 5;
 		System.out.println("Edit Menu:");
@@ -117,7 +121,7 @@ public class Staff extends User {
 		System.out.println("3:Description");
 		System.out.println("4:Maximum Slots");
 		System.out.println("5:Maximum Committee");
-		if(camp.getCommitteeCount() + camp.getAttendeeCount() == 0) {
+		if (camp.getCommitteeCount() + camp.getAttendeeCount() == 0) {
 			System.out.println("6:Start Date");
 			System.out.println("7:End Date");
 			System.out.println("8:Registration End Date");
@@ -131,27 +135,35 @@ public class Staff extends User {
 			int selection = Integer.parseInt(response);
 			if (selection < 0 || selection > maxOptions) {
 				System.out.println("Choice does not correspond to any camp on the list!");
-			}
-			else if(selection >=1 && selection <= 5){
+			} else if (selection >= 1 && selection <= 5) {
 				System.out.println("Enter the new value to change to:");
-			}
-			else if(selection >=6 && selection <=8){
+			} else if (selection >= 6 && selection <= 8) {
 				System.out.println("Enter the new date, 8 digits in yyyyMMdd format.");
-			}
-			else if(selection == 9){
+			} else if (selection == 9) {
 				System.out.println("Do you want this camp to be visible to students? Y/N");
-			}
-			else if(selection == 0){
+			} else if (selection == 0) {
 				System.out.println("Are you sure you want to delete this camp? Y/N");
-				System.out.println("DEV ----- UNIMPLEMENTED"); //TODO
+				switch (Helper.parseUserBoolInput(sc.nextLine())) {
+					case 0:
+						System.out.println("Camp not deleted.");
+						return;
+					case 1:
+						System.out.println(camp.getName() + " has been deleted.");
+						campList.remove(camp);
+						DataHandler.saveCamps(campList);
+						return;
+					default:
+						System.out.println("Camp not deleted.");
+						return;
+				}
 			}
-			response = sc.nextLine();
-			if(camp.tryEditCamp(selection,response)){
-				DataHandler.saveCamps(campList);
+				response = sc.nextLine();
+				if (camp.tryEditCamp(selection, response)) {
+					DataHandler.saveCamps(campList);
+				}
 			}
-		}
 
-	}
+		}
 	public Camp createCamp() {
 		String response;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -248,7 +260,7 @@ public class Staff extends User {
 			System.out.println("Set camp to be visible to students now? Y/N");
 			visibility = Helper.parseUserBoolInput(sc.nextLine());
 		}
-		return (new Camp(-1, name, faculty, startDate, endDate, regEnd,
+		return (new Camp(-2, name, faculty, startDate, endDate, regEnd,
 				description, location, maxSize, maxComm, this.getID(), visibility));
 	}
 

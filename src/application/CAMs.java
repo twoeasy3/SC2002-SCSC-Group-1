@@ -34,9 +34,7 @@ public class CAMs {
 					choice = 619;
 
 				}
-
-				//
-				 //TODO determine if this breaks anything
+				//////
 				switch (choice) {
 					case 1:
 						activeUser.changePass();

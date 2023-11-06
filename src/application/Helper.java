@@ -2,6 +2,7 @@ package application;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Comparator;
 import java.util.List;
 
@@ -24,25 +25,52 @@ public class Helper {
 
     public static List<Camp> sortCampList(List<Camp> campList, String arg){
         if(arg.equals("")){
-            campList.sort(Comparator.comparing(Camp::getName));
+            campList.sort(Comparator.comparing(Camp::getName,String.CASE_INSENSITIVE_ORDER));
         }
         else if(arg.equals("l")){
-            campList.sort(Comparator.comparing(Camp::getLocation));
+            System.out.println("Sorting by location");
+            campList.sort(Comparator.comparing(Camp::getLocation,String.CASE_INSENSITIVE_ORDER));
         }
         else if(arg.equals("s")){
+            System.out.println("Sorting by start date");
             campList.sort(Comparator.comparing(Camp::getStart));
         }
         else if(arg.equals("p")){
+            System.out.println("Sorting by popularity");
             campList.sort(Comparator.comparing(Camp::getAttendeeCount).reversed());
         }
         else if(arg.equals("f")){
+            System.out.println("Sorting by faculty");
             campList.sort(Comparator.comparing(Camp::getFaculty));
         }
         else{
             System.out.println("Unrecognised command, sorting by default");
-            campList.sort(Comparator.comparing(Camp::getName));
+            campList.sort(Comparator.comparing(Camp::getName,String.CASE_INSENSITIVE_ORDER));
         }
         return campList;
+    }
+
+    public static String createNumberedCampList(List<Camp> selectCamps){
+        DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        int i=0;
+        StringBuilder sb = new StringBuilder();
+        String lineString = "";
+        String listMenu = "";
+        for(Camp camp : selectCamps){
+            i++;
+            lineString = String.format("%-2d: %-55s %-6s %-15s %8s to %-8s [%-3d/%-3d]",i,camp.getName(),camp.getFaculty(),camp.getLocation()
+                    ,camp.getStart().format(customFormatter),
+                    camp.getEnd().format(customFormatter),camp.getAttendeeCount(),
+                    (camp.getMaxSize()- camp.getMaxComm()));
+            //listMenu = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") ").append(camp.getLocation()).append(" [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("] ").toString();
+            if (!camp.isVisible()){
+                lineString = lineString + " {HIDDEN}";
+            }
+            lineString = lineString + ("\n");
+            listMenu = sb.append(lineString).toString();
+
+        }
+        return listMenu;
     }
 
     public static Camp getCampfromID(int id, List<Camp> campList){
