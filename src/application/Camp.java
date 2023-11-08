@@ -412,6 +412,8 @@ public class Camp {
 	public ArrayList<Enquiry> getEnquiryList() {
 		return enquiryList;
 	}
+	public List<Student> getAttendeeList() {return this.attendeeList;}
+	public List<Student> getCommitteeList() {return this.committeeList;}
 	public void addEnquiry(Enquiry enquiry){
 		enquiryList.add(enquiry);
 	}

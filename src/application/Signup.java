@@ -31,6 +31,7 @@ public class Signup {
 	 * @param status Whether the signup is active or not. Relevant when called by DataHandler.
 	 */
 	public Signup(User student,Camp camp, boolean status ) {
+
 		this.student = student;
 		this.camp = camp;
 		this.status = status;
@@ -76,8 +77,8 @@ public class Signup {
 	 * @param student String userID of the student to match with the signup.
 	 * @return Boolean on whether this signup is made by the student.
 	 */
-	public boolean matchStudent(String student) { //USE STUDENT ID
-		return (this.student.getID().equals(student));
+	public boolean matchStudent(Student student) { //USE STUDENT ID
+		return (this.student.getID().equals(student.getID()));
 	}
 	/**
 	 * Code elsewhere iterates through the signups to find signups of a particular Camp.

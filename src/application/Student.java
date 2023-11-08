@@ -32,11 +32,14 @@ public class Student extends User{
 		System.out.println("3. View your signups.");
 		System.out.println("4. Sign up for camp. (-o,-l,-s,-r,-p,-f)" );
 		System.out.println("5. Camp Enquiry Hub");
+		if(this.committee!= -1){
 		System.out.println("6. Camp Committee Hub");
+		}
 		System.out.println("9. Log out");
 		System.out.println("0. Terminate CAMs");
 	}
 	public void viewCamps(List<Camp> campList, List<Enquiry> enquiryList){
+		Scanner sc = new Scanner(System.in);
 		List<Camp> eligibleCamps = new ArrayList<>();
 		for (Camp camp : campList){
 			if(camp.checkEligibility(this.getFaculty()) && camp.isVisible()){
@@ -46,39 +49,29 @@ public class Student extends User{
 		String listMenu = Helper.createNumberedCampList(eligibleCamps,this);
 		boolean endLoop = false;
 		while (!endLoop){
-			System.out.println(listMenu);
-			Scanner sc = new Scanner(System.in);
-			System.out.println("0: Back to CAMs main menu ");
-			System.out.println("Enter the number corresponding to the camp to view more: ");
-			String response = sc.nextLine();
-			if (Helper.checkInputIntValidity(response)) {
-				int selection = Integer.parseInt(response);
-				if (selection < 0 || selection > eligibleCamps.size()) {
-					System.out.println("Choice does not correspond to any camp on the list!");
-				} else if (selection == 0) {
-					System.out.println("Quitting View Camp menu...");
-					endLoop = true;
-				} else {
-					Camp selectedCamp = eligibleCamps.get(selection - 1);
-					selectedCamp.showSummary();
-					boolean canEnquire = false;
-					if (selectedCamp.checkCampStatus()==campStatus.ONGOING || selectedCamp.checkCampStatus()==campStatus.ENDED){
-						System.out.println("Enquiries are closed because the camp has started. Press Enter to continue.");}
-					else if (selectedCamp.checkCampStatus()==campStatus.CLOSED && selectedCamp.isAttending(this)){
-						System.out.println("Press Enter to continue or type 'enquiry' to start a new enquiry:");
-						canEnquire = true;}
-					else if (selectedCamp.checkCampStatus()==campStatus.CLOSED && !selectedCamp.isAttending(this)){
-						System.out.println("Enquiries are closed because registration is over and you aren't attending. Press Enter to continue. ");}
-					else if (selectedCamp.isBlacklisted(this)){
-						System.out.println("Enquiries are closed to you because have cancelled your signup for this camp.");}
-					else{
-						System.out.println("Press Enter to continue or type 'enquiry' to start a new enquiry:");
-						canEnquire = true;}
-					response = sc.nextLine();
-					if(response.equals("enquiry") && canEnquire) {
-						writeEnquiry(selectedCamp,enquiryList);
+			System.out.println("Showing all camps visible to you:");
+			Camp selectedCamp = Helper.campFromListSelector(eligibleCamps,listMenu);
+			if(selectedCamp == null) {
+				return;
+			}else {
+				selectedCamp.showSummary();
+				boolean canEnquire = false;
+				if (selectedCamp.checkCampStatus()==campStatus.ONGOING || selectedCamp.checkCampStatus()==campStatus.ENDED){
+					System.out.println("Enquiries are closed because the camp has started. Press Enter to continue.");}
+				else if (selectedCamp.checkCampStatus()==campStatus.CLOSED && selectedCamp.isAttending(this)){
+					System.out.println("Press Enter to continue or type 'enquiry' to start a new enquiry:");
+					canEnquire = true;}
+				else if (selectedCamp.checkCampStatus()==campStatus.CLOSED && !selectedCamp.isAttending(this)){
+					System.out.println("Enquiries are closed because registration is over and you aren't attending. Press Enter to continue. ");}
+				else if (selectedCamp.isBlacklisted(this)){
+					System.out.println("Enquiries are closed to you because have cancelled your signup for this camp.");}
+				else{
+					System.out.println("Press Enter to continue or type 'enquiry' to start a new enquiry:");
+					canEnquire = true;}
+				String response = sc.nextLine();
+				if(response.equals("enquiry") && canEnquire) {
+					writeEnquiry(selectedCamp,enquiryList);
 					}
-				}
 			}
 		}
 	}
@@ -92,88 +85,85 @@ public class Student extends User{
 		DataHandler.saveEnquiries(enquiryList);
 		}
 
-
+	public List<Camp> getOwnedCamps(List<Camp> campList,List<Signup> signupList) {
+		List<Camp> ownedCamps = new ArrayList<>();
+		for (Signup signup : signupList) {
+			if(signup.matchStudent(this) && signup.getStatus() ) {
+				ownedCamps.add(signup.getCamp());
+			}
+		}
+		if(this.committee!=-1) {
+			ownedCamps.add(Helper.getCampfromID(this.committee,campList));
+		}
+		return ownedCamps;
+	}
 	public void viewOwnedCamps(List<Camp> campList,List<Signup> signupList,List<User> schoolList){ //TODO
 		Scanner sc = new Scanner(System.in);
-		String response = "";
-		List<Camp> attendingCamps = this.getAttendingCamps(campList,signupList);
-		System.out.println("Showing events you are currently signed up for:" );
-		if(attendingCamps.size() ==0){
-			System.out.println("You are not registered for any camps.");
-			System.out.println("Press Enter to continue.");
-			response = sc.nextLine();
+		List<Camp> ownedCamps = this.getOwnedCamps(campList,signupList);
+		if (ownedCamps.size() == 0){
+			System.out.println("You aren't registered for any camp!");
 			return;
 		}
 		boolean endLoop = false;
-		String listMenu = Helper.createNumberedCampList(attendingCamps,this);
+		String listMenu = Helper.createNumberedCampList(ownedCamps,this);
 		while(!endLoop){
-			System.out.println(listMenu);
-			System.out.println("0: Back to CAMs main menu ");
-			System.out.println("Enter the number corresponding to the camp to view/edit: ");
-			response = sc.nextLine();
-			if (Helper.checkInputIntValidity(response)) {
-				int selection = Integer.parseInt(response);
-				if (selection < 0 || selection > attendingCamps.size()) {
-					System.out.println("Choice does not correspond to any camp on the list!");
-				} else if (selection == 0){
-					System.out.println("Quitting View Attending Camp menu...");
-					endLoop = true;
+			System.out.println("Showing all camps you have signed up for:");
+			Camp selectedCamp = Helper.campFromListSelector(ownedCamps,listMenu);
+			if(selectedCamp == null) {
+				return;
+			}else {
+				selectedCamp.showSummary();
+				System.out.println("Press Enter to go back.");
+				if(this.committee != selectedCamp.getID()) {
+					System.out.println("To cancel this signup type 'cancel'");
 				}
-				else {
-					Camp selectedCamp = attendingCamps.get(selection - 1);
-					selectedCamp.showSummary();
-					System.out.println("Press Enter to go back.");
-					if(this.committee != selectedCamp.getID()) {
-						System.out.println("To cancel this signup type 'cancel'");
+				if(!selectedCamp.isFullCommittee() && this.committee == -1){
+					System.out.println("To upgrade to Committee member type 'committee'"); }//TODO check for slots
+				String response = sc.nextLine();
+				if(response.equals("cancel") && this.committee != selectedCamp.getID()){
+					System.out.println("Once you cancel, you will not be able to sign up for this camp again! Are you sure? Y/N");
+					int input = -1;
+					while (input == -1) {
+						input = Helper.parseUserBoolInput(sc.nextLine());
 					}
-					if(!selectedCamp.isFullCommittee() && this.committee == -1){
-						System.out.println("To upgrade to Committee member type 'committee'"); }//TODO check for slots
-					response = sc.nextLine();
-					if(response.equals("cancel") && this.committee != selectedCamp.getID()){
-						System.out.println("Once you cancel, you will not be able to sign up for this camp again! Are you sure? Y/N");
-						int input = -1;
-						while (input == -1) {
-							input = Helper.parseUserBoolInput(sc.nextLine());
-						}
-						if (input == 1) {
-							for(Signup signup : signupList){
-								if(signup.getStudent() == this && signup.getCamp() == selectedCamp){
-									signup.cancelSignup();
-									DataHandler.saveSignups(signupList);
-									endLoop = true;
-									break;
-								}
+					if (input == 1) {
+						for(Signup signup : signupList){
+							if(signup.getStudent() == this && signup.getCamp() == selectedCamp){
+								signup.cancelSignup();
+								DataHandler.saveSignups(signupList);
+								endLoop = true;
+								break;
 							}
-							endLoop = true;
-						} else {
-							System.out.println("Backing out and showing you your signups...");
 						}
+						endLoop = true;
+					} else {
+						System.out.println("Backing out and showing you your signups...");
 					}
-					else if(response.equals("committee") && !selectedCamp.isFullCommittee() && this.committee == -1){
-						System.out.println("Once you change your role, you will not be able to cancel or join another committee! Are you sure? Y/N");
-						int input = -1;
-						while (input == -1) {
-							input = Helper.parseUserBoolInput(sc.nextLine());
-						}
-						if (input == 1) {
-							for(Signup signup : signupList){
-								if(signup.getStudent() == this && signup.getCamp() == selectedCamp){
-									signupList.remove(signup);
-									DataHandler.saveSignups(signupList);
-									this.committee = selectedCamp.getID();
-									selectedCamp.promoteToComittee(this); //this only matters for memory
-									DataHandler.saveUsers(schoolList);
-									endLoop = true;
-									break;
-								}
+				}
+				else if(response.equals("committee") && !selectedCamp.isFullCommittee() && this.committee == -1){
+					System.out.println("Once you change your role, you will not be able to cancel or join another committee! Are you sure? Y/N");
+					int input = -1;
+					while (input == -1) {
+						input = Helper.parseUserBoolInput(sc.nextLine());
+					}
+					if (input == 1) {
+						for(Signup signup : signupList){
+							if(signup.getStudent() == this && signup.getCamp() == selectedCamp){
+								signupList.remove(signup);
+								DataHandler.saveSignups(signupList);
+								this.committee = selectedCamp.getID();
+								selectedCamp.promoteToComittee(this); //this only matters for memory
+								DataHandler.saveUsers(schoolList);
+								endLoop = true;
+								break;
 							}
-							endLoop = true;
-						} else {
-							System.out.println("Backing out and showing you your signups...");
 						}
+						endLoop = true;
+					} else {
+						System.out.println("Backing out and showing you your signups...");
 					}
+				}
 
-				}
 			}
 		}
 	}
@@ -193,7 +183,7 @@ public class Student extends User{
 		}
 		return attendingCamps;
 	}
-	public List<Signup> signUpCamp(List<Camp> campList, List<Signup> signupList) { //TODO disallow when camp is full & clashes
+	public void signUpCamp(List<Camp> campList, List<Signup> signupList) { //TODO disallow when camp is full & clashes
 		System.out.println("Showing events you are eligible for as a student of " + this.getFaculty() + " and have never signed up for...");
 		List<Camp> campListCopy = new ArrayList<>(campList);
 		List<Camp> attendingCamps = this.getAttendingCamps(campList,signupList);
@@ -204,7 +194,8 @@ public class Student extends User{
 		boolean clashExists;
 		for (Camp camp : campListCopy) {
 			signUpExists = false;
-			if (camp.checkEligibility(this.getFaculty()) && camp.isVisible() && !camp.isFull()) {//camp eligibility check
+			if (camp.checkEligibility(this.getFaculty()) && camp.isVisible()
+					&& !camp.isFull() &&camp.checkCampStatus()==campStatus.OPEN) {//camp eligibility check
 				if(camp.isAttending(this) || camp.isBlacklisted(this)){
 					signUpExists = true;
 				}
@@ -226,43 +217,38 @@ public class Student extends User{
 		}
 		if (i == 0) {
 			System.out.println("No camps are currently open for you :(");
-			return signupList;
+			return;
 		}
-		String menuList = Helper.createNumberedCampList(eligibleCamps,this);
 		Scanner sc = new Scanner(System.in);
-		boolean endLoop = false; //Flag to end looping menu; end when joined a camp or choosing to exit
-		while(!endLoop) {//start of loop
-			System.out.println(menuList); //eligible camps list
-			System.out.println("0: Quit to menu. ");
-			System.out.println("Enter the number corresponding to the camp you wish to learn more about: ");
-			String response = sc.nextLine();
-			if (Helper.checkInputIntValidity(response)) {
-				int selection = Integer.parseInt(response);
-				if (selection < 0 || selection > eligibleCamps.size()) {
-					System.out.println("Choice does not correspond to any camp on the list!");
-				} else if (selection == 0){
-					System.out.println("Quitting Join Camp menu...");
-					endLoop = true;
+		if (eligibleCamps == null){
+			return;
+		}
+		boolean endLoop = false;
+		String listMenu = Helper.createNumberedCampList(eligibleCamps,this);
+		while(!endLoop){
+			System.out.println("Showing all camps created by you:");
+			Camp selectedCamp = Helper.campFromListSelector(eligibleCamps,listMenu);
+			if(selectedCamp == null) {
+				return;
+			}else {
+				selectedCamp.showSummary();
+				System.out.println("Join Camp as attendee? Y/N");
+				int input = -1;
+				while (input == -1) {
+					input = Helper.parseUserBoolInput(sc.nextLine());
 				}
-				else {
-					Camp selectedCamp = eligibleCamps.get(selection - 1);
-					selectedCamp.showSummary();
-					System.out.println("Join Camp as attendee? Y/N");
-					int input = -1;
-					while (input == -1) {
-						input = Helper.parseUserBoolInput(sc.nextLine());
-					}
-					if (input == 1) {
-						signupList.add(new Signup(this,selectedCamp,true));
-						DataHandler.saveSignups(signupList);
-						System.out.println("Successfully signed up!");
-						endLoop = true;
-					} else {
-						System.out.println("Backing out and showing you all eligible camps again...");
-					}
+				if (input == 1) {
+					signupList.add(new Signup(this,selectedCamp,true));
+					DataHandler.saveSignups(signupList);
+					System.out.println("Successfully signed up!");
+					endLoop = true;
+				} else {
+					System.out.println("Backing out and showing you all eligible camps again...");
 				}
 			}
 		}
-	return signupList;
+	return;
 	}
+
 }
+

@@ -36,7 +36,7 @@ public class DataHandler {
 					String faculty = lineData[2];
 					String passwordHash = lineData[3];
 					int committee = Integer.parseInt(lineData[4]);
-					Student newStudent = new Student(name,id,faculty,passwordHash,committee);
+					Student newStudent = new StudentCommittee(name,id,faculty,passwordHash,committee);
 					schoolList.add(newStudent);
 					line = br.readLine();
 					
@@ -230,7 +230,6 @@ public class DataHandler {
 								enquiry = new Enquiry(enquiryID,foundCamp,(Student) foundStudent, lineData[3],
 										foundReplyAuthor, lineData[5],true);
 								enquiryList.add(enquiry);
-								enquiry.getCamp().addEnquiry(enquiry);
 								break;
 							}
 						}

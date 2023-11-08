@@ -52,7 +52,7 @@ public class CAMs {
 					case 4:
 						if (activeUser instanceof Student) {
 							campList = Helper.sortCampList(campList,response);
-							signupList = ((Student) activeUser).signUpCamp(campList, signupList);
+							((Student) activeUser).signUpCamp(campList, signupList);
 						}
 						break;
 					case 5:
@@ -61,6 +61,14 @@ public class CAMs {
 							DataHandler.saveCamps(campList);
 							System.out.println("Camp successfully created!");
 
+						}
+						break;
+					case 6:
+						if (activeUser instanceof Staff){
+							((Staff) activeUser).adminMenu(campList,activeUser);
+						}
+						else if (activeUser instanceof StudentCommittee && ((StudentCommittee) activeUser).getCamp()!= null){
+							((StudentCommittee) activeUser).adminMenu(campList,activeUser);
 						}
 						break;
 					case 9:

@@ -50,6 +50,7 @@ public class Enquiry {
         if(!(replyAuthor==null) && replyAuthor instanceof StudentCommittee){
             ((StudentCommittee) replyAuthor).addPoints(1);
         }
+
         //en_NUM++;
     }
 

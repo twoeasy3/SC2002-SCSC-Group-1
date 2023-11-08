@@ -26,46 +26,34 @@ public class Staff extends User implements ElevatedActions{
 		System.out.println("3. View and Edit your camps. (-o,-l,-s,-r,-p,-f)");
 		System.out.println("4. Camp enquiry hub.");
 		System.out.println("5. Create a camp");
+		System.out.println("6. Camp Admin Hub");
 		System.out.println("9. Log out");
 		System.out.println("0. Terminate CAMs");
 	}
 
 	public void viewCamps(List<Camp> campList ,List<Enquiry> enquiryList) {
-		System.out.println("Staff privilege; showing all open events ");
-		String listMenu = Helper.createNumberedCampList(campList,this);
-
+		Scanner sc = new Scanner(System.in);
 		boolean endLoop = false;
-		while (!endLoop){
-			System.out.println(listMenu);
-			Scanner sc = new Scanner(System.in);
-			System.out.println("0: Back to CAMs main menu ");
-			System.out.println("Enter the number corresponding to the camp to view more: ");
-			String response = sc.nextLine();
-			if (Helper.checkInputIntValidity(response)) {
-				int selection = Integer.parseInt(response);
-				if (selection < 0 || selection > campList.size()) {
-					System.out.println("Choice does not correspond to any camp on the list!");
-				} else if (selection == 0) {
-					System.out.println("Quitting View Camp menu...");
-					endLoop = true;
-				} else {
-					Camp selectedCamp = campList.get(selection - 1);
-					selectedCamp.showSummary();
-					System.out.println("Press enter to continue.");
-					response = sc.nextLine();
-
-				}
+		String listMenu = Helper.createNumberedCampList(campList,this);
+		while(!endLoop){
+			System.out.println("Showing all camps created by you:");
+			Camp selectedCamp = Helper.campFromListSelector(campList,listMenu);
+			if(selectedCamp == null) {
+				return;
+			}else {
+				selectedCamp.showSummary();
+				System.out.println("Viewing Mode - Press Enter to return");
+				String response = sc.nextLine();
 			}
 		}
+
 	}
 
 
-
-	public void viewOwnedCamps(List<Camp> campList, List<Signup> signupList, List<User> schoolList) {
+	public List<Camp> getOwnedCamps(List<Camp> campList){
 		int i= 0;
 		List<Camp> ownedCamps = new ArrayList<>();
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Showing all camps created by you:");
 		for (Camp camp : campList) {
 			if (camp.getInCharge().equals(this.getID())) {
 				i++;
@@ -75,26 +63,25 @@ public class Staff extends User implements ElevatedActions{
 		if (i == 0) {
 			System.out.println("No active camps created by you found. Press enter to continue.");
 			String continueInput = sc.nextLine();
+			return null;
+		}
+		return ownedCamps;
+	}
+
+	public void viewOwnedCamps(List<Camp> campList, List<Signup> signupList, List<User> schoolList) {
+		Scanner sc = new Scanner(System.in);
+		List<Camp> ownedCamps = this.getOwnedCamps(campList);
+		if (ownedCamps == null){
 			return;
 		}
-
 		boolean endLoop = false;
 		String listMenu = Helper.createNumberedCampList(ownedCamps,this);
 		while(!endLoop){
-		System.out.println(listMenu);
-		System.out.println("0: Back to CAMs main menu ");
-		System.out.println("Enter the number corresponding to the camp to view/edit: ");
-		String response = sc.nextLine();
-		if (Helper.checkInputIntValidity(response)) {
-			int selection = Integer.parseInt(response);
-			if (selection < 0 || selection > ownedCamps.size()) {
-				System.out.println("Choice does not correspond to any camp on the list!");
-			} else if (selection == 0){
-				System.out.println("Quitting View Camp menu...");
-				endLoop = true;
-			}
-			else {
-				Camp selectedCamp = ownedCamps.get(selection - 1);
+			System.out.println("Showing all camps created by you:");
+			Camp selectedCamp = Helper.campFromListSelector(ownedCamps,listMenu);
+			if(selectedCamp == null) {
+				return;
+			}else {
 				selectedCamp.showSummary();
 				System.out.println("Edit Camp? Y/N");
 				int input = -1;
@@ -108,7 +95,6 @@ public class Staff extends User implements ElevatedActions{
 					System.out.println("Backing out and showing you all created camps again...");
 				}
 			}
-		}
 		}
 	}
 

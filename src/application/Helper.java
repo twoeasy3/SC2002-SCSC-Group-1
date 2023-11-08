@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Scanner;
 
 public class Helper {
 
@@ -17,6 +18,7 @@ public class Helper {
                     campObject = getCampfromID(((Student) user).getCommittee(),campList);
                     if(campObject!= null){
                         campObject.addCommittee(((Student) user));
+                        ((StudentCommittee) user).setCamp(campObject);
                     }
                 }
             }
@@ -104,7 +106,27 @@ public class Helper {
         }
         return listMenu;
     }
+    public static Camp campFromListSelector(List<Camp> selectableCamps, String listMenu) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println(listMenu);
+        System.out.println("0: Back to CAMs main menu ");
+        System.out.println("Enter the number corresponding to the camp to select: ");
+        int selection = -619;
+        while (selection <0 || selection > selectableCamps.size()) {
+            String response = sc.nextLine();
+            if(Helper.checkInputIntValidity(response)){
+                selection = Integer.parseInt(response);
+                if (selection < 0 || selection > selectableCamps.size()) {
+                    System.out.println("Choice does not correspond to any camp on the list!");
+                } else if (selection == 0) {
+                    System.out.println("Quitting menu...");
+                    return null;
+                }
+            }
 
+        }
+        return(selectableCamps.get(selection-1));
+    }
     public static Camp getCampfromID(int id, List<Camp> campList){
         for(Camp camp : campList){
             if (camp.getID() == id){
