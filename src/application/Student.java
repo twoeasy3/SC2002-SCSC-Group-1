@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Scanner;
 public class Student extends User{ 
 	int committee; //-1 if not committee member, otherwise put camp.id
+
+	private ArrayList<Enquiry> enquiryList;
 	
 	public Student(String name, String id, String faculty,String password,int committee) {
 		super();
@@ -16,6 +18,11 @@ public class Student extends User{
 	}
 
 	public int getCommittee(){return this.committee;}
+
+	public ArrayList<Enquiry> getEnquiryList() {
+		return enquiryList;
+	}
+
 	public boolean checkStaff() {
 		return false;
 	}
@@ -75,6 +82,7 @@ public class Student extends User{
 			}
 		}
 	}
+	/** THIS SECTION FOR ENQUIRY / SUGGESTIONS **/
 
 	public void writeEnquiry(Camp camp, List<Enquiry> enquiryList){
 		Scanner sc = new Scanner(System.in);
@@ -84,6 +92,29 @@ public class Student extends User{
 		enquiryList.add(newEnquiry);
 		DataHandler.saveEnquiries(enquiryList);
 		}
+	// allows student to view the enquiry (description + reply)
+	public void viewEnquiry(Enquiry enquiry) {
+		System.out.println(enquiry.getDescription());
+		if (enquiry.getReply().isEmpty()) {
+			System.out.println("This enquiry has not yet been replied");
+		}
+		else System.out.println(enquiry.getReply());
+	}
+	// assuming only description can be edited. but maybe camp can be updated as well?
+	public void editEnquiry(Enquiry e, String s) {
+		e.setDescription(s + "\n This enquiry has been edited");
+		System.out.println("Your enquiry has been edited");
+	}
+	// removes enquiry from both the camp and the user
+	public void deleteEnquiry(Enquiry e) {
+		this.enquiryList.remove(e);
+		Camp camp = e.getCamp();
+		camp.getEnquiryList().remove(e);
+		System.out.println("Your enquiry has been deleted");
+	}
+
+
+	/** END OF ENQUIRY / SUGGESTION SECTION **/
 
 	public List<Camp> getOwnedCamps(List<Camp> campList,List<Signup> signupList) {
 		List<Camp> ownedCamps = new ArrayList<>();

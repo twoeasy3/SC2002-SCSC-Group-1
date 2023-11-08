@@ -1,4 +1,5 @@
 package application;
+import java.lang.reflect.Array;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -85,6 +86,7 @@ public class Camp {
 	 * A list of enquiries associated with this camp
  	 */ 
 	private ArrayList<Enquiry> enquiryList;
+	private ArrayList<Suggestion> suggestionList;
 	private List<Student> attendeeList;
 	private List<Student> blackList;
 	private List<Student> committeeList;
@@ -120,6 +122,7 @@ public class Camp {
 		this.inCharge = creator;
 		this.visible = (visible==1);
 		this.enquiryList = new ArrayList<Enquiry>(0);
+		this.suggestionList = new ArrayList<Suggestion>(0);
 		this.attendeeList = new ArrayList<>();
 		this.blackList = new ArrayList<>();
 		this.committeeList = new ArrayList<>();
@@ -127,6 +130,10 @@ public class Camp {
 
 	public String getName() {
 		return this.name;
+	}
+
+	public ArrayList<Suggestion> getSuggestionList() {
+		return suggestionList;
 	}
 
 	public int getID() {

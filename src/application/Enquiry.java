@@ -51,7 +51,6 @@ public class Enquiry {
             ((StudentCommittee) replyAuthor).addPoints(1);
         }
 
-        //en_NUM++;
     }
 
     public String getDescription() {
@@ -83,6 +82,7 @@ public class Enquiry {
     public void setReplyAuthor(User author){
         this.replyAuthor = author;
         ((StudentCommittee)this.replyAuthor).addPoints(1);}
+
     public User getReplyAuthor(){
         return replyAuthor;
     }
@@ -91,29 +91,4 @@ public class Enquiry {
     }
     public void setResolved(boolean status){resolved = status;}
 
-    // functions to create
-    // Student
-    // view Y
-    // edit Y?
-    // create Y
-    // delete Y
-
-    // Staff
-    // reply
-
-    // Camp committee
-    // reply
-
-    // functions to implement
-    // Student
-    // view Y
-    // edit Y?
-    // create Y
-    // delete
-
-    // Staff
-    // reply
-
-    // Camp committee
-    // reply
 }
