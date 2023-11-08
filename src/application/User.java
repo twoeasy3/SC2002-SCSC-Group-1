@@ -150,7 +150,7 @@ public abstract class User {
 	 * Used to generate the list of camps that should be visible to the user.
 	 * @param campList List of all Camp objects.
 	 */
-	public abstract void viewCamps(List<Camp> campList);
+	public abstract void viewCamps(List<Camp> campList, List<Enquiry> enquiryList);
 
 	/**
 	 * Used to view the list of camps where the User can meaningfully interact with.

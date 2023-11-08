@@ -30,7 +30,7 @@ public class Staff extends User {
 		System.out.println("0. Terminate CAMs");
 	}
 
-	public void viewCamps(List<Camp> campList) {
+	public void viewCamps(List<Camp> campList ,List<Enquiry> enquiryList) {
 		System.out.println("Staff privilege; showing all open events ");
 		String listMenu = Helper.createNumberedCampList(campList,this);
 

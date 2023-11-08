@@ -43,7 +43,7 @@ public class CAMs {
 						break;
 					case 2:
 						campList = Helper.sortCampList(campList,response);
-						activeUser.viewCamps(campList);
+						activeUser.viewCamps(campList , enquiryList);
 						break;
 					case 3:
 						campList = Helper.sortCampList(campList,response);

@@ -2,7 +2,7 @@ package application;
 
 public class Enquiry {
     /**
-     * static variable to keep track of en_ID
+     * static variable to keep track of enquiryID
      */
     static int en_NUM = 1;
 
@@ -37,14 +37,16 @@ public class Enquiry {
 
     // Constructor
     public Enquiry(int enquiryID, Camp camp, Student author, String description, User replyAuthor,
-                    String reply, boolean status) {
+                    String reply, boolean resolved) {
         this.enquiryID = enquiryID;
         this.camp = camp;
         this.author = author;
         this.description = description;
         this.replyAuthor = replyAuthor;
         this.reply = reply;
-        this.resolved = status;
+        this.resolved = resolved;
+
+        this.camp.addEnquiry(this);
         //en_NUM++;
     }
 

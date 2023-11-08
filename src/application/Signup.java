@@ -77,10 +77,7 @@ public class Signup {
 	 * @return Boolean on whether this signup is made by the student.
 	 */
 	public boolean matchStudent(String student) { //USE STUDENT ID
-		if(this.student.getID().equals(student)) {
-			return(true);
-		}
-		return(false);
+		return (this.student.getID().equals(student));
 	}
 	/**
 	 * Code elsewhere iterates through the signups to find signups of a particular Camp.
@@ -89,9 +86,6 @@ public class Signup {
 	 * @return Boolean on whether this signup is for that particular camp.
 	 */
 	public boolean matchCamp(Camp camp) { //USE CAMP  OBJECT
-		if(this.camp.getID() == camp.getID()) {
-			return(true);
-		}
-		return(false);
+		return (this.camp.getID() == camp.getID());
 	}
 }

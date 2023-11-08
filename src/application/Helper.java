@@ -23,9 +23,24 @@ public class Helper {
         }
     }
 
+    /**
+     * Used in conjunction with extra arguments to select which sorted list to display
+     * -o "Open" Camps first
+     * -l Location
+     * -s Start date
+     * -p Popularity by signups
+     * -f Faculty Alphabetically
+     * @param campList
+     * @param arg
+     * @return
+     */
     public static List<Camp> sortCampList(List<Camp> campList, String arg){
         if(arg.equals("")){
             campList.sort(Comparator.comparing(Camp::getName,String.CASE_INSENSITIVE_ORDER));
+        }
+        else if(arg.equals("o")){
+            System.out.println("Sorting by status, then by earliest registration close");
+            campList.sort(Comparator.comparing(Camp::checkCampStatus).thenComparing(Camp::getRegEnd));
         }
         else if(arg.equals("l")){
             System.out.println("Sorting by location");
@@ -42,10 +57,6 @@ public class Helper {
         else if(arg.equals("f")){
             System.out.println("Sorting by faculty");
             campList.sort(Comparator.comparing(Camp::getFaculty));
-        }
-        else if(arg.equals("o")){
-            System.out.println("Sorting by status, then by earliest registration close");
-            campList.sort(Comparator.comparing(Camp::checkCampStatus).thenComparing(Camp::getRegEnd));
         }
         else{
             System.out.println("Unrecognised command, sorting by default");
@@ -70,20 +81,7 @@ public class Helper {
             if (!camp.isVisible()){
                 lineString = lineString + " |HIDDEN|";
             }
-            int status = camp.checkCampStatus();
-            switch(status){
-                case 1:
-                    lineString = lineString + " <CLOSED>";
-                    break;
-                case 2:
-                    lineString = lineString + " <ONGOING>";
-                    break;
-                case 3:
-                    lineString = lineString + " <ENDED>";
-                    break;
-                default:
-                    break;
-            }
+            lineString = lineString +  " <" + camp.checkCampStatus() + "> ";
             if (user instanceof Student){
                 if (((Student) user).getCommittee() == camp.getID()){
                     lineString = lineString + " {COMMITTEE}";

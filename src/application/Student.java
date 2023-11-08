@@ -1,4 +1,5 @@
 package application;
+import javax.xml.crypto.Data;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -35,7 +36,7 @@ public class Student extends User{
 		System.out.println("9. Log out");
 		System.out.println("0. Terminate CAMs");
 	}
-	public void viewCamps(List<Camp> campList){
+	public void viewCamps(List<Camp> campList, List<Enquiry> enquiryList){
 		List<Camp> eligibleCamps = new ArrayList<>();
 		for (Camp camp : campList){
 			if(camp.checkEligibility(this.getFaculty()) && camp.isVisible()){
@@ -60,13 +61,36 @@ public class Student extends User{
 				} else {
 					Camp selectedCamp = eligibleCamps.get(selection - 1);
 					selectedCamp.showSummary();
-					System.out.println("Press enter to continue.");
+					boolean canEnquire = false;
+					if (selectedCamp.checkCampStatus()==campStatus.ONGOING || selectedCamp.checkCampStatus()==campStatus.ENDED){
+						System.out.println("Enquiries are closed because the camp has started. Press Enter to continue.");}
+					else if (selectedCamp.checkCampStatus()==campStatus.CLOSED && selectedCamp.isAttending(this)){
+						System.out.println("Press Enter to continue or type 'enquiry' to start a new enquiry:");
+						canEnquire = true;}
+					else if (selectedCamp.checkCampStatus()==campStatus.CLOSED && !selectedCamp.isAttending(this)){
+						System.out.println("Enquiries are closed because registration is over and you aren't attending. Press Enter to continue. ");}
+					else if (selectedCamp.isBlacklisted(this)){
+						System.out.println("Enquiries are closed to you because have cancelled your signup for this camp.");}
+					else{
+						System.out.println("Press Enter to continue or type 'enquiry' to start a new enquiry:");
+						canEnquire = true;}
 					response = sc.nextLine();
-
+					if(response.equals("enquiry") && canEnquire) {
+						writeEnquiry(selectedCamp,enquiryList);
+					}
 				}
 			}
 		}
 	}
+
+	public void writeEnquiry(Camp camp, List<Enquiry> enquiryList){
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter your enquiry:");
+		String response = sc.nextLine();
+		Enquiry newEnquiry = new Enquiry(-1,camp,this,response,null,"",false);
+		enquiryList.add(newEnquiry);
+		DataHandler.saveEnquiries(enquiryList);
+		}
 
 
 	public void viewOwnedCamps(List<Camp> campList,List<Signup> signupList,List<User> schoolList){ //TODO

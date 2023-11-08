@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.temporal.*;
 
+enum campStatus{
+	OPEN,CLOSED,ONGOING,ENDED}
+
+
 /**
  * Representation of a camp event.
  * Many-to-Many relation with Student, One-to-Many relation with Staff.
@@ -172,18 +176,18 @@ public class Camp {
 	 * Returns a status for the camp relative to the date today.
 	 * @return 0 for Open registration, 1 for Closed, 2 for Ongoing and 3 for Ended
 	 */
-	public int checkCampStatus(){
+	public campStatus checkCampStatus(){
 		if(LocalDate.now().isBefore(this.regEnd)){ //Open for Registration
-			return 0;
+			return campStatus.OPEN;
 		}
 		else if(LocalDate.now().isAfter(this.regEnd) && LocalDate.now().isBefore(this.startDate)){ //Closed for registration but not started
-			return 1;
+			return campStatus.CLOSED;
 		}
 		else if(!LocalDate.now().isBefore(this.startDate)&&!LocalDate.now().isAfter(this.endDate)){ //Camp ongoing
-			return 2;
+			return campStatus.ONGOING;
 		}
 		else{
-			return 3; //Camp ended
+			return campStatus.ENDED; //Camp ended
 		}
 	}
 	/**

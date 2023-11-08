@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Responsible for reading files from data/ into the program state.
- * Called by CAMs.main().
+ * Also writes program state back into the file for persistence.
  *
  */
 public class DataHandler {
@@ -240,7 +240,6 @@ public class DataHandler {
 						enquiry = new Enquiry(enquiryID, foundCamp,(Student) foundStudent, lineData[3],
 								null, "", false);
 						enquiryList.add(enquiry);
-						enquiry.getCamp().addEnquiry(enquiry);
 					}
 				}
 				line = br.readLine();
@@ -336,6 +335,36 @@ public class DataHandler {
 		}
 
 	}
+	public static void saveEnquiries(List<Enquiry> enquiryList){
+		String enquiryFile = "data/enquiries.csv";
+		String line;
+		String csvSeparator = "|";
+		String status;
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(enquiryFile))) {
+			for (Enquiry enquiry : enquiryList) {
+				if (enquiry.getResolved()){status = "1";}else{status="0";}
+				line = enquiry.getEnquiryID() + csvSeparator
+						+ enquiry.getCamp().getID() + csvSeparator
+						+ enquiry.getAuthor().getID() + csvSeparator
+						+ enquiry.getDescription() + csvSeparator;
+
+				if(status.equals("1")){
+					line += enquiry.getReplyAuthor().getID() + csvSeparator
+							+ enquiry.getReply() + csvSeparator
+							+ status;
+				}
+				else{
+					line += csvSeparator+ csvSeparator + status;
+				}
+				writer.write(line);
+				writer.newLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 
 	/**
 	 * Returns the correct format for userID from the .csv
