@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-public class Staff extends User {
+public class Staff extends User implements ElevatedActions{
 	int inCharge; //-1 if not In Char, otherwise put camp.id
 
 	public Staff(String name, String id, String faculty, String password) {

@@ -47,6 +47,9 @@ public class Enquiry {
         this.resolved = resolved;
 
         this.camp.addEnquiry(this);
+        if(!(replyAuthor==null) && replyAuthor instanceof StudentCommittee){
+            ((StudentCommittee) replyAuthor).addPoints(1);
+        }
         //en_NUM++;
     }
 
@@ -76,12 +79,16 @@ public class Enquiry {
     public Student getAuthor(){
         return author;
     }
+    public void setReplyAuthor(User author){
+        this.replyAuthor = author;
+        ((StudentCommittee)this.replyAuthor).addPoints(1);}
     public User getReplyAuthor(){
         return replyAuthor;
     }
     public boolean getResolved(){
         return resolved;
     }
+    public void setResolved(boolean status){resolved = status;}
 
     // functions to create
     // Student

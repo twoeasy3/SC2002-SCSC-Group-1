@@ -81,6 +81,12 @@ public class CAMs {
 
 		}
 	}
+
+	/**
+	 *
+	 * @param schoolList
+	 * @return
+	 */
 	public static User resolveLogin(List<User> schoolList){
 		String response;
 		boolean userFound = false;
