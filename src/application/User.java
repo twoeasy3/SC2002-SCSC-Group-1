@@ -135,12 +135,7 @@ public abstract class User {
 	}
 
 
-	/**
-	 * Checks if User is a Staff or not. Used to allow certain privileges.
-	 *
-	 * @return Boolean on whether User is a Staff.
-	 */
-	public abstract boolean checkStaff();
+
 	/**
 	 * Used to determine and generate the menu of options in CAMs.
 	 */
@@ -159,11 +154,5 @@ public abstract class User {
 	 */
 	public abstract void viewOwnedCamps(List<Camp> campList,List<Signup> signupList, List<User> schoolList);
 
-	/**
-	 * Unimplemented.
-	 * @param campList
-	 * @param signupList
-	 * @return
-	 */
 
 }

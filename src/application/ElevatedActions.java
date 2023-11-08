@@ -8,7 +8,7 @@ import java.util.*;
 import java.time.LocalDate;
 
 interface ElevatedActions {
-    default void adminMenu(List<Camp> campList, User activeUser) {
+    default void adminMenu(List<Camp> campList, User activeUser, List<Suggestion> suggestionList) {
         Scanner sc = new Scanner(System.in);
         String response;
         Camp selectedCamp = null;
@@ -22,9 +22,9 @@ interface ElevatedActions {
                 selectedCamp = inchargeCamps.get(0);
                 System.out.println("Admin actions to perform on " + selectedCamp.getName());
             } else {
-                String listMenu = Helper.createNumberedCampList(inchargeCamps, activeUser);
+                String listMenu = CampListView.createNumberedCampList(inchargeCamps, activeUser);
                 System.out.println("Select camp to perform admin actions: ");
-                selectedCamp = Helper.campFromListSelector(inchargeCamps, listMenu);
+                selectedCamp = CampListView.campFromListSelector(inchargeCamps, listMenu);
                 if (selectedCamp == null) {
                     return;
                 } else {
@@ -53,119 +53,11 @@ interface ElevatedActions {
                 reportMenu(selectedCamp, activeUser);
                 break;
             case 3:
-                if (activeUser instanceof StudentCommittee) {
-                    System.out.println("Please enter a short description of your suggestion, avoiding commas");
-                    sc.nextLine();
-                    String description = sc.nextLine();
-                    System.out.println("Which category would your suggestion like to be in?");
-                    System.out.println("[1] Camp Name");
-                    System.out.println("[2] Venue");
-                    System.out.println("[3] Description");
-                    System.out.println("[4] Max Slots");
-                    System.out.println("[5] Committee Slots");
-                    choice = sc.nextInt();
-
-                    switch (choice) {
-                        case 1:
-                            System.out.println("Please enter the new camp name");
-                            String campName = sc.next();
-                            Suggestion s = new Suggestion(1, selectedCamp, (Student) activeUser, description,
-                                    null, "", false, 1, campName);
-                            selectedCamp.getSuggestionList().add(s);
-                            break;
-                        case 2:
-                            System.out.println("Please enter the new camp venue");
-                            String campVenue = sc.next();
-                            Suggestion s1 = new Suggestion(1, selectedCamp, (Student) activeUser, description,
-                                    null, "", false, 2, campVenue);
-                            selectedCamp.getSuggestionList().add(s1);
-                            break;
-                        case 3:
-                            System.out.println("Please enter the new camp description");
-                            String CampDescription = sc.nextLine();
-                            Suggestion s3 = new Suggestion(1, selectedCamp, (Student) activeUser, description,
-                                    null, "", false, 3, CampDescription);
-                            selectedCamp.getSuggestionList().add(s3);
-                            break;
-                        case 4:
-                            System.out.println("Please enter the new number of slots");
-                            int campSlots = sc.nextInt();
-                            if (!Helper.checkInputDateValidity(String.valueOf(campSlots))) {
-                                System.out.println("Input error. Not valid integer. Camp not updated.");
-                                break;
-                            }
-                            if (campSlots < selectedCamp.getAttendeeCount() + selectedCamp.getCommitteeCount()) {
-                                System.out.println("Camp not updated. Invalid input, current signups mean you need at least "
-                                        + selectedCamp.getAttendeeCount() + selectedCamp.getCommitteeCount() + " slots!");
-                                break;
-                            } else if (campSlots > 24757) {
-                                System.out.println("Camp not updated. Your camp cannot have more open slots than NTU's enrolment this AY!");
-                                break;
-                            } else {
-                                Suggestion s4 = new Suggestion(1, selectedCamp, (Student) activeUser, description,
-                                        null, "", false, 4, Integer.toString(campSlots));
-                                selectedCamp.getSuggestionList().add(s4);
-                                break;
-                            }
-                        case 5:
-                            System.out.println("Please enter the Committee Slots");
-                            int campComSlots = sc.nextInt();
-                            if (!Helper.checkInputDateValidity(String.valueOf(campComSlots))) {
-                                System.out.println("Input error. Not valid integer. Camp not updated.");
-                                break;
-                            }
-                            if (campComSlots > 10) {
-                                System.out.println("You can't have more than 10 committee slots!");
-                                break;
-                            } else if (campComSlots < selectedCamp.getCommitteeList().size()) {
-                                System.out.println("You already have " + selectedCamp.getCommitteeList().size() +
-                                        " committee members!");
-                                break;
-                            } else {
-                                Suggestion s5 = new Suggestion(1, selectedCamp, (Student) activeUser, description,
-                                        null, "", false, 5, Integer.toString(campComSlots));
-                                selectedCamp.getSuggestionList().add(s5);
-                                break;
-                            }
-
-
-                    }
-                    break;
+                if(activeUser instanceof StudentCommittee) {
+                    suggestionsEditor(selectedCamp, activeUser, campList, suggestionList);
                 }
-                // for staff
-                else {
-
-                    String[] category = {"Name", "Description", "Venue", "Slots", "Committee Slots"};
-                    List<Camp> inchargeCamps = ((Staff) this).getOwnedCamps(campList);
-                    ArrayList<Suggestion> suggestionList = new ArrayList<Suggestion>(100);
-                    // create a list of suggestions
-                    for (int i = 0; i < inchargeCamps.size(); i++) {
-                        for (int j =0; j < inchargeCamps.get(i).getSuggestionList().size(); j++) {
-                            suggestionList.add(inchargeCamps.get(i).getSuggestionList().get(j));
-                        }
-                    }
-                    // show the first 5
-                    if (suggestionList.size() ==0) {
-                        break;
-                    }
-                    System.out.printf("Select a Suggestion \n");
-                    for (int i = 0;i < suggestionList.size(); i++) {
-                        System.out.printf("[%d] %s \n", i + 1, suggestionList.get(i).getDescription());
-                    }
-                    choice = sc.nextInt();
-                    sc.nextLine();
-                    Suggestion activeSuggestion = suggestionList.get(choice -1);
-                    System.out.printf("Changing: %s \n", category[activeSuggestion.getChangeCategory()]);
-                    System.out.printf("to: %s \n ", activeSuggestion.getChange().toString());
-                    System.out.printf("yes to accept \n");
-
-                    String decision = sc.nextLine();
-                    System.out.printf("%s", decision);
-                    if (decision.toLowerCase().equals("yes")) {
-                        activeSuggestion.accept();
-                    }
-                    else break;
-
+                else{
+                    suggestionResolver(campList,activeUser);
                 }
         }
     }
@@ -186,6 +78,75 @@ interface ElevatedActions {
         }
 
     }
+
+    static void suggestionsEditor(Camp selectedCamp, User activeUser, List<Camp> campList, List<Suggestion> suggestionList) {
+        Scanner sc = new Scanner(System.in);
+        List<String> fieldNames = Arrays.asList("Camp Name", "Venue", "Description", "Max Slots", "Committee Slots");
+        if (activeUser instanceof StudentCommittee) {
+            System.out.println("Please enter a short description of your suggestion");
+            String suggestionDesc = sc.nextLine();
+            System.out.println("Which category would your suggestion like to be in?");
+            System.out.println("[1] Camp Name");
+            System.out.println("[2] Venue");
+            System.out.println("[3] Description");
+            System.out.println("[4] Max Slots");
+            System.out.println("[5] Committee Slots");
+            int choice = sc.nextInt();
+            String response = sc.nextLine();
+            if (choice >= 1 && choice <= 5) {
+                System.out.println("Please enter the new " + fieldNames.get(choice - 1));
+                String change = sc.nextLine();
+                if (selectedCamp.tryEditCamp(choice, change)) {
+                    System.out.println("Your suggestion has been posted!");
+                    suggestionList.add(new Suggestion(selectedCamp, (Student) activeUser,
+                            suggestionDesc,  choice, change, suggestionStatus.PENDING));
+                } else {
+                    System.out.println("Suggestion was not posted");
+                }
+
+            }
+
+        }
+    }
+
+    static void suggestionResolver(List<Camp> campList, User activeUser ){
+        Scanner sc = new Scanner(System.in);
+        String[] category = {"Name", "Description", "Venue", "Slots", "Committee Slots"};
+        List<Camp> inchargeCamps = ((Staff) activeUser).getOwnedCamps(campList);
+        ArrayList<Suggestion> suggestionList = new ArrayList<>();
+        // create a list of suggestions
+        for (Camp camp : inchargeCamps) {
+            for (Suggestion suggestion : camp.getSuggestionList()) {
+                suggestionList.add(suggestion);
+            }
+        }
+        int i = 0;
+        System.out.println("Select a Suggestion");
+        for (Suggestion suggestion : suggestionList) {
+            i++;
+            System.out.println(i+ ": " + suggestion.getDescription());
+        }
+        int choice = sc.nextInt();
+        sc.nextLine();
+        Suggestion activeSuggestion = suggestionList.get(choice - 1);
+        System.out.println("Changing: " + category[activeSuggestion.getChangeCategory()]);
+        System.out.println("to: " + activeSuggestion.getChange().toString());
+        System.out.println("Accept? Y/N, any other input to exit without making a decision.");
+        int decision = InputChecker.parseUserBoolInput(sc.nextLine());
+        if (decision == 1){
+            System.out.println("Suggestion accepted");
+            activeSuggestion.accept();
+        }
+        else if(decision == 0){
+            System.out.println("Suggestion rejected");
+            //TODO code reject;
+        }
+        else{
+            System.out.println("Decision adjourned. Suggestion still remains.");
+            }
+
+    }
+
 
     static void reportMenu(Camp camp, User requestingUser) {
         Scanner sc = new Scanner(System.in);

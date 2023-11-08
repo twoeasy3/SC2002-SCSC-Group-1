@@ -2,7 +2,6 @@ package application;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 public class Staff extends User implements ElevatedActions{
@@ -34,10 +33,10 @@ public class Staff extends User implements ElevatedActions{
 	public void viewCamps(List<Camp> campList ,List<Enquiry> enquiryList) {
 		Scanner sc = new Scanner(System.in);
 		boolean endLoop = false;
-		String listMenu = Helper.createNumberedCampList(campList,this);
+		String listMenu = CampListView.createNumberedCampList(campList,this);
 		while(!endLoop){
 			System.out.println("Showing all camps created by you:");
-			Camp selectedCamp = Helper.campFromListSelector(campList,listMenu);
+			Camp selectedCamp = CampListView.campFromListSelector(campList,listMenu);
 			if(selectedCamp == null) {
 				return;
 			}else {
@@ -75,10 +74,10 @@ public class Staff extends User implements ElevatedActions{
 			return;
 		}
 		boolean endLoop = false;
-		String listMenu = Helper.createNumberedCampList(ownedCamps,this);
+		String listMenu = CampListView.createNumberedCampList(ownedCamps,this);
 		while(!endLoop){
 			System.out.println("Showing all camps created by you:");
-			Camp selectedCamp = Helper.campFromListSelector(ownedCamps,listMenu);
+			Camp selectedCamp = CampListView.campFromListSelector(ownedCamps,listMenu);
 			if(selectedCamp == null) {
 				return;
 			}else {
@@ -86,7 +85,7 @@ public class Staff extends User implements ElevatedActions{
 				System.out.println("Edit Camp? Y/N");
 				int input = -1;
 				while (input == -1) {
-					input = Helper.parseUserBoolInput(sc.nextLine());
+					input = InputChecker.parseUserBoolInput(sc.nextLine());
 				}
 				if (input == 1) {
 					this.staffEditCamp(selectedCamp, campList);
@@ -117,10 +116,10 @@ public class Staff extends User implements ElevatedActions{
 		}
 		System.out.println("Select component to edit:");
 		String response = sc.nextLine();
-		if (Helper.checkInputIntValidity(response)) {
+		if (InputChecker.intValidity(response)) {
 			int selection = Integer.parseInt(response);
 			if (selection < 0 || selection > maxOptions) {
-				System.out.println("Choice does not correspond to any camp on the list!");
+				System.out.println("Choice does not correspond to any option!");
 			} else if (selection >= 1 && selection <= 5) {
 				System.out.println("Enter the new value to change to:");
 			} else if (selection >= 6 && selection <= 8) {
@@ -129,7 +128,7 @@ public class Staff extends User implements ElevatedActions{
 				System.out.println("Do you want this camp to be visible to students? Y/N");
 			} else if (selection == 0) {
 				System.out.println("Are you sure you want to delete this camp? Y/N");
-				switch (Helper.parseUserBoolInput(sc.nextLine())) {
+				switch (InputChecker.parseUserBoolInput(sc.nextLine())) {
 					case 0:
 						System.out.println("Camp not deleted.");
 						return;
@@ -145,6 +144,7 @@ public class Staff extends User implements ElevatedActions{
 			}
 				response = sc.nextLine();
 				if (camp.tryEditCamp(selection, response)) {
+					camp.doEditCamp(selection, response);
 					DataHandler.saveCamps(campList);
 				}
 			}
@@ -159,7 +159,7 @@ public class Staff extends User implements ElevatedActions{
 		String faculty = "None";
 		System.out.println("Camp open to all? Y/N (If N, camp will be " + this.getFaculty() + " only.)");
 		while (faculty.equals("None")) {
-			switch (Helper.parseUserBoolInput(sc.nextLine())) {
+			switch (InputChecker.parseUserBoolInput(sc.nextLine())) {
 				case 0:
 					faculty = this.getFaculty();
 					break;
@@ -175,7 +175,7 @@ public class Staff extends User implements ElevatedActions{
 		while (!dateCheck) {
 			System.out.println("Enter start date for camp (yyyyMMdd): ");
 			dateString = sc.nextLine();
-			dateCheck = Helper.checkInputDateValidity(dateString);
+			dateCheck = InputChecker.dateValidity(dateString);
 		}
 		LocalDate startDate = LocalDate.parse(dateString, formatter);
 		LocalDate endDate = LocalDate.of(2024, 12, 31); //default value
@@ -183,7 +183,7 @@ public class Staff extends User implements ElevatedActions{
 		while (!dateCheck) {
 			System.out.println("Enter end date for camp (yyyyMMdd): ");
 			dateString = sc.nextLine();
-			if (!Helper.checkInputDateValidity(dateString)){
+			if (!InputChecker.dateValidity(dateString)){
 				continue;
 			}
 			endDate = LocalDate.parse(dateString, formatter);
@@ -199,7 +199,7 @@ public class Staff extends User implements ElevatedActions{
 		while (!dateCheck) {
 			System.out.println("Enter registration end date for camp (yyyyMMdd): ");
 			dateString = sc.nextLine();
-			if (!Helper.checkInputDateValidity(dateString)){
+			if (!InputChecker.dateValidity(dateString)){
 				continue;
 			}
 			regEnd = LocalDate.parse(dateString, formatter);
@@ -214,7 +214,7 @@ public class Staff extends User implements ElevatedActions{
 		while (maxSize < 10 || maxSize > 24757) {
 			System.out.println("Enter maximum number of camp attendees: ");
 			response = sc.nextLine();
-			if (Helper.checkInputIntValidity(response)) {
+			if (InputChecker.intValidity(response)) {
 				maxSize = Integer.parseInt(response);
 				if (maxSize < 10) {
 					System.out.println("Camps in CAMs must have at least 10 open slots!");
@@ -227,7 +227,7 @@ public class Staff extends User implements ElevatedActions{
 		while (maxComm < 0 || maxComm > 10) {
 			System.out.println("Enter maximum number of camp committee members: ");
 			response = sc.nextLine();
-			if (Helper.checkInputIntValidity(response)) {
+			if (InputChecker.intValidity(response)) {
 				maxComm = Integer.parseInt(response);
 				if (maxComm < 0) {
 					System.out.println("You can't have a negative number of committee members!");
@@ -244,7 +244,7 @@ public class Staff extends User implements ElevatedActions{
 		int visibility = -1;
 		while (visibility == -1) {
 			System.out.println("Set camp to be visible to students now? Y/N");
-			visibility = Helper.parseUserBoolInput(sc.nextLine());
+			visibility = InputChecker.parseUserBoolInput(sc.nextLine());
 		}
 		return (new Camp(-2, name, faculty, startDate, endDate, regEnd,
 				description, location, maxSize, maxComm, this.getID(), visibility));

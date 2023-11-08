@@ -184,7 +184,6 @@ public class DataHandler {
 		String enquiryFile = "data/enquiries.csv";
 		String line;
 		String csvSeparator = "\\|";
-		int enquiryID = 0;
 		int campID;
 		String userID;
 		String replyUserID;
@@ -199,8 +198,7 @@ public class DataHandler {
 			while ((line != null && line.length() > 1)) {
 				String[] lineData = line.split(csvSeparator);
 				if (lineData.length > 2) {
-					enquiryID = Integer.parseInt(lineData[0]);
-					userID = lineData[2];
+					userID = lineData[1];
 					studentExists = false;
 					for (User user : schoolList) {
 						if (user.getID().equals(userID)) {
@@ -210,7 +208,7 @@ public class DataHandler {
 						}
 					}
 					if (studentExists) {
-						campID = Integer.parseInt(lineData[1]);
+						campID = Integer.parseInt(lineData[0]);
 						campExists = false;
 						for (Camp camp : campList) {
 							if (camp.getID() == campID) {
@@ -221,14 +219,14 @@ public class DataHandler {
 					}
 				}
 				if (studentExists && campExists) {
-					boolean status = (1 == Integer.parseInt(lineData[6]));
+					boolean status = (1 == Integer.parseInt(lineData[5]));
 					if (status) {
-						replyUserID = lineData[4];
+						replyUserID = lineData[3];
 						for (User user : schoolList) {
 							if (user.getID().equals(replyUserID)) {
 								foundReplyAuthor = user;
-								enquiry = new Enquiry(enquiryID,foundCamp,(Student) foundStudent, lineData[3],
-										foundReplyAuthor, lineData[5],true);
+								enquiry = new Enquiry(foundCamp,(Student) foundStudent, lineData[2],
+										foundReplyAuthor, lineData[4],true);
 								enquiryList.add(enquiry);
 								break;
 							}
@@ -236,7 +234,7 @@ public class DataHandler {
 
 
 					} else {
-						enquiry = new Enquiry(enquiryID, foundCamp,(Student) foundStudent, lineData[3],
+						enquiry = new Enquiry(foundCamp,(Student) foundStudent, lineData[2],
 								null, "", false);
 						enquiryList.add(enquiry);
 					}
@@ -247,6 +245,58 @@ public class DataHandler {
 			e.printStackTrace();
 		}
 		return enquiryList;
+	}
+
+	public static List<Suggestion> getSuggestions(List<User> schoolList, List<Camp> campList) {
+		List<Suggestion> suggestionList = new ArrayList<>();
+		String suggestionFile = "data/Suggestions.csv";
+		String line;
+		String csvSeparator = "\\|";
+		int campID;
+		String userID;
+		String replyUserID;
+		boolean studentExists = false;
+		boolean campExists = false;
+		Suggestion suggestion = null;
+		User foundStudent = null;
+		Camp foundCamp = null;
+		try (BufferedReader br = new BufferedReader(new FileReader(suggestionFile))) {
+			line = br.readLine();
+			while ((line != null && line.length() > 1)) {
+				String[] lineData = line.split(csvSeparator);
+				if (lineData.length > 2) {
+					userID = lineData[1];
+					studentExists = false;
+					for (User user : schoolList) {
+						if (user.getID().equals(userID)) {
+							foundStudent = user;
+							studentExists = true;
+							break;
+						}
+					}
+					if (studentExists) {
+						campID = Integer.parseInt(lineData[0]);
+						campExists = false;
+						for (Camp camp : campList) {
+							if (camp.getID() == campID) {
+								foundCamp = camp;
+								campExists = true;
+							}
+						}
+					}
+				}
+				if (studentExists && campExists) {
+					suggestionStatus status = suggestionStatus.valueOf(lineData[5]);
+					suggestionList.add(new Suggestion(foundCamp,(Student) foundStudent,
+							lineData[2],Integer.parseInt(lineData[3]),lineData[4],status));
+					}
+				line = br.readLine();
+			}
+
+		}catch(IOException e){
+			e.printStackTrace();
+		}
+		return suggestionList;
 	}
 	/**
 	 *Writes the current state of all User objects into their respective CSVs.
@@ -342,8 +392,7 @@ public class DataHandler {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(enquiryFile))) {
 			for (Enquiry enquiry : enquiryList) {
 				if (enquiry.getResolved()){status = "1";}else{status="0";}
-				line = enquiry.getEnquiryID() + csvSeparator
-						+ enquiry.getCamp().getID() + csvSeparator
+				line =   enquiry.getCamp().getID() + csvSeparator
 						+ enquiry.getAuthor().getID() + csvSeparator
 						+ enquiry.getDescription() + csvSeparator;
 

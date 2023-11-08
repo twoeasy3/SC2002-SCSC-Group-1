@@ -1,5 +1,4 @@
 package application;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 public class CAMs {
@@ -11,11 +10,11 @@ public class CAMs {
 	public static void main(String[] args) {
 
 		List<User> schoolList = DataHandler.getUsers();
-		ArrayList<Suggestion> suggestionList = new ArrayList<>(0);
 		List<Camp> campList = DataHandler.getCamps();
-		Helper.populateCommittees(schoolList,campList);
+		Fetcher.populateCommittees(schoolList,campList);
 		List<Signup> signupList = DataHandler.getSignups(schoolList, campList);
 		List<Enquiry> enquiryList = DataHandler.getEnquiries(schoolList,campList);
+		List<Suggestion> suggestionList = DataHandler.getSuggestions(schoolList,campList);
 		Scanner sc = new Scanner(System.in);
 		boolean quitCAMs = false;
 		while (!quitCAMs) {
@@ -43,16 +42,16 @@ public class CAMs {
 						DataHandler.saveUsers(schoolList);
 						break;
 					case 2:
-						campList = Helper.sortCampList(campList,response);
+						campList = CampListView.sortCampList(campList,response);
 						activeUser.viewCamps(campList , enquiryList);
 						break;
 					case 3:
-						campList = Helper.sortCampList(campList,response);
+						campList = CampListView.sortCampList(campList,response);
 						activeUser.viewOwnedCamps(campList, signupList,schoolList);
 						break;
 					case 4:
 						if (activeUser instanceof Student) {
-							campList = Helper.sortCampList(campList,response);
+							campList = CampListView.sortCampList(campList,response);
 							((Student) activeUser).signUpCamp(campList, signupList);
 						}
 						break;
@@ -76,10 +75,10 @@ public class CAMs {
 						break;
 					case 6:
 						if (activeUser instanceof Staff){
-							((Staff) activeUser).adminMenu(campList,activeUser);
+							((Staff) activeUser).adminMenu(campList,activeUser,suggestionList);
 						}
 						else if (activeUser instanceof StudentCommittee && ((StudentCommittee) activeUser).getCamp()!= null){
-							((StudentCommittee) activeUser).adminMenu(campList,activeUser);
+							((StudentCommittee) activeUser).adminMenu(campList,activeUser,suggestionList);
 						}
 						break;
 					case 9:
@@ -116,7 +115,7 @@ public class CAMs {
 		while (!userFound) {
 			System.out.println("Please enter your username to login: ");
 			response = sc.nextLine();
-			activeUser = getUserObject(response,schoolList);
+			activeUser = Fetcher.getUserFromID(response,schoolList);
 			if (activeUser == null) {
 				System.out.println("User not found!");} else {
 				userFound = true;}
@@ -138,22 +137,6 @@ public class CAMs {
 		
 		return activeUser;
 	}
-	/**
-	 * Finds a User object and returns it.
-	 * Used in login screen, object is selected as the active user.
-	 * @param userID UserID as a String to look for.
-	 * @param schoolList List of all Users loaded in by DataHandler.
-	 * @return Appropriate User object if matching ID is found. If no user matched, dummy error object is returned.
-	 *
-	 */
-	public static User getUserObject(String userID, List<User> schoolList) {
-		for (User user : schoolList) {
-			if(user.getID().equals(userID)) {
-				return user;
-			}
-		}
-        return null;
-		}
-	}
+}
 	
 

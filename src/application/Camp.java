@@ -1,11 +1,9 @@
 package application;
-import java.lang.reflect.Array;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
-import java.time.temporal.*;
 
 enum campStatus{
 	OPEN,CLOSED,ONGOING,ENDED}
@@ -310,20 +308,13 @@ public class Camp {
 		int proposed;
 		switch (category) {
 			case 1: //NAME
-				this.name = change;
-				System.out.println("Camp updated. New name: " + this.name);
 				return true;
 			case 2: //VENUE
-				this.location = change;
-				System.out.println("Camp updated. New venue: " + this.location);
 				return true;
 			case 3: //DESCRIPTION
-				this.description = change.replace(",", "");
-				System.out.println("Camp updated. New description: ");
-				System.out.println(this.description);
 				return true;
 			case 4: //MAX SLOTS; CONDITIONAL
-				if(!Helper.checkInputIntValidity(change)){
+				if(!InputChecker.intValidity(change)){
 					System.out.println("Input error. Not valid integer. Camp not updated.");
 					return false;
 				}
@@ -341,12 +332,11 @@ public class Camp {
 					return false;
 				}
 				else{
-					this.maxSize = proposed;
-					System.out.println("Camp updated. New Max Slots: " + this.maxSize);
+					System.out.println("# of Camp Slots acceptable");
 					return true;
 				}
 			case 5: //MAX COMM; CONDITIONAL
-				if(!Helper.checkInputDateValidity(change)){
+				if(!InputChecker.dateValidity(change)){
 					System.out.println("Input error. Not valid integer. Camp not updated.");
 					return false;
 				}
@@ -360,12 +350,11 @@ public class Camp {
 					return false;
 				}
 				else{
-					this.maxComm = proposed;
-					System.out.println("Camp updated. New Max Committee Slots: " + this.maxComm);
+					System.out.println("# of Committee Slots acceptable");
 					return true;
 				}
 			case 6: //START DATE; ONLY IF EMPTY CAMP
-				if (!Helper.checkInputDateValidity(change)) {
+				if (!InputChecker.dateValidity(change)) {
 					System.out.println("General Date Error: Camp was not edited.");
 					return false;
 				}
@@ -378,12 +367,11 @@ public class Camp {
 					System.out.println("Date Error: Start date before Registration End Date. Camp was not edited.");
 					return false;
 				} else {
-					this.startDate = proposedDate;
-					System.out.println("Camp updated. New start date: " + this.startDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
+					System.out.println("Date Accepted");
 					return true;
 				}
 			case 7://END DATE; ONLY IF EMPTY CAMP
-				if (!Helper.checkInputDateValidity(change)) {
+				if (!InputChecker.dateValidity(change)) {
 					System.out.println("General Date Error: Camp was not edited.");
 					return false;
 				}
@@ -396,12 +384,11 @@ public class Camp {
 					System.out.println("Date Error: Start date before Registration End Date. Camp was not edited.");
 					return false;
 				} else {
-					this.endDate = proposedDate;
-					System.out.println("Camp updated. New end date: " + this.endDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
+					System.out.println("Date Accepted");
 					return true;
 				}
 			case 8: //REG END, ONLY IF EMPTY
-				if (!Helper.checkInputDateValidity(change)) {
+				if (!InputChecker.dateValidity(change)) {
 					System.out.println("General Date Error: Camp was not edited.");
 					return false;
 				}
@@ -410,31 +397,81 @@ public class Camp {
 					System.out.println("Date Error: Reg End date is after Start Date. Camp was not edited.");
 					return false;
 				} else {
-					this.regEnd = proposedDate;
-					System.out.println("Camp updated. New Reg End date: " + this.regEnd.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
+					System.out.println("Date Accepted");
 					return true;
 				}
 			case 9: //VISIBILITY, ONLY IF EMPTY
-				if(Helper.parseUserBoolInput(change) == -1){
+				if(InputChecker.parseUserBoolInput(change) == -1){
 					System.out.println("Camp not updated.");
 					return false;
 				}
-				else if(Helper.parseUserBoolInput(change) == 1){
-					this.visible = true;
-					System.out.println("Camp updated and is now visible to eligible students.");
-					return true;
-				}
 				else{
-					this.visible = false;
-					System.out.println("Camp updated and is no longer visible to students.");
 					return true;
 				}
+
 			default:
 				System.out.println("Error editing camp.");
 				return false;
 		}
 	}
-	// access enquiry list
+	public void doEditCamp(int category, String change) { //true for success, false for failure
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		LocalDate proposedDate;
+
+		switch (category) {
+			case 1: //NAME
+				this.name = change.replace(",", "");
+				System.out.println("Camp updated. New name: " + this.name);
+				return;
+			case 2: //VENUE
+				this.location = change.replace(",", "");
+				System.out.println("Camp updated. New venue: " + this.location);
+				return;
+			case 3: //DESCRIPTION
+				this.description = change.replace(",", "");
+				System.out.println("Camp updated. New description: ");
+				System.out.println(this.description);
+				return;
+			case 4: //MAX SLOTS; CONDITIONAL
+				this.maxSize = Integer.parseInt(change);
+				System.out.println("Camp updated. New Max Slots: " + this.maxSize);
+				return;
+			case 5: //MAX COMM; CONDITIONAL
+				this.maxComm = Integer.parseInt(change);
+				System.out.println("Camp updated. New Max Committee Slots: " + this.maxComm);
+				return;
+			case 6: //START DATE; ONLY IF EMPTY CAMP
+				proposedDate = LocalDate.parse(change, formatter);
+				this.startDate = proposedDate;
+				System.out.println("Camp updated. New start date: " + this.startDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
+				return;
+			case 7://END DATE; ONLY IF EMPTY CAMP
+				proposedDate = LocalDate.parse(change, formatter);
+				this.endDate = proposedDate;
+				System.out.println("Camp updated. New end date: " + this.endDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
+				return;
+			case 8: //REG END, ONLY IF EMPTY
+				proposedDate = LocalDate.parse(change, formatter);
+				this.regEnd = proposedDate;
+				System.out.println("Camp updated. New Reg End date: " + this.regEnd.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
+				return;
+			case 9: //VISIBILITY, ONLY IF EMPTY
+				if(InputChecker.parseUserBoolInput(change) == 1){
+					this.visible = true;
+					System.out.println("Camp updated and is now visible to eligible students.");
+					return;
+				}
+				else{
+					this.visible = false;
+					System.out.println("Camp updated and is no longer visible to students.");
+					return;
+				}
+			default:
+				System.out.println("Error editing camp.");
+				return;
+		}
+	}
+
 
 
 	public ArrayList<Enquiry> getEnquiryList() {
@@ -445,4 +482,5 @@ public class Camp {
 	public void addEnquiry(Enquiry enquiry){
 		enquiryList.add(enquiry);
 	}
+	public void addSuggestion(Suggestion suggestion){suggestionList.add(suggestion);}
 }

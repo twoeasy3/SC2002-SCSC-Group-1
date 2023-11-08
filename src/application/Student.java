@@ -1,8 +1,4 @@
 package application;
-import javax.xml.crypto.Data;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -23,16 +19,12 @@ public class Student extends User{
 		return enquiryList;
 	}
 
-	public boolean checkStaff() {
-		return false;
-	}
-
 	public void printMenu(List<Camp> campList){
 		System.out.println("Student Portal");
 		if(this.getCommittee() == -1){
 			System.out.println("You are not currently a committee member of any camp.");}
 		else{
-			System.out.println("You are currently a committee member of " + Helper.getCampfromID(this.committee, campList).getName());//dangerous error possible
+			System.out.println("You are currently a committee member of " + Fetcher.getCampfromID(this.committee, campList).getName());//dangerous error possible
 		}
 		System.out.println("1. Change your password.");
 		System.out.println("2. View eligible camps. (-o,-l,-s,-r,-p,-f)");
@@ -53,11 +45,11 @@ public class Student extends User{
 				eligibleCamps.add(camp);
 			}
 		}
-		String listMenu = Helper.createNumberedCampList(eligibleCamps,this);
+		String listMenu = CampListView.createNumberedCampList(eligibleCamps,this);
 		boolean endLoop = false;
 		while (!endLoop){
 			System.out.println("Showing all camps visible to you:");
-			Camp selectedCamp = Helper.campFromListSelector(eligibleCamps,listMenu);
+			Camp selectedCamp = CampListView.campFromListSelector(eligibleCamps,listMenu);
 			if(selectedCamp == null) {
 				return;
 			}else {
@@ -88,7 +80,7 @@ public class Student extends User{
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter your enquiry:");
 		String response = sc.nextLine();
-		Enquiry newEnquiry = new Enquiry(-1,camp,this,response,null,"",false);
+		Enquiry newEnquiry = new Enquiry(camp,this,response,null,"",false);
 		enquiryList.add(newEnquiry);
 		DataHandler.saveEnquiries(enquiryList);
 		}
@@ -124,7 +116,7 @@ public class Student extends User{
 			}
 		}
 		if(this.committee!=-1) {
-			ownedCamps.add(Helper.getCampfromID(this.committee,campList));
+			ownedCamps.add(Fetcher.getCampfromID(this.committee,campList));
 		}
 		return ownedCamps;
 	}
@@ -136,10 +128,10 @@ public class Student extends User{
 			return;
 		}
 		boolean endLoop = false;
-		String listMenu = Helper.createNumberedCampList(ownedCamps,this);
+		String listMenu = CampListView.createNumberedCampList(ownedCamps,this);
 		while(!endLoop){
 			System.out.println("Showing all camps you have signed up for:");
-			Camp selectedCamp = Helper.campFromListSelector(ownedCamps,listMenu);
+			Camp selectedCamp = CampListView.campFromListSelector(ownedCamps,listMenu);
 			if(selectedCamp == null) {
 				return;
 			}else {
@@ -155,7 +147,7 @@ public class Student extends User{
 					System.out.println("Once you cancel, you will not be able to sign up for this camp again! Are you sure? Y/N");
 					int input = -1;
 					while (input == -1) {
-						input = Helper.parseUserBoolInput(sc.nextLine());
+						input = InputChecker.parseUserBoolInput(sc.nextLine());
 					}
 					if (input == 1) {
 						for(Signup signup : signupList){
@@ -175,7 +167,7 @@ public class Student extends User{
 					System.out.println("Once you change your role, you will not be able to cancel or join another committee! Are you sure? Y/N");
 					int input = -1;
 					while (input == -1) {
-						input = Helper.parseUserBoolInput(sc.nextLine());
+						input = InputChecker.parseUserBoolInput(sc.nextLine());
 					}
 					if (input == 1) {
 						for(Signup signup : signupList){
@@ -208,7 +200,7 @@ public class Student extends User{
 				attendingCamps.add(signup.getCamp());
 			}
 		}
-		committeeCamp = Helper.getCampfromID(this.getCommittee(),campList);
+		committeeCamp = Fetcher.getCampfromID(this.getCommittee(),campList);
 		if (committeeCamp != null){
 			attendingCamps.add(committeeCamp);
 		}
@@ -255,10 +247,10 @@ public class Student extends User{
 			return;
 		}
 		boolean endLoop = false;
-		String listMenu = Helper.createNumberedCampList(eligibleCamps,this);
+		String listMenu = CampListView.createNumberedCampList(eligibleCamps,this);
 		while(!endLoop){
 			System.out.println("Showing all camps created by you:");
-			Camp selectedCamp = Helper.campFromListSelector(eligibleCamps,listMenu);
+			Camp selectedCamp = CampListView.campFromListSelector(eligibleCamps,listMenu);
 			if(selectedCamp == null) {
 				return;
 			}else {
@@ -266,7 +258,7 @@ public class Student extends User{
 				System.out.println("Join Camp as attendee? Y/N");
 				int input = -1;
 				while (input == -1) {
-					input = Helper.parseUserBoolInput(sc.nextLine());
+					input = InputChecker.parseUserBoolInput(sc.nextLine());
 				}
 				if (input == 1) {
 					signupList.add(new Signup(this,selectedCamp,true));
@@ -278,7 +270,6 @@ public class Student extends User{
 				}
 			}
 		}
-	return;
 	}
 
 }

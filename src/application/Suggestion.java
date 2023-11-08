@@ -1,20 +1,30 @@
 package application;
 
 import java.time.LocalDate;
-
-public class Suggestion extends Enquiry {
+enum suggestionStatus{
+    PENDING,REJECTED,APPROVED
+}
+public class Suggestion extends Message {
 
     private int changeCategory;
-
     private String change;
+    private suggestionStatus status;
 
-    public Suggestion(int enquiryID, Camp camp, Student author, String description, User replyAuthor,
-                      String reply, boolean resolved, int changeCategory, String change) {
-        super(enquiryID, camp, author, description, replyAuthor, reply, resolved);
+    public Suggestion(Camp camp, Student author, String description,
+                      int changeCategory, String change,suggestionStatus status) {
+        super(camp, author, description);
         this.changeCategory = changeCategory;
         this.change = change;
-    }
+        this.status = status;
 
+        this.getCamp().addSuggestion(this);
+        if(this.status == suggestionStatus.APPROVED){
+            ((StudentCommittee) this.getAuthor()).addPoints(2);
+        }
+        else{
+            ((StudentCommittee) this.getAuthor()).addPoints(1);
+        }
+    }
     public String getChange() {
         return change;
     }
@@ -31,40 +41,13 @@ public class Suggestion extends Enquiry {
         this.changeCategory = changeCategory;
     }
 
-    public void rejectSuggestions(Suggestion s) {
-        s.setReply("Suggestion Rejected");
-        s.getCamp().getSuggestionList().remove(s);
+    public void reject() {
+        this.status = suggestionStatus.REJECTED;
     }
 
     public void accept(){
-        System.out.printf("DEBUG 1");
-        switch (this.getChangeCategory()) {
-            case 1 -> {
-                this.getCamp().setName(this.getChange());
-                break;
-            }
-            case 2 -> {
-                System.out.printf("DEBUG 2");
-                this.getCamp().setLocation(this.getChange());
-                break;
-            }
-            case 3 -> {
-                this.getCamp().setDescription(this.getChange());
-                break;
-            }
-            case 4 -> {
-                this.getCamp().setMaxSize(Integer.parseInt(this.getChange()));
-                break;
-            }
-            case 5 -> {
-                this.getCamp().setMaxComm(Integer.parseInt(this.getChange()));
-                break;
-            }
-            default -> System.out.println("Error in acceptance");
-        }
-        this.setReply("Suggestion Accepted");
-        this.getCamp().getSuggestionList().remove(this);
-
-
+        this.status = suggestionStatus.APPROVED;
+        this.getCamp().doEditCamp(changeCategory,change);
+        ((StudentCommittee) this.getAuthor()).addPoints(1);
     }
     }
