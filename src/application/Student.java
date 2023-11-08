@@ -103,18 +103,18 @@ public class Student extends User{
 	// assuming only description can be edited. but maybe camp can be updated as well?
 	public void editEnquiry(Enquiry e, String s) {
 		e.setDescription(s + "\n This enquiry has been edited");
+		DataHandler.saveEnquiries(enquiryList);
 		System.out.println("Your enquiry has been edited");
 	}
 	// removes enquiry from both the camp and the user
-	public void deleteEnquiry(Enquiry e) {
+	public void deleteEnquiry(Enquiry e, List<Enquiry> enquiryList) {
 		this.enquiryList.remove(e);
-		Camp camp = e.getCamp();
-		camp.getEnquiryList().remove(e);
+		e.getCamp().getEnquiryList().remove(e);
+		enquiryList.remove(e);
 		System.out.println("Your enquiry has been deleted");
 	}
 
 
-	/** END OF ENQUIRY / SUGGESTION SECTION **/
 
 	public List<Camp> getOwnedCamps(List<Camp> campList,List<Signup> signupList) {
 		List<Camp> ownedCamps = new ArrayList<>();

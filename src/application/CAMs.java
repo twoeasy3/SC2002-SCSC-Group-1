@@ -11,6 +11,7 @@ public class CAMs {
 	public static void main(String[] args) {
 
 		List<User> schoolList = DataHandler.getUsers();
+		ArrayList<Suggestion> suggestionList = new ArrayList<>(0);
 		List<Camp> campList = DataHandler.getCamps();
 		Helper.populateCommittees(schoolList,campList);
 		List<Signup> signupList = DataHandler.getSignups(schoolList, campList);
@@ -62,6 +63,16 @@ public class CAMs {
 							System.out.println("Camp successfully created!");
 
 						}
+						if (activeUser instanceof Student) {
+							System.out.println("Welcome to Enquiries Hub");
+							System.out.println("[1]: Manage my Enquiries");
+							System.out.println("[2]: Back");
+							choice = sc.nextInt();
+							switch (choice) {
+								case 1:
+
+								}
+							}
 						break;
 					case 6:
 						if (activeUser instanceof Staff){

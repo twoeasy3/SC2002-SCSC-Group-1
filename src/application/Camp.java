@@ -140,6 +140,26 @@ public class Camp {
 		return this.id;
 	}
 
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setMaxSize(int maxSize) {
+		this.maxSize = maxSize;
+	}
+
+	public void setMaxComm(int maxComm) {
+		this.maxComm = maxComm;
+	}
+
 	public LocalDate getStart() {
 		return this.startDate;
 	}
@@ -197,6 +217,7 @@ public class Camp {
 			return campStatus.ENDED; //Camp ended
 		}
 	}
+
 	/**
 	 * Appends a student to the internal list of attendee members for the camp.
 	 * Conditions to do so should be checked elsewhere.

@@ -91,4 +91,5 @@ public class Enquiry {
     }
     public void setResolved(boolean status){resolved = status;}
 
+
 }
