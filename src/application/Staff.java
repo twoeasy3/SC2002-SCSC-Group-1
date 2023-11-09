@@ -1,10 +1,17 @@
 package application;
+import enquiry.Enquiry;
+import helper.Console;
+import helper.DataHandler;
+import helper.InputChecker;
+import suggestions.Suggestion;
+import suggestions.SuggestionResolver;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-public class Staff extends User implements ElevatedActions{
+
+public class Staff extends User implements AdminActions, SuggestionResolver {
 	int inCharge; //-1 if not In Char, otherwise put camp.id
 
 	public Staff(String name, String id, String faculty, String password) {
@@ -12,23 +19,18 @@ public class Staff extends User implements ElevatedActions{
 		this.fillDetails(name, id, faculty, password);
 		this.inCharge = -1;
 	}
-
-	public boolean checkStaff() {
-		return true;
-	}
-
 	public void printMenu(List<Camp> campList){
 		StaffView.printMenu(campList);
 	}
 	public void viewCamps(List<Camp> campList, List<Enquiry> enquiryList){
 		StaffView.viewCamps(this,campList,enquiryList);
 	}
-	public sessionStatus resolveCAMsMenu(int choice, String argument,
-												List<User> userList,
-												List<Camp> campList,
-												List<Signup> signupList,
-												List<Enquiry> enquiryList,
-												List<Suggestion> suggestionList){
+	public SessionStatus resolveCAMsMenu(int choice, String argument,
+										 List<User> userList,
+										 List<Camp> campList,
+										 List<Signup> signupList,
+										 List<Enquiry> enquiryList,
+										 List<Suggestion> suggestionList){
 		return StaffView.resolveCAMsMenu(this, choice, argument,
 									userList,campList,signupList,enquiryList,suggestionList);
 	}
@@ -36,7 +38,7 @@ public class Staff extends User implements ElevatedActions{
 	public List<Camp> getOwnedCamps(List<Camp> campList){
 		int i= 0;
 		List<Camp> ownedCamps = new ArrayList<>();
-		Scanner sc = new Scanner(System.in);
+		
 		for (Camp camp : campList) {
 			if (camp.getInCharge().equals(this.getID())) {
 				i++;
@@ -45,14 +47,14 @@ public class Staff extends User implements ElevatedActions{
 		}
 		if (i == 0) {
 			System.out.println("No active camps created by you found. Press enter to continue.");
-			String continueInput = sc.nextLine();
+			String continueInput = Console.nextString();
 			return null;
 		}
 		return ownedCamps;
 	}
 
 	public void viewOwnedCamps(List<Camp> campList, List<Signup> signupList, List<User> userList) {
-		Scanner sc = new Scanner(System.in);
+		
 		List<Camp> ownedCamps = this.getOwnedCamps(campList);
 		if (ownedCamps == null){
 			return;
@@ -69,7 +71,7 @@ public class Staff extends User implements ElevatedActions{
 				System.out.println("Edit Camp? Y/N");
 				int input = -1;
 				while (input == -1) {
-					input = InputChecker.parseUserBoolInput(sc.nextLine());
+					input = InputChecker.parseUserBoolInput(Console.nextString());
 				}
 				if (input == 1) {
 					this.staffEditCamp(selectedCamp, campList);
@@ -82,7 +84,7 @@ public class Staff extends User implements ElevatedActions{
 	}
 
 	public void staffEditCamp(Camp camp, List<Camp> campList) {
-		Scanner sc = new Scanner(System.in);
+		
 		int maxOptions = 5;
 		System.out.println("Edit Menu:");
 		System.out.println("1:Name");
@@ -99,7 +101,7 @@ public class Staff extends User implements ElevatedActions{
 			maxOptions = 9;
 		}
 		System.out.println("Select component to edit:");
-		String response = sc.nextLine();
+		String response = Console.nextString();
 		if (InputChecker.intValidity(response)) {
 			int selection = Integer.parseInt(response);
 			if (selection < 0 || selection > maxOptions) {
@@ -112,7 +114,7 @@ public class Staff extends User implements ElevatedActions{
 				System.out.println("Do you want this camp to be visible to students? Y/N");
 			} else if (selection == 0) {
 				System.out.println("Are you sure you want to delete this camp? Y/N");
-				switch (InputChecker.parseUserBoolInput(sc.nextLine())) {
+				switch (InputChecker.parseUserBoolInput(Console.nextString())) {
 					case 0:
 						System.out.println("Camp not deleted.");
 						return;
@@ -126,9 +128,9 @@ public class Staff extends User implements ElevatedActions{
 						return;
 				}
 			}
-				response = sc.nextLine();
-				if (camp.tryEditCamp(selection, response)) {
-					camp.doEditCamp(selection, response);
+				response = Console.nextString();
+				if (CampEdit.tryEditCamp(camp, selection, response)) {
+					CampEdit.doEditCamp(camp, selection, response);
 					DataHandler.saveCamps(campList);
 				}
 			}
@@ -137,13 +139,13 @@ public class Staff extends User implements ElevatedActions{
 	public void createCamp(List<Camp> campList) {
 		String response;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-		Scanner sc = new Scanner(System.in);
+		
 		System.out.println("Enter name for camp: ");
-		String name = sc.nextLine();
+		String name = Console.nextString();
 		String faculty = "None";
 		System.out.println("Camp open to all? Y/N (If N, camp will be " + this.getFaculty() + " only.)");
 		while (faculty.equals("None")) {
-			switch (InputChecker.parseUserBoolInput(sc.nextLine())) {
+			switch (InputChecker.parseUserBoolInput(Console.nextString())) {
 				case 0:
 					faculty = this.getFaculty();
 					break;
@@ -158,7 +160,7 @@ public class Staff extends User implements ElevatedActions{
 		String dateString = " ";
 		while (!dateCheck) {
 			System.out.println("Enter start date for camp (yyyyMMdd): ");
-			dateString = sc.nextLine();
+			dateString = Console.nextString();
 			dateCheck = InputChecker.dateValidity(dateString);
 		}
 		LocalDate startDate = LocalDate.parse(dateString, formatter);
@@ -166,7 +168,7 @@ public class Staff extends User implements ElevatedActions{
 		dateCheck = false;
 		while (!dateCheck) {
 			System.out.println("Enter end date for camp (yyyyMMdd): ");
-			dateString = sc.nextLine();
+			dateString = Console.nextString();
 			if (!InputChecker.dateValidity(dateString)){
 				continue;
 			}
@@ -182,7 +184,7 @@ public class Staff extends User implements ElevatedActions{
 		dateCheck = false;
 		while (!dateCheck) {
 			System.out.println("Enter registration end date for camp (yyyyMMdd): ");
-			dateString = sc.nextLine();
+			dateString = Console.nextString();
 			if (!InputChecker.dateValidity(dateString)){
 				continue;
 			}
@@ -197,7 +199,7 @@ public class Staff extends User implements ElevatedActions{
 		int maxSize = -619;
 		while (maxSize < 10 || maxSize > 24757) {
 			System.out.println("Enter maximum number of camp attendees: ");
-			response = sc.nextLine();
+			response = Console.nextString();
 			if (InputChecker.intValidity(response)) {
 				maxSize = Integer.parseInt(response);
 				if (maxSize < 10) {
@@ -210,7 +212,7 @@ public class Staff extends User implements ElevatedActions{
 		int maxComm = -619;
 		while (maxComm < 0 || maxComm > 10) {
 			System.out.println("Enter maximum number of camp committee members: ");
-			response = sc.nextLine();
+			response = Console.nextString();
 			if (InputChecker.intValidity(response)) {
 				maxComm = Integer.parseInt(response);
 				if (maxComm < 0) {
@@ -221,16 +223,16 @@ public class Staff extends User implements ElevatedActions{
 			}
 		}
 		System.out.println("Enter venue name for camp: ");
-		String location = sc.nextLine();
+		String location = Console.nextString();
 		System.out.println("Enter short description for camp: ");
-		String description = sc.nextLine().replace(",", "");
+		String description = Console.nextString().replace(",", "");
 
 		int visibility = -1;
 		while (visibility == -1) {
 			System.out.println("Set camp to be visible to students now? Y/N");
-			visibility = InputChecker.parseUserBoolInput(sc.nextLine());
+			visibility = InputChecker.parseUserBoolInput(Console.nextString());
 		}
-		campList.add(new Camp(-2, name, faculty, startDate, endDate, regEnd,
+		campList.add(new Camp(Camp.getGlobalIDCounter()+1, name, faculty, startDate, endDate, regEnd,
 				description, location, maxSize, maxComm, this.getID(), visibility));
 		DataHandler.saveCamps(campList);
 	}

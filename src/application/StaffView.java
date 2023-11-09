@@ -1,10 +1,13 @@
 package application;
 
-import java.util.List;
-import java.util.Scanner;
+import enquiry.Enquiry;
+import helper.Console;
+import suggestions.Suggestion;
 
-public abstract class StaffView {
-    public static void printMenu(List<Camp> campList) {
+import java.util.List;
+
+public interface StaffView {
+    static void printMenu(List<Camp> campList) {
         final String staffMenu = "Staff Portal\n" +
                                     "1. Change your password.\n"+
                                     "2. View all active camps. (-o,-l,-s,-r,-p,-f)\n"+
@@ -17,8 +20,8 @@ public abstract class StaffView {
         System.out.println(staffMenu);
     }
 
-    public static void viewCamps(Staff staff, List<Camp> campList, List<Enquiry> enquiryList) {
-        Scanner sc = new Scanner(System.in);
+    static void viewCamps(Staff staff, List<Camp> campList, List<Enquiry> enquiryList) {
+        
         boolean endLoop = false;
         String listMenu = CampListView.createNumberedCampList(campList, staff);
         while(!endLoop){
@@ -29,19 +32,19 @@ public abstract class StaffView {
             }else {
                 CampView.showSummary(selectedCamp);
                 System.out.println("Viewing Mode - Press Enter to return");
-                String response = sc.nextLine();
+                String response = Console.nextString();
             }
         }
 
     }
 
-    public static sessionStatus resolveCAMsMenu(Staff staff, int choice, String argument,
-                                                 List<User> userList,
-                                                 List<Camp> campList,
-                                                 List<Signup> signupList,
-                                                 List<Enquiry> enquiryList,
-                                                 List<Suggestion> suggestionList){
-        sessionStatus status = sessionStatus.CONTINUE;
+    static SessionStatus resolveCAMsMenu(Staff staff, int choice, String argument,
+                                         List<User> userList,
+                                         List<Camp> campList,
+                                         List<Signup> signupList,
+                                         List<Enquiry> enquiryList,
+                                         List<Suggestion> suggestionList){
+        SessionStatus status = SessionStatus.CONTINUE;
         switch(choice) {
             case 1:
                 staff.changePass(userList);
@@ -61,15 +64,15 @@ public abstract class StaffView {
                 staff.createCamp(campList);
                 return status;
             case 6:
-                staff.adminMenu(campList, staff,suggestionList);
+                staff.adminMenu(campList, staff,suggestionList,enquiryList);
                 return status;
             case 9:
                 System.out.println("Logging out from CAMs...");
-                status = sessionStatus.LOGOUT;
+                status = SessionStatus.LOGOUT;
                 return status;
             case 0:
                 System.out.println("Logging out and terminating CAMs...");
-                status = sessionStatus.CLOSE;
+                status = SessionStatus.CLOSE;
                 return status;
             default:
                 System.out.println("Invalid Choice");

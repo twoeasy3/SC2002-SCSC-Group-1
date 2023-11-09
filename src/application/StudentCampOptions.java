@@ -1,10 +1,28 @@
 package application;
 
+import helper.Console;
+import helper.DataHandler;
+import helper.Fetcher;
+import helper.InputChecker;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public interface StudentCampOptions {
+
+    static void joinCommittee(Student student, Camp selectedCamp, List<User> userList, List<Camp> campList){
+        selectedCamp.addCommittee(student);
+        ((StudentCommittee)student).setCamp(selectedCamp);
+        student.setCommittee(selectedCamp.getID());
+        DataHandler.saveUsers(userList);
+        DataHandler.saveCamps(campList);
+    }
+
+    static void joinCamp(Student student, Camp selectedCamp,  List<Signup> signupList){
+        signupList.add(new Signup(student,selectedCamp,true));
+        DataHandler.saveSignups(signupList);
+
+    }
 
     static List<Camp> getOwnedCamps(Student student, List<Camp> campList, List<Signup> signupList) {
         List<Camp> ownedCamps = new ArrayList<>();
@@ -30,7 +48,7 @@ public interface StudentCampOptions {
         for (Camp camp : campListCopy) {
             signUpExists = false;
             if (camp.checkEligibility(student.getFaculty()) && camp.isVisible()
-                    && !camp.isFull() && camp.checkCampStatus() == campStatus.OPEN) {//camp eligibility check
+                    && !camp.isFull() && camp.checkCampStatus() == CampStatus.OPEN) {//camp eligibility check
                 if (camp.isAttending(student) || camp.isBlacklisted(student)) {
                     signUpExists = true;
                 }
@@ -53,8 +71,8 @@ public interface StudentCampOptions {
         return(eligibleCamps);
     }
 
-    static boolean extraViewOptions(Student student, Camp selectedCamp, List<User> userList, List<Signup> signupList) {
-        Scanner sc = new Scanner(System.in);
+    static boolean extraSignupOptions(Student student, Camp selectedCamp, List<User> userList, List<Signup> signupList) {
+        
         CampView.showSummary(selectedCamp);
         System.out.println("Press Enter to go back.");
         if (student.getCommittee() != selectedCamp.getID()) {
@@ -63,12 +81,12 @@ public interface StudentCampOptions {
         if (!selectedCamp.isFullCommittee() && student.getCommittee() == -1) {
             System.out.println("To upgrade to Committee member type 'committee'");
         }//TODO check for slots
-        String response = sc.nextLine();
+        String response = Console.nextString();
         if (response.equals("cancel") && student.getCommittee() != selectedCamp.getID()) {
             System.out.println("Once you cancel, you will not be able to sign up for this camp again! Are you sure? Y/N");
             int input = -1;
             while (input == -1) {
-                input = InputChecker.parseUserBoolInput(sc.nextLine());
+                input = InputChecker.parseUserBoolInput(Console.nextString());
             }
             if (input == 1) {
                 for (Signup signup : signupList) {
@@ -86,7 +104,7 @@ public interface StudentCampOptions {
             System.out.println("Once you change your role, you will not be able to cancel or join another committee! Are you sure? Y/N");
             int input = -1;
             while (input == -1) {
-                input = InputChecker.parseUserBoolInput(sc.nextLine());
+                input = InputChecker.parseUserBoolInput(Console.nextString());
             }
             if (input == 1) {
                 for (Signup signup : signupList) {

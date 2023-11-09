@@ -1,8 +1,12 @@
 package application;
+import enquiry.Enquiry;
+import helper.Console;
+import helper.DataHandler;
+import suggestions.Suggestion;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Superclass intended to be used in CAMs interface.
@@ -115,17 +119,17 @@ public abstract class User {
 	 *
 	 */
 	public void changePass(List<User> userList) {
-		Scanner sc = new Scanner(System.in);
+		
 		String lastpass = "";
 		while(!matchPass(lastpass)){
 		System.out.println("Please enter your current password:");
-		lastpass = sc.nextLine();
+		lastpass = Console.nextString();
 		if(!matchPass(lastpass)){
 			System.out.println("Current password is incorrect.");}
 		}
 		if(matchPass(lastpass)) {
 			System.out.println("Please enter your new password.");
-			String newpass = sc.nextLine();
+			String newpass = Console.nextString();
 			this.password = hash(newpass);
 			System.out.println("Password successfully updated.");
 			DataHandler.saveUsers(userList);
@@ -152,11 +156,11 @@ public abstract class User {
 	 * @param campList List of all Camp objects.
 	 */
 	public abstract void viewOwnedCamps(List<Camp> campList,List<Signup> signupList, List<User> userList);
-	public abstract sessionStatus resolveCAMsMenu(int choice,String argument,
-										 List<User> userList,
-										 List<Camp> campList,
-										 List<Signup> SignupList,
-										 List<Enquiry> enquiryList,
-										 List<Suggestion> suggestionList);
+	public abstract SessionStatus resolveCAMsMenu(int choice, String argument,
+												  List<User> userList,
+												  List<Camp> campList,
+												  List<Signup> SignupList,
+												  List<Enquiry> enquiryList,
+												  List<Suggestion> suggestionList);
 
 }

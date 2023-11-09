@@ -1,5 +1,9 @@
 package application;
-public class StudentCommittee extends Student implements ElevatedActions{
+
+import suggestions.*;
+
+
+public class StudentCommittee extends Student implements AdminActions, SuggestionView, SuggestionEditor {
     private Camp camp;
     private int points;
     public StudentCommittee(String name, String id, String faculty,String password,int committee){

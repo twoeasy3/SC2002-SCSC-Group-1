@@ -1,11 +1,19 @@
 package application;
+import enquiry.Enquiry;
+import suggestions.Suggestion;
+
 import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 
-enum campStatus{
+/**
+ * The various states that a Camp can be, in real-time.
+ * OPEN - Registration date has not passed.
+ * CLOSED - Registration date has passed, but Start Date has not passed.
+ * ONGOING - Start Date has passed, but End Date has not passed.
+ * ENDED - End Date has passed.
+ */
+enum CampStatus {
 	OPEN,CLOSED,ONGOING,ENDED}
 
 
@@ -17,6 +25,13 @@ enum campStatus{
  * Relations with Students are handled by the Signup class.
  */
 public class Camp {
+	/**
+	 * Keeps track of the highest value seen so far.
+	 * When a new Camp is created, it will use this value +1.
+	 * This means that IDs may be skipped if Camps were deleted after the fact.
+	 *
+	 */
+	private static int globalIDCounter = -1;
 	/**
 	 * Name of the camp for display.
 	 * Due to current implementation, no commas in this field are allowed.
@@ -124,6 +139,9 @@ public class Camp {
 		this.attendeeList = new ArrayList<>();
 		this.blackList = new ArrayList<>();
 		this.committeeList = new ArrayList<>();
+		if(this.id > this.globalIDCounter){
+			this.globalIDCounter = this.id;
+		}
 	}
 
 	public String getName() {
@@ -161,12 +179,15 @@ public class Camp {
 	public LocalDate getStart() {
 		return this.startDate;
 	}
+	public void setStart(LocalDate startDate){this.endDate = startDate;}
 
 	public LocalDate getEnd() {
 		return this.endDate;
 	}
+	public void setEnd(LocalDate endDate){this.endDate = endDate;}
 
 	public LocalDate getRegEnd() {return regEnd;}
+	public void setRegEnd(LocalDate regEnd){this.regEnd = regEnd;}
 	public String getLocation()	{return location;}
 	public String getDescription(){return description;}
 	public int getMaxSize(){return maxSize;}
@@ -175,11 +196,13 @@ public class Camp {
 		return this.faculty;
 	}
 	public boolean isVisible(){return this.visible;}
+	public void setVisibility(boolean visible){this.visible = visible;}
 	public String getInCharge(){return this.inCharge;}
 	public int getAttendeeCount(){return attendeeList.size();}
 	public int getCommitteeCount(){return committeeList.size();}
 	public boolean isFull(){return (attendeeList.size()>= this.maxSize - this.maxComm);};
 	public boolean isFullCommittee(){return (committeeList.size() >= this.maxComm);}
+	public static int getGlobalIDCounter(){return this.getGlobalIDCounter();}
 	
 	public boolean checkEligibility(String faculty) {
 		if(this.faculty.equals(faculty) || this.faculty.equals("ALL")) {
@@ -187,6 +210,14 @@ public class Camp {
 		}
 		return false;
 	}
+
+	/**
+	 * Checks for clashes between this camp and another start and end date.
+	 * A Start Date falling on the same day and the other camp's End Date is considered a clash.
+	 * @param start1 Start date of the other camp.
+	 * @param end1 End date of the other camp.
+	 * @return Boolean on whether the camps clash. Returns true for clash.
+	 */
 	public boolean checkClash(LocalDate start1, LocalDate end1) { //TODO check if this is correct
 		if(start1.isBefore(this.endDate.plusDays(1)) && //if either start date falls between the duration of the other event
 				start1.isAfter(this.startDate.plusDays(-1))||
@@ -198,21 +229,25 @@ public class Camp {
 	}
 
 	/**
-	 * Returns a status for the camp relative to the date today.
-	 * @return 0 for Open registration, 1 for Closed, 2 for Ongoing and 3 for Ended
+	 * Returns the state that a Camp is in real-time.
+	 * OPEN - Registration date has not passed.
+	 * CLOSED - Registration date has passed, but Start Date has not passed.
+	 * ONGOING - Start Date has passed, but End Date has not passed.
+	 * ENDED - End Date has passed.
+	 * @return The campStatus of the camp
 	 */
-	public campStatus checkCampStatus(){
+	public CampStatus checkCampStatus(){
 		if(LocalDate.now().isBefore(this.regEnd)){ //Open for Registration
-			return campStatus.OPEN;
+			return CampStatus.OPEN;
 		}
 		else if(LocalDate.now().isAfter(this.regEnd) && LocalDate.now().isBefore(this.startDate)){ //Closed for registration but not started
-			return campStatus.CLOSED;
+			return CampStatus.CLOSED;
 		}
 		else if(!LocalDate.now().isBefore(this.startDate)&&!LocalDate.now().isAfter(this.endDate)){ //Camp ongoing
-			return campStatus.ONGOING;
+			return CampStatus.ONGOING;
 		}
 		else{
-			return campStatus.ENDED; //Camp ended
+			return CampStatus.ENDED; //Camp ended
 		}
 	}
 
@@ -233,6 +268,12 @@ public class Camp {
 	public void addCommittee(Student student){
 		this.committeeList.add(student);
 	}
+
+	/**
+	 * Moves a Student from the internal list of attendees to the list of committee.
+	 * Other actions that are required (deleting of the Signup, changing Student variables) are not performed here.
+	 * @param student Student to be moved.
+	 */
 	public void promoteToComittee(Student student){
 		this.attendeeList.remove(student);
 		this.committeeList.add(student);
@@ -258,183 +299,13 @@ public class Camp {
 	public void addToBlackList(Student student){
 		blackList.add(student);
 	}
+	public List<Student> getBlackList(){return this.blackList;}
 	public boolean isAttending(Student student){
 		return(attendeeList.contains(student));
 	}
 	public boolean isBlacklisted(Student student){
 		return(blackList.contains(student));
 	}
-
-	public boolean tryEditCamp(int category, String change) { //true for success, false for failure
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-		LocalDate proposedDate;
-		int proposed;
-		switch (category) {
-			case 1: //NAME
-				return true;
-			case 2: //VENUE
-				return true;
-			case 3: //DESCRIPTION
-				return true;
-			case 4: //MAX SLOTS; CONDITIONAL
-				if(!InputChecker.intValidity(change)){
-					System.out.println("Input error. Not valid integer. Camp not updated.");
-					return false;
-				}
-				proposed = Integer.parseInt(change);
-				if(proposed < 10){
-					System.out.println("Camp not updated. You can't create a camp with fewer than 10 slots!");
-					return false;
-				}
-				else if(proposed < this.getAttendeeCount() + this.maxComm ){
-					System.out.println("Camp not updated. Invalid input, current signups mean you need at least " + this.getAttendeeCount() + this.maxComm + " slots!");
-					return false;
-				}
-				else if(proposed > 24757){
-					System.out.println("Camp not updated. Your camp cannot have more open slots than NTU's enrolment this AY!");
-					return false;
-				}
-				else{
-					System.out.println("# of Camp Slots acceptable");
-					return true;
-				}
-			case 5: //MAX COMM; CONDITIONAL
-				if(!InputChecker.dateValidity(change)){
-					System.out.println("Input error. Not valid integer. Camp not updated.");
-					return false;
-				}
-				proposed = Integer.parseInt(change);
-				if(proposed > 10){
-					System.out.println("Camp not updated. You can't have more than 10 committee slots!");
-					return false;
-				}
-				else if(proposed < this.committeeList.size()){
-					System.out.println("Camp not updated. You already have " + this.committeeList.size() + " committee members!");
-					return false;
-				}
-				else{
-					System.out.println("# of Committee Slots acceptable");
-					return true;
-				}
-			case 6: //START DATE; ONLY IF EMPTY CAMP
-				if (!InputChecker.dateValidity(change)) {
-					System.out.println("General Date Error: Camp was not edited.");
-					return false;
-				}
-				proposedDate = LocalDate.parse(change, formatter);
-				if (proposedDate.isAfter(this.endDate)) {
-					System.out.println("Date Error: Start date is after End Date. Camp was not edited.");
-					return false;
-				}
-				if (proposedDate.isBefore(this.regEnd)) {
-					System.out.println("Date Error: Start date before Registration End Date. Camp was not edited.");
-					return false;
-				} else {
-					System.out.println("Date Accepted");
-					return true;
-				}
-			case 7://END DATE; ONLY IF EMPTY CAMP
-				if (!InputChecker.dateValidity(change)) {
-					System.out.println("General Date Error: Camp was not edited.");
-					return false;
-				}
-				proposedDate = LocalDate.parse(change, formatter);
-				if (proposedDate.isBefore(this.startDate)) {
-					System.out.println("Date Error: End date is before Start Date. Camp was not edited.");
-					return false;
-				}
-				if (proposedDate.isBefore(this.regEnd)) {
-					System.out.println("Date Error: Start date before Registration End Date. Camp was not edited.");
-					return false;
-				} else {
-					System.out.println("Date Accepted");
-					return true;
-				}
-			case 8: //REG END, ONLY IF EMPTY
-				if (!InputChecker.dateValidity(change)) {
-					System.out.println("General Date Error: Camp was not edited.");
-					return false;
-				}
-				proposedDate = LocalDate.parse(change, formatter);
-				if (proposedDate.isAfter(this.startDate)) {
-					System.out.println("Date Error: Reg End date is after Start Date. Camp was not edited.");
-					return false;
-				} else {
-					System.out.println("Date Accepted");
-					return true;
-				}
-			case 9: //VISIBILITY, ONLY IF EMPTY
-				if(InputChecker.parseUserBoolInput(change) == -1){
-					System.out.println("Camp not updated.");
-					return false;
-				}
-				else{
-					return true;
-				}
-
-			default:
-				System.out.println("Error editing camp.");
-				return false;
-		}
-	}
-	public void doEditCamp(int category, String change) { //true for success, false for failure
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-		LocalDate proposedDate;
-
-		switch (category) {
-			case 1: //NAME
-				this.name = change.replace(",", "");
-				System.out.println("Camp updated. New name: " + this.name);
-				return;
-			case 2: //VENUE
-				this.location = change.replace(",", "");
-				System.out.println("Camp updated. New venue: " + this.location);
-				return;
-			case 3: //DESCRIPTION
-				this.description = change.replace(",", "");
-				System.out.println("Camp updated. New description: ");
-				System.out.println(this.description);
-				return;
-			case 4: //MAX SLOTS; CONDITIONAL
-				this.maxSize = Integer.parseInt(change);
-				System.out.println("Camp updated. New Max Slots: " + this.maxSize);
-				return;
-			case 5: //MAX COMM; CONDITIONAL
-				this.maxComm = Integer.parseInt(change);
-				System.out.println("Camp updated. New Max Committee Slots: " + this.maxComm);
-				return;
-			case 6: //START DATE; ONLY IF EMPTY CAMP
-				proposedDate = LocalDate.parse(change, formatter);
-				this.startDate = proposedDate;
-				System.out.println("Camp updated. New start date: " + this.startDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
-				return;
-			case 7://END DATE; ONLY IF EMPTY CAMP
-				proposedDate = LocalDate.parse(change, formatter);
-				this.endDate = proposedDate;
-				System.out.println("Camp updated. New end date: " + this.endDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
-				return;
-			case 8: //REG END, ONLY IF EMPTY
-				proposedDate = LocalDate.parse(change, formatter);
-				this.regEnd = proposedDate;
-				System.out.println("Camp updated. New Reg End date: " + this.regEnd.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
-				return;
-			case 9: //VISIBILITY, ONLY IF EMPTY
-				if(InputChecker.parseUserBoolInput(change) == 1){
-					this.visible = true;
-					System.out.println("Camp updated and is now visible to eligible students.");
-					return;
-				}
-				else{
-					this.visible = false;
-					System.out.println("Camp updated and is no longer visible to students.");
-					return;
-				}
-			default:
-				System.out.println("Error editing camp.");
-				return;
-		}
-	}
-
 
 
 	public ArrayList<Enquiry> getEnquiryList() {

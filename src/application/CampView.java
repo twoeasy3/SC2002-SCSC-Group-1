@@ -1,5 +1,7 @@
 package application;
 
+import enquiry.*;
+
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
@@ -11,21 +13,7 @@ public abstract class CampView {
             return;
         }
         for(Enquiry enquiry: camp.getEnquiryList()){
-            System.out.println(enquiry.getAuthor().getName()+ " (" + enquiry.getAuthor().getFaculty() +"): ");
-            System.out.println(enquiry.getDescription());
-            if(enquiry.getResolved()){
-                if(enquiry.getReplyAuthor() instanceof Staff){
-                    System.out.println(enquiry.getReplyAuthor().getName()+ " (" + enquiry.getReplyAuthor().getFaculty() +") [INCHARGE]: ");
-                }
-                else{
-                    System.out.println(enquiry.getReplyAuthor().getName()+ " (" + enquiry.getReplyAuthor().getFaculty() +") [COMMITTEE]: ");
-                }
-                System.out.println(enquiry.getReply());
-            }
-            else{
-                System.out.println("No reply yet.");
-            }
-            System.out.println("-----------------------");
+            System.out.println( EnquiryView.singleEnquiryToString(enquiry,true));
         }
     }
 

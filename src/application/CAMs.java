@@ -1,8 +1,14 @@
 package application;
-import java.util.List;
-import java.util.Scanner;
+import enquiry.Enquiry;
+import helper.Console;
+import helper.DataHandler;
+import helper.Fetcher;
+import helper.InputChecker;
+import suggestions.Suggestion;
 
-enum sessionStatus{ CONTINUE,LOGOUT,CLOSE}
+import java.util.List;
+
+enum SessionStatus { CONTINUE,LOGOUT,CLOSE}
 public class CAMs {
 	/**
 	 * CAMs main interface. Initialises the program state and provides login for user
@@ -17,15 +23,15 @@ public class CAMs {
 		List<Signup> signupList = DataHandler.getSignups(userList, campList);
 		List<Enquiry> enquiryList = DataHandler.getEnquiries(userList, campList);
 		List<Suggestion> suggestionList = DataHandler.getSuggestions(userList, campList);
-		Scanner sc = new Scanner(System.in);
-		sessionStatus sStatus = sessionStatus.LOGOUT;
-		while (sStatus == sessionStatus.LOGOUT) {
+		
+		SessionStatus sStatus = SessionStatus.LOGOUT;
+		while (sStatus == SessionStatus.LOGOUT) {
 			User activeUser = resolveLogin(userList); //login user
-			sStatus = sessionStatus.CONTINUE;
-			while (sStatus == sessionStatus.CONTINUE) {
+			sStatus = SessionStatus.CONTINUE;
+			while (sStatus == SessionStatus.CONTINUE) {
 				activeUser.printMenu(campList);
 				//This entire portion allows for arguments in the options like 2-f
-				String response = sc.nextLine();
+				String response = Console.nextString();
 				int choice;
 				String argument;
 				try {
@@ -50,12 +56,12 @@ public class CAMs {
 		String response;
 		boolean userFound = false;
 		User activeUser = null;
-		Scanner sc = new Scanner(System.in);
+		
 
 
 		while (!userFound) {
 			System.out.println("Please enter your username to login: ");
-			response = sc.nextLine();
+			response = Console.nextString();
 			activeUser = Fetcher.getUserFromID(response,userList);
 			if (activeUser == null) {
 				System.out.println("User not found!");} else {
@@ -64,7 +70,7 @@ public class CAMs {
 		boolean passwordMatch = false;
 		while (!passwordMatch) {
 			System.out.println("Please enter your password: ");
-			response = sc.nextLine();
+			response = Console.nextString();
 
 			if (activeUser.matchPass(response)) {
 				passwordMatch = true;
