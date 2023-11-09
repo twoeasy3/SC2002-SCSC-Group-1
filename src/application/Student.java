@@ -2,7 +2,9 @@ package application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-public class Student extends User{ 
+
+
+public class Student extends User implements StudentCampOptions{
 	int committee; //-1 if not committee member, otherwise put camp.id
 
 	private ArrayList<Enquiry> enquiryList;
@@ -14,238 +16,98 @@ public class Student extends User{
 	}
 
 	public int getCommittee(){return this.committee;}
+	public void setCommittee(int campID){this.committee = campID;}
 
 	public ArrayList<Enquiry> getEnquiryList() {
 		return enquiryList;
 	}
 
-	public void printMenu(List<Camp> campList){
-		System.out.println("Student Portal");
-		if(this.getCommittee() == -1){
-			System.out.println("You are not currently a committee member of any camp.");}
-		else{
-			System.out.println("You are currently a committee member of " + Fetcher.getCampfromID(this.committee, campList).getName());//dangerous error possible
-		}
-		System.out.println("1. Change your password.");
-		System.out.println("2. View eligible camps. (-o,-l,-s,-r,-p,-f)");
-		System.out.println("3. View your signups.");
-		System.out.println("4. Sign up for camp. (-o,-l,-s,-r,-p,-f)" );
-		System.out.println("5. Camp Enquiry Hub");
-		if(this.committee!= -1){
-		System.out.println("6. Camp Committee Hub");
-		}
-		System.out.println("9. Log out");
-		System.out.println("0. Terminate CAMs");
-	}
-	public void viewCamps(List<Camp> campList, List<Enquiry> enquiryList){
-		Scanner sc = new Scanner(System.in);
-		List<Camp> eligibleCamps = new ArrayList<>();
-		for (Camp camp : campList){
-			if(camp.checkEligibility(this.getFaculty()) && camp.isVisible()){
-				eligibleCamps.add(camp);
-			}
-		}
-		String listMenu = CampListView.createNumberedCampList(eligibleCamps,this);
-		boolean endLoop = false;
-		while (!endLoop){
-			System.out.println("Showing all camps visible to you:");
-			Camp selectedCamp = CampListView.campFromListSelector(eligibleCamps,listMenu);
-			if(selectedCamp == null) {
-				return;
-			}else {
-				selectedCamp.showSummary();
-				boolean canEnquire = false;
-				if (selectedCamp.checkCampStatus()==campStatus.ONGOING || selectedCamp.checkCampStatus()==campStatus.ENDED){
-					System.out.println("Enquiries are closed because the camp has started. Press Enter to continue.");}
-				else if (selectedCamp.checkCampStatus()==campStatus.CLOSED && selectedCamp.isAttending(this)){
-					System.out.println("Press Enter to continue or type 'enquiry' to start a new enquiry:");
-					canEnquire = true;}
-				else if (selectedCamp.checkCampStatus()==campStatus.CLOSED && !selectedCamp.isAttending(this)){
-					System.out.println("Enquiries are closed because registration is over and you aren't attending. Press Enter to continue. ");}
-				else if (selectedCamp.isBlacklisted(this)){
-					System.out.println("Enquiries are closed to you because have cancelled your signup for this camp.");}
+	public sessionStatus resolveCAMsMenu(int choice,String argument,
+								List<User> userList,
+								List<Camp> campList,
+								List<Signup> signupList,
+								List<Enquiry> enquiryList,
+								List<Suggestion> suggestionList){
+		sessionStatus status = sessionStatus.CONTINUE;
+		switch(choice) {
+			case 1:
+				this.changePass(userList);
+				return status;
+			case 2:
+				campList = CampListView.sortCampList(campList,argument);
+				this.viewCamps(campList , enquiryList);
+				return status;
+			case 3:
+				campList = CampListView.sortCampList(campList,argument);
+				this.viewOwnedCamps(campList, signupList,userList);
+				return status;
+			case 4:
+				campList = CampListView.sortCampList(campList,argument);
+				this.signUpCamp(campList, signupList);
+				return status;
+			case 5:
+				//ENQUIRIES HUB
+				return status;
+			case 6:
+				if (this instanceof StudentCommittee && ((StudentCommittee)this).getCamp() != null){
+					((StudentCommittee) this).adminMenu(campList,this,suggestionList);
+				}
 				else{
-					System.out.println("Press Enter to continue or type 'enquiry' to start a new enquiry:");
-					canEnquire = true;}
-				String response = sc.nextLine();
-				if(response.equals("enquiry") && canEnquire) {
-					writeEnquiry(selectedCamp,enquiryList);
-					}
-			}
+					System.out.println("Invalid Choice");
+				}
+				return status;
+			case 9:
+				System.out.println("Logging out from CAMs...");
+				status = sessionStatus.LOGOUT;
+				return status;
+			case 0:
+				System.out.println("Logging out and terminating CAMs...");
+				status = sessionStatus.CLOSE;
+				return status;
+
+			default:
+				System.out.println("Invalid Choice");
+				return status;
 		}
 	}
-	/** THIS SECTION FOR ENQUIRY / SUGGESTIONS **/
 
-	public void writeEnquiry(Camp camp, List<Enquiry> enquiryList){
+
+	public void printMenu(List<Camp> campList){
+		StudentView.printMenu(this,campList);
+	}
+
+	public void viewCamps(List<Camp> campList, List<Enquiry> enquiryList){
+		StudentView.viewCamps(this,campList,enquiryList);
+	}
+
+	public void viewOwnedCamps(List<Camp> campList,List<Signup> signupList,List<User> userList) { //TODO
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter your enquiry:");
-		String response = sc.nextLine();
-		Enquiry newEnquiry = new Enquiry(camp,this,response,null,"",false);
-		enquiryList.add(newEnquiry);
-		DataHandler.saveEnquiries(enquiryList);
-		}
-	// allows student to view the enquiry (description + reply)
-	public void viewEnquiry(Enquiry enquiry) {
-		System.out.println(enquiry.getDescription());
-		if (enquiry.getReply().isEmpty()) {
-			System.out.println("This enquiry has not yet been replied");
-		}
-		else System.out.println(enquiry.getReply());
-	}
-	// assuming only description can be edited. but maybe camp can be updated as well?
-	public void editEnquiry(Enquiry e, String s) {
-		e.setDescription(s + "\n This enquiry has been edited");
-		DataHandler.saveEnquiries(enquiryList);
-		System.out.println("Your enquiry has been edited");
-	}
-	// removes enquiry from both the camp and the user
-	public void deleteEnquiry(Enquiry e, List<Enquiry> enquiryList) {
-		this.enquiryList.remove(e);
-		e.getCamp().getEnquiryList().remove(e);
-		enquiryList.remove(e);
-		System.out.println("Your enquiry has been deleted");
-	}
-
-
-
-	public List<Camp> getOwnedCamps(List<Camp> campList,List<Signup> signupList) {
-		List<Camp> ownedCamps = new ArrayList<>();
-		for (Signup signup : signupList) {
-			if(signup.matchStudent(this) && signup.getStatus() ) {
-				ownedCamps.add(signup.getCamp());
-			}
-		}
-		if(this.committee!=-1) {
-			ownedCamps.add(Fetcher.getCampfromID(this.committee,campList));
-		}
-		return ownedCamps;
-	}
-	public void viewOwnedCamps(List<Camp> campList,List<Signup> signupList,List<User> schoolList){ //TODO
-		Scanner sc = new Scanner(System.in);
-		List<Camp> ownedCamps = this.getOwnedCamps(campList,signupList);
-		if (ownedCamps.size() == 0){
+		List<Camp> ownedCamps = StudentCampOptions.getOwnedCamps(this, campList, signupList);
+		if (ownedCamps.size() == 0) {
 			System.out.println("You aren't registered for any camp!");
 			return;
 		}
 		boolean endLoop = false;
-		String listMenu = CampListView.createNumberedCampList(ownedCamps,this);
-		while(!endLoop){
+		String listMenu = CampListView.createNumberedCampList(ownedCamps, this);
+		while (!endLoop) {
 			System.out.println("Showing all camps you have signed up for:");
-			Camp selectedCamp = CampListView.campFromListSelector(ownedCamps,listMenu);
-			if(selectedCamp == null) {
+			Camp selectedCamp = CampListView.campFromListSelector(ownedCamps, listMenu);
+			if (selectedCamp == null) {
 				return;
-			}else {
-				selectedCamp.showSummary();
-				System.out.println("Press Enter to go back.");
-				if(this.committee != selectedCamp.getID()) {
-					System.out.println("To cancel this signup type 'cancel'");
-				}
-				if(!selectedCamp.isFullCommittee() && this.committee == -1){
-					System.out.println("To upgrade to Committee member type 'committee'"); }//TODO check for slots
-				String response = sc.nextLine();
-				if(response.equals("cancel") && this.committee != selectedCamp.getID()){
-					System.out.println("Once you cancel, you will not be able to sign up for this camp again! Are you sure? Y/N");
-					int input = -1;
-					while (input == -1) {
-						input = InputChecker.parseUserBoolInput(sc.nextLine());
-					}
-					if (input == 1) {
-						for(Signup signup : signupList){
-							if(signup.getStudent() == this && signup.getCamp() == selectedCamp){
-								signup.cancelSignup();
-								DataHandler.saveSignups(signupList);
-								endLoop = true;
-								break;
-							}
-						}
-						endLoop = true;
-					} else {
-						System.out.println("Backing out and showing you your signups...");
-					}
-				}
-				else if(response.equals("committee") && !selectedCamp.isFullCommittee() && this.committee == -1){
-					System.out.println("Once you change your role, you will not be able to cancel or join another committee! Are you sure? Y/N");
-					int input = -1;
-					while (input == -1) {
-						input = InputChecker.parseUserBoolInput(sc.nextLine());
-					}
-					if (input == 1) {
-						for(Signup signup : signupList){
-							if(signup.getStudent() == this && signup.getCamp() == selectedCamp){
-								signupList.remove(signup);
-								DataHandler.saveSignups(signupList);
-								this.committee = selectedCamp.getID();
-								selectedCamp.promoteToComittee(this); //this only matters for memory
-								DataHandler.saveUsers(schoolList);
-								endLoop = true;
-								break;
-							}
-						}
-						endLoop = true;
-					} else {
-						System.out.println("Backing out and showing you your signups...");
-					}
-				}
-
+			} else {
+				endLoop = StudentCampOptions.extraViewOptions(this, selectedCamp , userList, signupList);
 			}
 		}
 	}
 
-
-	public List<Camp> getAttendingCamps(List<Camp> campList, List<Signup> signupList){
-		List<Camp> attendingCamps = new ArrayList<>();
-		Camp committeeCamp;
-		for (Signup signup : signupList){
-			if (signup.getStatus() && signup.getStudent().getID().equals(this.getID())){
-				attendingCamps.add(signup.getCamp());
-			}
-		}
-		committeeCamp = Fetcher.getCampfromID(this.getCommittee(),campList);
-		if (committeeCamp != null){
-			attendingCamps.add(committeeCamp);
-		}
-		return attendingCamps;
-	}
 	public void signUpCamp(List<Camp> campList, List<Signup> signupList) { //TODO disallow when camp is full & clashes
 		System.out.println("Showing events you are eligible for as a student of " + this.getFaculty() + " and have never signed up for...");
-		List<Camp> campListCopy = new ArrayList<>(campList);
-		List<Camp> attendingCamps = this.getAttendingCamps(campList,signupList);
-		campListCopy.removeAll(attendingCamps); //remove all camps that student is already attending/committee-ing
-		int i = 0;
-		List<Camp> eligibleCamps = new ArrayList<>();
-		boolean signUpExists;
-		boolean clashExists;
-		for (Camp camp : campListCopy) {
-			signUpExists = false;
-			if (camp.checkEligibility(this.getFaculty()) && camp.isVisible()
-					&& !camp.isFull() &&camp.checkCampStatus()==campStatus.OPEN) {//camp eligibility check
-				if(camp.isAttending(this) || camp.isBlacklisted(this)){
-					signUpExists = true;
-				}
-				if(!signUpExists){//Now check for clashes
-					clashExists = false;
-					for(Camp attendingCamp : attendingCamps){//for each attending camp, see if eligible camp clashes
-						if(attendingCamp.checkClash(camp.getStart(),camp.getEnd())){ //clash found
-							clashExists = true;
-							break;
-						}
-					}
-					if (!clashExists){
-						i++;
-						eligibleCamps.add(camp);
-					}
-				}
-			}
-
-		}
-		if (i == 0) {
+		List<Camp> eligibleCamps = StudentCampOptions.getEligibleCamps(this,campList,signupList);
+		if (eligibleCamps == null || eligibleCamps.size() == 0) {
 			System.out.println("No camps are currently open for you :(");
 			return;
 		}
 		Scanner sc = new Scanner(System.in);
-		if (eligibleCamps == null){
-			return;
-		}
 		boolean endLoop = false;
 		String listMenu = CampListView.createNumberedCampList(eligibleCamps,this);
 		while(!endLoop){
@@ -254,7 +116,7 @@ public class Student extends User{
 			if(selectedCamp == null) {
 				return;
 			}else {
-				selectedCamp.showSummary();
+				CampView.showSummary(selectedCamp);
 				System.out.println("Join Camp as attendee? Y/N");
 				int input = -1;
 				while (input == -1) {
@@ -271,6 +133,5 @@ public class Student extends User{
 			}
 		}
 	}
-
 }
 

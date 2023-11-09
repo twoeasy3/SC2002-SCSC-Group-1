@@ -5,6 +5,11 @@ import java.time.format.DateTimeFormatter;
 
 public class InputChecker {
 
+    public static String resolveArgument(String response){
+        response = response.replaceAll("[-\\s]+", "");
+        response = response.substring(1);
+        return response;
+    }
 
     public static boolean dateValidity(String input) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");

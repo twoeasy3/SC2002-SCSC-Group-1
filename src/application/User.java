@@ -1,8 +1,6 @@
 package application;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -101,10 +99,10 @@ public abstract class User {
 		}
 	}
 
-	public void checkForDefaultPass(){
+	public void checkForDefaultPass(List<User> userList){
 		if(hash("password").equals(this.password)){
 			System.out.println("Welcome to CAMs. We require you to change your password.");
-			this.changePass();
+			this.changePass(userList);
 		}
 	}
 
@@ -116,7 +114,7 @@ public abstract class User {
 	 * After this is called, main() should call DataHandler.saveUsers() to update program state.
 	 *
 	 */
-	public void changePass() {
+	public void changePass(List<User> userList) {
 		Scanner sc = new Scanner(System.in);
 		String lastpass = "";
 		while(!matchPass(lastpass)){
@@ -130,6 +128,7 @@ public abstract class User {
 			String newpass = sc.nextLine();
 			this.password = hash(newpass);
 			System.out.println("Password successfully updated.");
+			DataHandler.saveUsers(userList);
 		}
 
 	}
@@ -152,7 +151,12 @@ public abstract class User {
 	 * Behaviour changes based on whether the User is a Student or Staff.
 	 * @param campList List of all Camp objects.
 	 */
-	public abstract void viewOwnedCamps(List<Camp> campList,List<Signup> signupList, List<User> schoolList);
-
+	public abstract void viewOwnedCamps(List<Camp> campList,List<Signup> signupList, List<User> userList);
+	public abstract sessionStatus resolveCAMsMenu(int choice,String argument,
+										 List<User> userList,
+										 List<Camp> campList,
+										 List<Signup> SignupList,
+										 List<Enquiry> enquiryList,
+										 List<Suggestion> suggestionList);
 
 }

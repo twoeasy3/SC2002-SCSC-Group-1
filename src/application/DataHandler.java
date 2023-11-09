@@ -24,7 +24,7 @@ public class DataHandler {
         String csvSeparator = ",";
 
         //Creating Students
-		List<User> schoolList = new ArrayList<>();
+		List<User> userList = new ArrayList<>();
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(studentFile))){
 			line = br.readLine();
@@ -37,7 +37,7 @@ public class DataHandler {
 					String passwordHash = lineData[3];
 					int committee = Integer.parseInt(lineData[4]);
 					Student newStudent = new StudentCommittee(name,id,faculty,passwordHash,committee);
-					schoolList.add(newStudent);
+					userList.add(newStudent);
 					line = br.readLine();
 					
 					
@@ -58,7 +58,7 @@ public class DataHandler {
 					String passwordHash = lineData[3];
 					//committee field ignored for Staff
 					Staff newStaff = new Staff(name,id,faculty,passwordHash);
-					schoolList.add(newStaff);
+					userList.add(newStaff);
 					line = br.readLine();
 					
 				}
@@ -67,10 +67,10 @@ public class DataHandler {
 			e.printStackTrace();
 		}
 		/*DEBUG
-		for (User User : schoolList) {
+		for (User User : userList) {
             System.out.println(User.getID() + " " + User.getName());
         } */
-		return schoolList;
+		return userList;
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class DataHandler {
 	 *
 	 * @return List of all Signup objects described in the CSV.
 	 */
-	public static List<Signup> getSignups(List<User> schoolList, List<Camp> campList){
+	public static List<Signup> getSignups(List<User> userList, List<Camp> campList){
 		//Creating Signup
 		List<Signup> signupList = new ArrayList<>();
 		String signupFile = "data/signups.csv";
@@ -144,7 +144,7 @@ public class DataHandler {
 				if (lineData.length>2) {
 					userID = lineData[0];
 					studentExists = false;
-					for (User user : schoolList) {
+					for (User user : userList) {
 						if (user.getID().equals(userID)) {
 							foundStudent = user;
 							studentExists = true;
@@ -179,7 +179,7 @@ public class DataHandler {
         }*/
 		return signupList;
 	}
-	public static List<Enquiry> getEnquiries(List<User> schoolList, List<Camp> campList) {
+	public static List<Enquiry> getEnquiries(List<User> userList, List<Camp> campList) {
 		List<Enquiry> enquiryList = new ArrayList<>();
 		String enquiryFile = "data/enquiries.csv";
 		String line;
@@ -200,7 +200,7 @@ public class DataHandler {
 				if (lineData.length > 2) {
 					userID = lineData[1];
 					studentExists = false;
-					for (User user : schoolList) {
+					for (User user : userList) {
 						if (user.getID().equals(userID)) {
 							foundStudent = user;
 							studentExists = true;
@@ -222,7 +222,7 @@ public class DataHandler {
 					boolean status = (1 == Integer.parseInt(lineData[5]));
 					if (status) {
 						replyUserID = lineData[3];
-						for (User user : schoolList) {
+						for (User user : userList) {
 							if (user.getID().equals(replyUserID)) {
 								foundReplyAuthor = user;
 								enquiry = new Enquiry(foundCamp,(Student) foundStudent, lineData[2],
@@ -247,7 +247,7 @@ public class DataHandler {
 		return enquiryList;
 	}
 
-	public static List<Suggestion> getSuggestions(List<User> schoolList, List<Camp> campList) {
+	public static List<Suggestion> getSuggestions(List<User> userList, List<Camp> campList) {
 		List<Suggestion> suggestionList = new ArrayList<>();
 		String suggestionFile = "data/Suggestions.csv";
 		String line;
@@ -267,7 +267,7 @@ public class DataHandler {
 				if (lineData.length > 2) {
 					userID = lineData[1];
 					studentExists = false;
-					for (User user : schoolList) {
+					for (User user : userList) {
 						if (user.getID().equals(userID)) {
 							foundStudent = user;
 							studentExists = true;

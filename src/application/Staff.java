@@ -17,37 +17,21 @@ public class Staff extends User implements ElevatedActions{
 		return true;
 	}
 
-	public void printMenu(List<Camp> campList) {
-		System.out.println("Staff Portal");
-		System.out.println("You have XX new queries."); //TODO 	A staff can view and reply to enquiries from students to the camp(s) his/her has created
-		System.out.println("1. Change your password.");
-		System.out.println("2. View all active camps. (-o,-l,-s,-r,-p,-f)");
-		System.out.println("3. View and Edit your camps. (-o,-l,-s,-r,-p,-f)");
-		System.out.println("4. Camp enquiry hub.");
-		System.out.println("5. Create a camp");
-		System.out.println("6. Camp Admin Hub");
-		System.out.println("9. Log out");
-		System.out.println("0. Terminate CAMs");
+	public void printMenu(List<Camp> campList){
+		StaffView.printMenu(campList);
 	}
-
-	public void viewCamps(List<Camp> campList ,List<Enquiry> enquiryList) {
-		Scanner sc = new Scanner(System.in);
-		boolean endLoop = false;
-		String listMenu = CampListView.createNumberedCampList(campList,this);
-		while(!endLoop){
-			System.out.println("Showing all camps created by you:");
-			Camp selectedCamp = CampListView.campFromListSelector(campList,listMenu);
-			if(selectedCamp == null) {
-				return;
-			}else {
-				selectedCamp.showSummary();
-				System.out.println("Viewing Mode - Press Enter to return");
-				String response = sc.nextLine();
-			}
-		}
-
+	public void viewCamps(List<Camp> campList, List<Enquiry> enquiryList){
+		StaffView.viewCamps(this,campList,enquiryList);
 	}
-
+	public sessionStatus resolveCAMsMenu(int choice, String argument,
+												List<User> userList,
+												List<Camp> campList,
+												List<Signup> signupList,
+												List<Enquiry> enquiryList,
+												List<Suggestion> suggestionList){
+		return StaffView.resolveCAMsMenu(this, choice, argument,
+									userList,campList,signupList,enquiryList,suggestionList);
+	}
 
 	public List<Camp> getOwnedCamps(List<Camp> campList){
 		int i= 0;
@@ -67,7 +51,7 @@ public class Staff extends User implements ElevatedActions{
 		return ownedCamps;
 	}
 
-	public void viewOwnedCamps(List<Camp> campList, List<Signup> signupList, List<User> schoolList) {
+	public void viewOwnedCamps(List<Camp> campList, List<Signup> signupList, List<User> userList) {
 		Scanner sc = new Scanner(System.in);
 		List<Camp> ownedCamps = this.getOwnedCamps(campList);
 		if (ownedCamps == null){
@@ -81,7 +65,7 @@ public class Staff extends User implements ElevatedActions{
 			if(selectedCamp == null) {
 				return;
 			}else {
-				selectedCamp.showSummary();
+				CampView.showSummary(selectedCamp);
 				System.out.println("Edit Camp? Y/N");
 				int input = -1;
 				while (input == -1) {
@@ -150,7 +134,7 @@ public class Staff extends User implements ElevatedActions{
 			}
 
 		}
-	public Camp createCamp() {
+	public void createCamp(List<Camp> campList) {
 		String response;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		Scanner sc = new Scanner(System.in);
@@ -246,8 +230,9 @@ public class Staff extends User implements ElevatedActions{
 			System.out.println("Set camp to be visible to students now? Y/N");
 			visibility = InputChecker.parseUserBoolInput(sc.nextLine());
 		}
-		return (new Camp(-2, name, faculty, startDate, endDate, regEnd,
+		campList.add(new Camp(-2, name, faculty, startDate, endDate, regEnd,
 				description, location, maxSize, maxComm, this.getID(), visibility));
+		DataHandler.saveCamps(campList);
 	}
 
 

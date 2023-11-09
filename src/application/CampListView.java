@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
-public class CampListView {
+public abstract class CampListView {
     /**
      * Used in conjunction with extra arguments to select which sorted list to display
      * -o "Open" Camps first
@@ -60,7 +60,6 @@ public class CampListView {
                     ,camp.getStart().format(customFormatter),
                     camp.getEnd().format(customFormatter),camp.getAttendeeCount(),
                     (camp.getMaxSize()- camp.getMaxComm()));
-            //listMenu = sb.append(i).append(": ").append(camp.getName()).append(" (").append(camp.getFaculty()).append(") ").append(camp.getLocation()).append(" [").append(camp.getAttendeeCount()).append("/").append(camp.getMaxSize()-camp.getMaxComm()).append("] ").toString();
             if (!camp.isVisible()){
                 lineString = lineString + " |HIDDEN|";
             }

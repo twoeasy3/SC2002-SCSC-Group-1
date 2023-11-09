@@ -7,12 +7,12 @@ public class Fetcher {
      * Finds a User object and returns it.
      * Used in login screen, object is selected as the active user.
      * @param userID UserID as a String to look for.
-     * @param schoolList List of all Users loaded in by DataHandler.
+     * @param userList List of all Users loaded in by DataHandler.
      * @return Appropriate User object if matching ID is found. If no user matched, dummy error object is returned.
      *
      */
-    public static User getUserFromID (String userID, List<User> schoolList) {
-        for (User user : schoolList) {
+    public static User getUserFromID (String userID, List<User> userList) {
+        for (User user : userList) {
             if(user.getID().equals(userID)) {
 
                 return user;
