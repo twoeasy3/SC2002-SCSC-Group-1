@@ -202,7 +202,7 @@ public class Camp {
 	public int getCommitteeCount(){return committeeList.size();}
 	public boolean isFull(){return (attendeeList.size()>= this.maxSize - this.maxComm);};
 	public boolean isFullCommittee(){return (committeeList.size() >= this.maxComm);}
-	public static int getGlobalIDCounter(){return this.getGlobalIDCounter();}
+	public static int getGlobalIDCounter(){return globalIDCounter;}
 	
 	public boolean checkEligibility(String faculty) {
 		if(this.faculty.equals(faculty) || this.faculty.equals("ALL")) {
