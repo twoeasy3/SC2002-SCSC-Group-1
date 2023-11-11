@@ -233,7 +233,7 @@ public class Staff extends User implements AdminActions, SuggestionResolver {
 			visibility = InputChecker.parseUserBoolInput(Console.nextString());
 		}
 		campList.add(new Camp(Camp.getGlobalIDCounter()+1, name, faculty, startDate, endDate, regEnd,
-				description, location, maxSize, maxComm, this.getID(), visibility));
+				location, description, maxSize, maxComm, this.getID(), visibility));
 		DataHandler.saveCamps(campList);
 	}
 
