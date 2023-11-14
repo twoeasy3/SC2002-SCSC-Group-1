@@ -7,15 +7,27 @@ import suggestions.Suggestion;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Account type for User. Its exclusive complement is Staff.
+ * Students exclusively have the rights to join Camps and write enquiries.
+ * Students can also sign up to be StudentCommittee, so no Student object should be inititalised as Student. It should be initialied as StudentCommittee and immediately cast up to Student.
+ */
 public class Student extends User implements StudentCampOptions{
 	int committee; //-1 if not committee member, otherwise put camp.id
 
 	private List<Enquiry>  enquiryList= new ArrayList<>();
-	
+
+	/**
+	 * Standard constructor for Student object.
+	 * Calls upon User constructor.
+	 * @param name
+	 * @param id
+	 * @param faculty
+	 * @param password
+	 * @param committee
+	 */
 	public Student(String name, String id, String faculty,String password,int committee) {
-		super();
-		this.fillDetails(name, id, faculty, password);
+		super(name, id, faculty, password);
 		this.committee = committee;
 	}
 
@@ -33,6 +45,17 @@ public class Student extends User implements StudentCampOptions{
 		StudentView.printMenu(this,campList);
 	}
 
+	/**
+	 * Used to determine which methods to call when option is given on the CAMs main menu.
+	 * @param choice Input integer choice for menu
+	 * @param argument Any additional string arguments (used for Camp filters)
+	 * @param userList List of all User objects. Passed to other classes.
+	 * @param campList List of all Camp objects. Passed to other classes.
+	 * @param signupList List of all Signup objects. Passed to other classes.
+	 * @param enquiryList List of all Enquiry objects. Passed to other classes.
+	 * @param suggestionList List of all Suggestion objects. Passed to other classes.
+	 * @return
+	 */
 	public SessionStatus resolveCAMsMenu(int choice, String argument,
 										 List<User> userList,
 										 List<Camp> campList,
@@ -43,6 +66,13 @@ public class Student extends User implements StudentCampOptions{
 				userList,campList,signupList,enquiryList,suggestionList);
 	}
 
+	/**
+	 * General view menu for Students.
+	 * This view shows all Camps of the Student's faculty and those open to ALL.
+	 * This view shows Blacklisted and non-Open camps.
+	 * @param campList List of all Camp objects.
+	 * @param enquiryList
+	 */
 	public void viewCamps(List<Camp> campList, List<Enquiry> enquiryList){
 		StudentView.viewCamps(this,campList,enquiryList);
 	}
@@ -66,6 +96,19 @@ public class Student extends User implements StudentCampOptions{
 		}
 	}
 
+	/**
+	 * General menu for Camps the Student can sign up for.
+	 * The conditions checked for an eligible Camp are as follows:
+	 * - Same faculty or "ALL"
+	 * - Not already signed up or Committee
+	 * - Not blacklisted
+	 * - Camp registration date not past
+	 * - Camp still have empty spots.
+	 *
+	 * @param userList List of all User objects. Used to save user state.
+	 * @param campList List of all Camp objects. Used for camp data.
+	 * @param signupList List of all Signup objects. Used to save signup state.
+	 */
 	public void signUpView(List<User> userList, List<Camp> campList, List<Signup> signupList) { //TODO disallow when camp is full & clashes
 		System.out.println("Showing events you are eligible for as a student of " + this.getFaculty() + " and have never signed up for...");
 		List<Camp> eligibleCamps = StudentCampOptions.getEligibleCamps(this,campList,signupList);
@@ -76,8 +119,7 @@ public class Student extends User implements StudentCampOptions{
 		
 		boolean endLoop = false;
 		String listMenu = CampListView.createNumberedCampList(eligibleCamps,this);
-		while(!endLoop){
-			System.out.println("Showing all camps created by you:");
+			System.out.println("Showing all camps you can sign up for:");
 			Camp selectedCamp = CampListView.campFromListSelector(eligibleCamps,listMenu);
 			if(selectedCamp == null) {
 				return;
@@ -105,7 +147,6 @@ public class Student extends User implements StudentCampOptions{
 					System.out.println("Backing out and showing you all eligible camps again...");
 				}
 			}
-		}
 	}
 }
 

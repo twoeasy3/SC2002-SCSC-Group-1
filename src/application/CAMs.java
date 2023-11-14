@@ -13,9 +13,8 @@ public class CAMs {
 	/**
 	 * CAMs main interface. Initialises the program state and provides login for user
 	 *
-	 * @param args Unused.
 	 */
-	public static void main(String[] args) {
+	public static void main() {
 
 		List<User> userList = DataHandler.getUsers();
 		List<Camp> campList = DataHandler.getCamps();

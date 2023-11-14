@@ -43,7 +43,7 @@ public abstract class User {
 	 * @param faculty String identifier of user faculty.
 	 * @param password SHA-256 hash value of password.
 	 */
-	public void fillDetails(String name, String id, String faculty, String password) {
+	public User(String name, String id, String faculty, String password) {
 		this.name = name;
 		this.id = id;
 		this.faculty = faculty;
@@ -103,6 +103,12 @@ public abstract class User {
 		}
 	}
 
+	/**
+	 * Called after a login.
+	 * If the current password matches the hash for "password", the user is assumed to be new and is prompted to change their password.
+	 * @param userList List of all users. Required to pass to changePass() to save user data in event of a password change.
+	 */
+
 	public void checkForDefaultPass(List<User> userList){
 		if(hash("password").equals(this.password)){
 			System.out.println("Welcome to CAMs. We require you to change your password.");
@@ -115,7 +121,7 @@ public abstract class User {
 	 * Asks user for current password, then a new password.
 	 * Current password must be correct.
 	 * New password is hashed then stored in User.password
-	 * After this is called, main() should call DataHandler.saveUsers() to update program state.
+	 * After this is called, DataHandler.saveUsers() is called to update program state.
 	 *
 	 */
 	public void changePass(List<User> userList) {
@@ -141,11 +147,13 @@ public abstract class User {
 
 	/**
 	 * Used to determine and generate the menu of options in CAMs.
+	 * Overriden by Student and Staff.
 	 */
 	public abstract void printMenu(List<Camp> campList);
 
 	/**
 	 * Used to generate the list of camps that should be visible to the user.
+	 * Overriden by Student and Staff.
 	 * @param campList List of all Camp objects.
 	 */
 	public abstract void viewCamps(List<Camp> campList, List<Enquiry> enquiryList);
@@ -153,13 +161,27 @@ public abstract class User {
 	/**
 	 * Used to view the list of camps where the User can meaningfully interact with.
 	 * Behaviour changes based on whether the User is a Student or Staff.
+	 * Overriden by Student and Staff.
 	 * @param campList List of all Camp objects.
 	 */
 	public abstract void viewOwnedCamps(List<Camp> campList,List<Signup> signupList, List<User> userList);
+
+	/**
+	 * Method to determine functionality for each choice.
+	 * Overriden by Student and Staff.
+	 * @param choice Input integer choice for menu
+	 * @param argument Any additional string arguments (used for Camp filters)
+	 * @param userList List of all User objects. Passed to other classes.
+	 * @param campList List of all Camp objects. Passed to other classes.
+	 * @param signupList List of all Signup objects. Passed to other classes.
+	 * @param enquiryList List of all Enquiry objects. Passed to other classes.
+	 * @param suggestionList List of all Suggestion objects. Passed to other classes.
+	 * @return
+	 */
 	public abstract SessionStatus resolveCAMsMenu(int choice, String argument,
 												  List<User> userList,
 												  List<Camp> campList,
-												  List<Signup> SignupList,
+												  List<Signup> signupList,
 												  List<Enquiry> enquiryList,
 												  List<Suggestion> suggestionList);
 

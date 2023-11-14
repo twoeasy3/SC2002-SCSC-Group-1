@@ -15,8 +15,7 @@ public class Staff extends User implements AdminActions, SuggestionResolver {
 	int inCharge; //-1 if not In Char, otherwise put camp.id
 
 	public Staff(String name, String id, String faculty, String password) {
-		super();
-		this.fillDetails(name, id, faculty, password);
+		super(name, id, faculty, password);
 		this.inCharge = -1;
 	}
 	public void printMenu(List<Camp> campList){

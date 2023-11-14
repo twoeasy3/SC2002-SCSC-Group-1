@@ -138,10 +138,7 @@ interface AdminActions {
         String fileName = LocalDate.now().format(formatter) + "AttendeeReport.txt";
         String line;
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            line = String.format("""
-                            %s (%s) Total Strength: [%d/%d] In-Charge: %s
-                            Camp Committee [%d/%d]:
-                            """, camp.getName(), camp.getFaculty(), (camp.getAttendeeCount() + camp.getCommitteeCount()), camp.getMaxSize(),
+            line = String.format("%s (%s) Total Strength: [%d/%d] In-Charge: %s Camp Committee [%d/%d]:", camp.getName(), camp.getFaculty(), (camp.getAttendeeCount() + camp.getCommitteeCount()), camp.getMaxSize(),
                     camp.getInCharge(), camp.getCommitteeCount(), camp.getMaxComm());
             writer.write(line);
             for (Student committee : campCommittee) {
@@ -209,9 +206,7 @@ interface AdminActions {
         String fileName = LocalDate.now().format(formatter) + "CommitteeReport.txt";
         String line = "";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            line = String.format("""
-                            %s (%s) Camp Committee [%d/%d] In-Charge: %s                            
-                            """, camp.getName(), camp.getFaculty(), camp.getCommitteeCount(), camp.getMaxComm(),
+            line = String.format("%s (%s) Camp Committee [%d/%d] In-Charge: %s", camp.getName(), camp.getFaculty(), camp.getCommitteeCount(), camp.getMaxComm(),
                             camp.getInCharge() );
             writer.write(line);
             for (StudentCommittee studComm : committeeListByScore){
