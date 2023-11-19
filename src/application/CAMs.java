@@ -11,12 +11,20 @@ import java.util.List;
 /**
  * Defines some statuses for the current session of CAMs.<br>
  *
- * CONTINUE - Normal state, CAMs continues with current ActiveUser<br>>
- * LOGOUT - Logout requested, CAMs will continue to login screen<br>
- * CLOSE - CAMs will terminate<br>
- *
  */
-enum SessionStatus { CONTINUE,LOGOUT,CLOSE}
+enum SessionStatus {
+	/**
+	 * CONTINUE - Normal state, CAMs continues with current ActiveUser<br>>
+	 */
+	CONTINUE,
+	/**
+	 * LOGOUT - Logout requested, CAMs will continue to login screen<br>
+	 */
+	LOGOUT,
+	/**
+	 * CLOSE - CAMs will terminate<br>
+	 */
+	CLOSE}
 
 /**
  * CAMs is the main interface from which the application is built around

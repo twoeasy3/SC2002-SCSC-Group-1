@@ -476,7 +476,7 @@ public class DataHandler {
 	/**
 	 * Returns the correct format for userID from the .csv
 	 * CSVs have emails instead of userID as per format.
-	 *
+	 * @param email Email string as found in datafile
 	 * @return Preceding string before the "@" symbol.
 	 */
 	private static String getIDFromEmail(String email) {

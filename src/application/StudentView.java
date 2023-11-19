@@ -89,7 +89,7 @@ interface StudentView {
      * @param signupList List of all Signup objects. Passed to other classes.
      * @param enquiryList List of all Enquiry objects. Passed to other classes.
      * @param suggestionList List of all Suggestion objects. Passed to other classes.
-     * @return
+     * @return SessionStatus to determine which state CAMs should continue with
      */
     static SessionStatus resolveCAMsMenu(Student student, int choice, String argument,
                                          List<User> userList,
