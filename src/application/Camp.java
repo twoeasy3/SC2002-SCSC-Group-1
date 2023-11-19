@@ -8,13 +8,24 @@ import java.util.List;
 
 /**
  * The various states that a Camp can be, in real-time.<br>
- * OPEN - Registration date has not passed.<br>
- * CLOSED - Registration date has passed, but Start Date has not passed.<br>
- * ONGOING - Start Date has passed, but End Date has not passed.<br>
- * ENDED - End Date has passed.
  */
 enum CampStatus {
-	OPEN,CLOSED,ONGOING,ENDED}
+	/**
+	 *  OPEN - Registration date has not passed.
+	 */
+	OPEN,
+	/**
+	 * CLOSED - Registration date has passed, but Start Date has not passed.
+	 */
+	CLOSED,
+	/**
+	 * ONGOING - Start Date has passed, but End Date has not passed.
+	 */
+	ONGOING,
+	/**
+	 * ENDED - End Date has passed.
+	 */
+	ENDED}
 
 
 /**

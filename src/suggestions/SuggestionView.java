@@ -94,10 +94,10 @@ public interface SuggestionView{
         }
 
         System.out.println("Enter the number corresponding to the suggestion to select: ");
-        int selection = Console.nextInt();
         while (true) {
+            int selection = Console.nextInt();
             if (selection < 1 || selection > relevantSuggestions.size()) {
-                System.out.println("Selection does not correspond to any suggestion on the list. ");
+                System.out.println("Selection does not correspond to any suggestion on the list. Please select again.");
             } else {
                 return relevantSuggestions.get(selection - 1);
             }

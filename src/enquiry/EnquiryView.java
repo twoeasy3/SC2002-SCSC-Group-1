@@ -100,10 +100,10 @@ public class EnquiryView {
         }
 
         System.out.println("Enter the number corresponding to the enquiry to select: ");
-        int selection = Console.nextInt();
         while (true) {
+            int selection = Console.nextInt();
             if (selection < 1 || selection > relevantEnquiries.size()) {
-                System.out.println("Selection does not correspond to any inquiry on the list. ");
+                System.out.println("Selection does not correspond to any inquiry on the list. Please select again.");
             } else {
                 return relevantEnquiries.get(selection - 1);
             }
