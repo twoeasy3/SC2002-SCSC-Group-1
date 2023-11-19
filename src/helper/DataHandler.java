@@ -36,7 +36,7 @@ public class DataHandler {
 			while((line!= null && line.length()>1)) {
 				String[] lineData = line.split(csvSeparator);
 				if (lineData.length>=2) {
-					String name = lineData[0];
+					String name = lineData[0].replace("\uFEFF", "");
 					String id = getIDFromEmail(lineData[1]);
 					String faculty = lineData[2];
 					String passwordHash = lineData[3];
@@ -57,7 +57,7 @@ public class DataHandler {
 			while((line != null && line.length()>1)) {
 				String[] lineData = line.split(csvSeparator);
 				if (lineData.length>=2) {
-					String name = lineData[0];
+					String name = lineData[0].replace("\uFEFF", "");
 					String id = getIDFromEmail(lineData[1]);
 					String faculty = lineData[2];
 					String passwordHash = lineData[3];

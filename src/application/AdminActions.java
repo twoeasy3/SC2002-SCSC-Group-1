@@ -95,7 +95,7 @@ interface AdminActions {
         int response;
         System.out.println("Choose the report you want to generate:");
         System.out.println("1: Camp report with the list of students attending each camp.");
-        System.out.println("2: Students’ enquiry report");
+        System.out.println("2: Student enquiry report");
         if (requestingUser instanceof Staff) {
             System.out.println("3: Camp committee performance report");
         }
@@ -106,7 +106,7 @@ interface AdminActions {
                 AdminActions.printAttendeeReport(camp);
                 break;
             case 2:
-                System.out.println("2: Students’ enquiry report");
+                System.out.println("2: Student enquiry report");
                 AdminActions.printEnquiryReport(camp);
                 break;
             case 3:
