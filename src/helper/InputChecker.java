@@ -3,15 +3,30 @@ package helper;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Helper class for different kinds of input checking from the user.
+ */
 public class InputChecker {
 
-
+    /**
+     * Resolves the argument when an option allows a user to optionally enter 2 arguments like "2 -c" <br>
+     * The method strips the "-" and any spaces. <br>
+     * @param response String input to parse the argument from
+     * @return The selected argument
+     */
     public static String resolveArgument(String response){
         response = response.replaceAll("[-\\s]+", "");
         response = response.substring(1);
         return response;
     }
 
+    /**
+     * Checks whether a String input is a valid date.<br>
+     * Input to be in yyyyMMdd format. <br>
+     * Dates in the past and dates after 2024 are not permitted <br>
+     * @param input String input for date, supposed to be in yyyyMMdd format.
+     * @return Boolean value on whether the date is valid or not.
+     */
     public static boolean dateValidity(String input) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         if (input.length() != 8) {
@@ -42,6 +57,12 @@ public class InputChecker {
 
 
     }
+
+    /**
+     * Checks if integer input is valid.
+     * @param input String input to check
+     * @return Boolean value on whether input integer is valid.
+     */
     public static boolean intValidity(String input){
         int test;
         try{

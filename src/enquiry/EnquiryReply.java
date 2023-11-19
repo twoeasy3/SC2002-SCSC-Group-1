@@ -9,8 +9,15 @@ import helper.DataHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class EnquiryReply {
-
+/**
+ * This class implements all the methods related to replying to enquiries.
+ */
+public class EnquiryReply {
+    /**
+     * Returns a list of all unreplied enquiries from a camp
+     * @param camp Camp to pull enquiries for
+     * @return List of all unreplied enquiries from a camp
+     */
     public static List<Enquiry> getCampEnquiries(Camp camp){
         List<Enquiry> noReplyEnquiries = new ArrayList<>();
         for (Enquiry enquiry : camp.getEnquiryList()){
@@ -20,6 +27,14 @@ public abstract class EnquiryReply {
         }
         return noReplyEnquiries;
     }
+
+    /**
+     * Menu interface for making a reply for Enquiries<br>
+     * Outputs all unreplied Enquiries, then select one to reply to<br>
+     * @param camp Camp object of the Enquiries to reply to
+     * @param activeUser Current user doing the replies
+     * @param enquiryList List of all Enquiries, to parse the enquiries from
+     */
     public static void replyMenu(Camp camp, User activeUser, List<Enquiry> enquiryList ) {
         while(true) {
             Enquiry selectedEnquiry = null;
@@ -49,7 +64,12 @@ public abstract class EnquiryReply {
         }
     }
 
-
+    /**
+     * Provides the interface and logic from which to reply to the selected Enquiry
+     * @param enquiry Enquiry to reply to
+     * @param replyAuthor User who is doing the replying
+     * @param enquiryList List of all Enquiries to save program state
+     */
     public static void replyTo(Enquiry enquiry, User replyAuthor, List<Enquiry> enquiryList) {
         if (enquiry.getResolved()) {
             System.out.println("Reply not possible, enquiry already replied to!");

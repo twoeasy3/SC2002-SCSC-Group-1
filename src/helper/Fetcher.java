@@ -7,6 +7,9 @@ import application.User;
 
 import java.util.List;
 
+/**
+ * Helper class for fetching various data from different forms
+ */
 public class Fetcher {
     /**
      * Finds a User object and returns it.
@@ -23,9 +26,15 @@ public class Fetcher {
                 return user;
             }
         }
-return null;
-        }
+        return null;
+    }
 
+    /**
+     * Puts all committee Student objects in the Committee Lists in the corresponding Camps. <br>
+     * Loaded in memory for CAMs<br>
+     * @param userList List of all User objects to iterate through
+     * @param campList List of all Camp objects to iterate through
+     */
     public static void populateCommittees(List<User> userList, List<Camp> campList){
         Camp campObject = null;
         for(User user : userList){
@@ -41,6 +50,12 @@ return null;
         }
     }
 
+    /**
+     * Fetches a Camp object from a camp ID.
+     * @param id Camp ID to fetch
+     * @param campList List of all Camp objects, to pull the Camp object from.
+     * @return Camp object requested. Returns NULL if not found.
+     */
     public static Camp getCampfromID(int id, List<Camp> campList){
         for(Camp camp : campList){
             if (camp.getID() == id){

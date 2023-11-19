@@ -7,8 +7,21 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * This class implements methods relating to viewing of Enquiries
+ */
 public class EnquiryView {
-
+    /**
+     * Returns a preview of an enquiry to a String. Can be displayed or printed to report.<br>
+     * Outputs the following:
+     * Enquiry Author (faculty)<br>
+     * Enquiry body text<br>
+     * Reply Author (faculty,role), if applicable<br>
+     * Reply body text, if applicable<br>
+     * @param enquiry Enquiry to be output
+     * @param printNoReplyLine Boolean to toggle whether to output reply line
+     * @return Readable String output of the Enquiry
+     */
     public static String singleEnquiryToString(Enquiry enquiry, boolean printNoReplyLine) {
         String printLine = "";
         printLine += (enquiry.getAuthor().getName() + " (" + enquiry.getAuthor().getFaculty() + "): \n");
@@ -27,6 +40,13 @@ public class EnquiryView {
         return(printLine);
     }
 
+    /**
+     * Outputs a list of enquiries from a particular student, based on the value of resolvedOrNot. <br>
+     * Returns all enquiries with the same resolved status.
+     * @param student Student to pull enquiries from
+     * @param resolvedOrNot Match of status of resolution to pull enquiries from
+     * @return List of Enquiries that match the parameters
+     */
     public static List<Enquiry> getRelevantEnquiries(Student student, boolean resolvedOrNot){
         List<Enquiry> relevantEnquiries = new ArrayList<>();
         for (Enquiry enquiry : student.getEnquiryList()){
@@ -37,6 +57,12 @@ public class EnquiryView {
         }
         return relevantEnquiries;
     }
+
+    /**
+     * Helper method to output all the enquiries from a curated list. <br>
+     * To be paired with selectEnquiry() for the selection functionality. <br>
+     * @param eligibleEnquiries Curated list to output all enquiries, with an index number for each.
+     */
     public static void viewRelevantEnquiries(List<Enquiry> eligibleEnquiries) {
 
         List<Enquiry> enquiryList = eligibleEnquiries;
@@ -61,6 +87,12 @@ public class EnquiryView {
 
     }
 
+    /**
+     * Method to select an enquiry. The user should see the list from viewRelevantEnquiries() first. <br>
+     * Reads an integer and selects the Enquiry that corresponds to it.
+     * @param eligibleEnquiries Curated list of Enquiries to select from.
+     * @return Enquiry object selected
+     */
     public static Enquiry selectEnquiry(List<Enquiry> eligibleEnquiries) {
         List<Enquiry> relevantEnquiries = eligibleEnquiries;
         if (relevantEnquiries.size() == 0) {

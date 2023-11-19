@@ -13,34 +13,62 @@ import java.util.List;
  * Students can also sign up to be StudentCommittee, so no Student object should be inititalised as Student. It should be initialied as StudentCommittee and immediately cast up to Student.
  */
 public class Student extends User implements StudentCampOptions{
+	/**
+	 * CampID that the student is a committee member of. -1 if the Student is not a Committee Member
+	 */
 	int committee; //-1 if not committee member, otherwise put camp.id
-
+	/**
+	 * List of all Enquiries that this Student has authored
+	 */
 	private List<Enquiry>  enquiryList= new ArrayList<>();
 
 	/**
 	 * Standard constructor for Student object.
 	 * Calls upon User constructor.
-	 * @param name
-	 * @param id
-	 * @param faculty
-	 * @param password
-	 * @param committee
+	 * @param name Name of Student
+	 * @param id UserID of Student
+	 * @param faculty Faculty of Student
+	 * @param password Hashed password
+	 * @param committee CampID that Student is Committee of
 	 */
 	public Student(String name, String id, String faculty,String password,int committee) {
 		super(name, id, faculty, password);
 		this.committee = committee;
 	}
 
+	/**
+	 * Fetch the CampID that the Student is a committee member of
+	 * @return CampID that the Student is committee member of
+	 */
 	public int getCommittee(){return this.committee;}
+
+	/**
+	 * Set the CampID that the Student signed up for as committee
+	 * @param campID CampID that the Student signed up for as committee.
+	 */
 	public void setCommittee(int campID){this.committee = campID;}
 
+	/**
+	 * Fetches the list of all Enquiries the Student has authored
+	 * @return List of all enquiries that Student has authored
+	 */
 	public List<Enquiry> getEnquiryList() {
 		return enquiryList;
 	}
+
+	/**
+	 * Adds an Enquiry to the list of Enquiries that the Student has authored
+	 * @param enquiry New Enquiry object to add to the Student's enquiryList
+	 */
 	public void addEnquiry(Enquiry enquiry){
 		enquiryList.add(enquiry);
 	}
 
+	/**
+	 * Prints the main menu options for a Student user.<br>
+	 * Calls StudentView.printMenu()
+	 * @param campList List of all Camp objects
+	 */
 	public void printMenu(List<Camp> campList){
 		StudentView.printMenu(this,campList);
 	}
@@ -54,7 +82,7 @@ public class Student extends User implements StudentCampOptions{
 	 * @param signupList List of all Signup objects. Passed to other classes.
 	 * @param enquiryList List of all Enquiry objects. Passed to other classes.
 	 * @param suggestionList List of all Suggestion objects. Passed to other classes.
-	 * @return
+	 * @return SessionStatus to determine the state CAMs will continue with
 	 */
 	public SessionStatus resolveCAMsMenu(int choice, String argument,
 										 List<User> userList,
@@ -71,12 +99,18 @@ public class Student extends User implements StudentCampOptions{
 	 * This view shows all Camps of the Student's faculty and those open to ALL.
 	 * This view shows Blacklisted and non-Open camps.
 	 * @param campList List of all Camp objects.
-	 * @param enquiryList
+	 * @param enquiryList List of all Enquiry objects
 	 */
 	public void viewCamps(List<Camp> campList, List<Enquiry> enquiryList){
 		StudentView.viewCamps(this,campList,enquiryList);
 	}
 
+	/**
+	 * Used to view the list of camps where the Student has signed up for.
+	 * @param campList List of all Camp objects.
+	 * @param signupList List of all Signups
+	 * @param userList List of all User objects
+	 */
 	public void viewOwnedCamps(List<Camp> campList,List<Signup> signupList,List<User> userList) { //TODO
 		List<Camp> ownedCamps = StudentCampOptions.getOwnedCamps(this, campList, signupList);
 		if (ownedCamps.size() == 0) {
@@ -97,13 +131,13 @@ public class Student extends User implements StudentCampOptions{
 	}
 
 	/**
-	 * General menu for Camps the Student can sign up for.
-	 * The conditions checked for an eligible Camp are as follows:
-	 * - Same faculty or "ALL"
-	 * - Not already signed up or Committee
-	 * - Not blacklisted
-	 * - Camp registration date not past
-	 * - Camp still have empty spots.
+	 * General menu for Camps the Student can sign up for. <br>
+	 * The conditions checked for an eligible Camp are as follows:<br>
+	 * Same faculty or "ALL"<br>
+	 * Not already signed up or Committee<br>
+	 * Not blacklisted<br>
+	 * Camp registration date not past<br>
+	 * Camp still have empty spots.<br>
 	 *
 	 * @param userList List of all User objects. Used to save user state.
 	 * @param campList List of all Camp objects. Used for camp data.
@@ -132,14 +166,14 @@ public class Student extends User implements StudentCampOptions{
 				String response = "";
 				while (input == -1) {
 					response = Console.nextString();
-					input = InputChecker.parseUserBoolInput(response.substring(0));
+					input = InputChecker.parseUserBoolInput(response.substring(0,1));
 					response = InputChecker.resolveArgument(response);
 				}
 				if (input == 1 && response.equals("c") && this.getCommittee() == -1){
 					StudentCampOptions.joinCommittee(this,selectedCamp, userList,campList);
 					System.out.println("Successfully signed up as committee!");
 				}
-				if (input == 1) {
+				else if (input == 1) {
 					StudentCampOptions.joinCamp(this,selectedCamp,signupList);
 					System.out.println("Successfully signed up as attendee!");
 					endLoop = true;

@@ -23,15 +23,15 @@ public abstract class User {
 	 */
 	private String id;
 	/**
-	 * String identifier of the faculty that the user belongs to. Inherited by subclasses.
-	 * A full list of faculties in use by CAMs are:
-	 * ADM,ASE,CCEB,CEE,EEE,LKC,MAE,MSE,NBS,NIE,SBS,SCSE,SOH,SPMS,SSS,WKWSCI.
+	 * String identifier of the faculty that the user belongs to. Inherited by subclasses. <br>
+	 * A full list of faculties in use by CAMs are: <br>
+	 * ADM,ASE,CCEB,CEE,EEE,LKC,MAE,MSE,NBS,NIE,SBS,SCSE,SOH,SPMS,SSS,WKWSCI. <br>
 	 * ALL may be seen as a value, but only in Camp objects and not here.
 	 */
 	private String faculty;
 	/**
-	 * Hashed password value using SHA-256.
-	 * New users are set on default password value 'password'; starting with "5e884898..."
+	 * Hashed password value using SHA-256. <br>
+	 * New users are set on default password value 'password'; starting with "5e884898..." <br>
 	 * Users on this hash value are assumed to be new users.
 	 */
 	private String password;
@@ -50,13 +50,26 @@ public abstract class User {
 		this.password = password;
 	}
 
+	/**
+	 * Fetches the name of the User
+	 * @return String of the user's name
+	 */
 	public String getName() {
 		return(this.name);
 	}
 
+	/**
+	 * Fetches the userID of the User
+	 * @return String of the userID
+	 */
 	public String getID() {
 		return(this.id);
 	}
+
+	/**
+	 * Fetches the faculty of the User
+	 * @return String of the Faculty the User belongs to
+	 */
 	public String getFaculty() {
 		return(this.faculty);
 	}
@@ -67,13 +80,12 @@ public abstract class User {
 	 */
 	public String getPassword() { return(this.password);}
 	/**
-	 * Boilerplate code to avoid storing passwords in plaintext in the .csv files at the very minimum.
+	 * Boilerplate code to avoid storing passwords in plaintext in the .csv files.
 	 *
 	 * @param password Plaintext String of password intended to be hashed.
 	 * @return Hashed String intended to be stored.
 	 * If an Exception happens it will return the default password, but should be exceedingly rare.
 	 */
-
 	public String hash(String password) { //not required by the document but seems extremely silly to keep plaintext passwords
 		try {
 		MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -85,7 +97,7 @@ public abstract class User {
         return hexString.toString();}
 		catch (NoSuchAlgorithmException e) {
 			System.out.println("Error in password operations. Your password may be reset to the default.");
-           return "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8";} //have to return a string here, not too sure what to do
+           return "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8";} //have to return a string
 	}
 
 	/**
@@ -117,12 +129,12 @@ public abstract class User {
 	}
 
 	/**
-	 * Called when user requests or after checkForDefaultPass() finds a default password.
-	 * Asks user for current password, then a new password.
-	 * Current password must be correct.
-	 * New password is hashed then stored in User.password
+	 * Called when user requests or after checkForDefaultPass() finds a default password. <br>
+	 * Asks user for current password, then a new password. <br>
+	 * Current password must be correct. <br>
+	 * New password is hashed then stored in User.password <br>
 	 * After this is called, DataHandler.saveUsers() is called to update program state.
-	 *
+	 * @param userList List of all User objects to save program state.
 	 */
 	public void changePass(List<User> userList) {
 		
@@ -148,6 +160,7 @@ public abstract class User {
 	/**
 	 * Used to determine and generate the menu of options in CAMs.
 	 * Overriden by Student and Staff.
+	 * @param campList List of all Camp objects
 	 */
 	public abstract void printMenu(List<Camp> campList);
 
@@ -155,6 +168,7 @@ public abstract class User {
 	 * Used to generate the list of camps that should be visible to the user.
 	 * Overriden by Student and Staff.
 	 * @param campList List of all Camp objects.
+	 * @param enquiryList List of all Enquiry objects
 	 */
 	public abstract void viewCamps(List<Camp> campList, List<Enquiry> enquiryList);
 
@@ -163,6 +177,8 @@ public abstract class User {
 	 * Behaviour changes based on whether the User is a Student or Staff.
 	 * Overriden by Student and Staff.
 	 * @param campList List of all Camp objects.
+	 * @param signupList  List of all Signup objects
+	 * @param userList List of all User objects
 	 */
 	public abstract void viewOwnedCamps(List<Camp> campList,List<Signup> signupList, List<User> userList);
 
@@ -176,7 +192,7 @@ public abstract class User {
 	 * @param signupList List of all Signup objects. Passed to other classes.
 	 * @param enquiryList List of all Enquiry objects. Passed to other classes.
 	 * @param suggestionList List of all Suggestion objects. Passed to other classes.
-	 * @return
+	 * @return SessionStatus to determine the state CAMs will continue with
 	 */
 	public abstract SessionStatus resolveCAMsMenu(int choice, String argument,
 												  List<User> userList,

@@ -7,7 +7,16 @@ import helper.InputChecker;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class contains the necessary code for resolving suggestions
+ */
 public interface SuggestionResolver {
+    /**
+     * This method implements a menu for Staff-In-Charge to resolve Suggestions. <br>
+     * Displays all Suggestions to resolve, then allows the Staff to select one and make a verdict<br>
+     * @param campList List of all Camps
+     * @param activeUser User object of the activeUser
+     */
     default void resolveMenu(List<Camp> campList, User activeUser){
 
         String[] category = {"Name", "Description", "Venue", "Slots", "Committee Slots"};

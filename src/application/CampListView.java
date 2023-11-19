@@ -14,15 +14,17 @@ import java.util.List;
 public abstract class CampListView {
     /**
      * Sorts campList based on different filters.
-     * Used in conjunction with extra arguments to select which sorted list to display
-     * -o "Open" Camps first
-     * -l Location
-     * -s Start date
-     * -p Popularity by signups
-     * -f Faculty Alphabetically
-     * @param campList
-     * @param arg
-     * @return
+     * Used in conjunction with extra arguments to select which sorted list to display<br>
+     * 
+     * -o "Open" Camps first<br>
+     * -l Location<br>
+     * -s Start date<br>
+     * -p Popularity by signups<br>
+     * -f Faculty Alphabetically<br>
+     *
+     * @param campList List of Camps to sort
+     * @param arg String argument to check for the filter
+     * @return Sorted List of Camps on desired filter
      */
     public static List<Camp> sortCampList(List<Camp> campList, String arg){
         if(arg.equals("")){
@@ -57,9 +59,9 @@ public abstract class CampListView {
 
     /**
      * This is the main method for creating a list of camps.
-     * It displays each camp from a List of Camps, numerated and formatted.
-     * It adds additional tags to each camp to denote what status it is at - OPEN,CLOSED,ONGOING and ENDED.
-     * Other relevant role tags for the active user is displayed as well, {COMMITTEE} {ATTENDEE} {INCHARGE}
+     * It displays each camp from a List of Camps, numerated and formatted.<br>
+     * It adds additional tags to each camp to denote what status it is at - OPEN,CLOSED,ONGOING and ENDED.<br>
+     * Other relevant role tags for the active user is displayed as well, {COMMITTEE} {ATTENDEE} {INCHARGE}<br>
      * Hidden camps in the list are tagged with |HIDDEN|
      *
      * @param selectCamps The camps from which to construct the list with. This list should only contain relevant options.
@@ -106,9 +108,9 @@ public abstract class CampListView {
     }
 
     /**
-     * Intended to be used in conjunction with createdNumberedCampList().
-     * Provides the IO and logic for user to select a camp from the displayed screen.
-     * This function will loop until the user quits or chooses a valid camp.
+     * Intended to be used in conjunction with createdNumberedCampList().<br>
+     * Provides the IO and logic for user to select a camp from the displayed screen.<br>
+     * This function will loop until the user quits or chooses a valid camp.<br>
      * @param selectableCamps The camps from which to select from. This list should only contain relevant options.
      * @param listMenu The String returned by createdNumberedCampList().
      * @return Camp object of the User selected camp.

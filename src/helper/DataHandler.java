@@ -12,12 +12,12 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * Responsible for reading files from data/ into the program state.
- * Also writes program state back into the file for persistence.
+ * Also writes program state back into the files for persistence.
  *
  */
 public class DataHandler {
 	/**
-	 * Reads both student_list and staff_list CSVs
+	 * Reads both student_list and staff_list CSVs <br>
 	 * Builds the appropriate objects (Student/Staff)
 	 *
 	 * @return List of all User objects described in the CSVs.
@@ -79,7 +79,7 @@ public class DataHandler {
 	}
 
 	/**
-	 * Reads data/camps.csv
+	 * Reads data/camps.csv <br>
 	 * Builds Camp objects described in camps.csv
 	 *
 	 * @return List of all Camp objects described in the CSV.
@@ -125,9 +125,10 @@ public class DataHandler {
 		return campList;
 	}
 	/**
-	 * Reads data/signups.csv
+	 * Reads data/signups.csv <br>
 	 * Builds Signup objects described in signups.csv
-	 *
+	 * @param userList List of all Users
+	 * @param campList List of all Camps
 	 * @return List of all Signup objects described in the CSV.
 	 */
 	public static List<Signup> getSignups(List<User> userList, List<Camp> campList){
@@ -184,6 +185,16 @@ public class DataHandler {
         }*/
 		return signupList;
 	}
+
+	/**
+	 * Read data/enquiries.csv <br>
+	 * Constructs all enquiries and adds to the master list. <br>
+	 * This .csv has "|" instead of commas to allow for commas in the descriptions <br>
+	 * Newlines in the .csv have been substituted with 胡 with very low chance of collision <br>
+	 * @param userList List of all User objects. Required to pull the correct user to construct the Enquiry.
+	 * @param campList List of all Camp objects. Required to pull the correct camp to construct the Enquiry.
+	 * @return List of all Enquiry objects.
+	 */
 	public static List<Enquiry> getEnquiries(List<User> userList, List<Camp> campList) {
 		List<Enquiry> enquiryList = new ArrayList<>();
 		String enquiryFile = "data/enquiries.csv";
@@ -251,7 +262,15 @@ public class DataHandler {
 		}
 		return enquiryList;
 	}
-
+	/**
+	 * Read data/suggestions.csv <br>
+	 * Constructs all Suggestions and adds to the master list. <br>
+	 * This .csv has "|" instead of commas to allow for commas in the descriptions <br>
+	 * Newlines in the .csv have been substituted with 胡 with very low chance of collision <br>
+	 * @param userList List of all User objects. Required to pull the correct user to construct the Suggestion.
+	 * @param campList List of all Camp objects. Required to pull the correct camp to construct the Suggestion.
+	 * @return List of all Suggestion objects.
+	 */
 	public static List<Suggestion> getSuggestions(List<User> userList, List<Camp> campList) {
 		List<Suggestion> suggestionList = new ArrayList<>();
 		String suggestionFile = "data/Suggestions.csv";
@@ -305,7 +324,7 @@ public class DataHandler {
 	}
 	/**
 	 *Writes the current state of all User objects into their respective CSVs.
-	 *Currently only required for password updates.
+	 * @param userList List of all User objects
 	 */
 	public static void saveUsers(List<User> userList){
 		String studentFile = "data/student_list.csv";
@@ -333,6 +352,10 @@ public class DataHandler {
 			e.printStackTrace();
 		}
 	}
+	/**
+	 *Writes the current state of all Camp objects into their respective CSVs.
+	 * @param campList List of all Camps
+	 */
 	public static void saveCamps(List<Camp> campList){
 		String campFile = "data/camps.csv";
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -366,8 +389,8 @@ public class DataHandler {
 	}
 
 	/**
-	 * Saves all student-camp attendee relationships to csv.
-	 * Called in signUpCamp(), so non-signups don't cause a write to file.
+	 * Saves all student-camp attendee relationships to csv. <br>
+	 * Called whenever Signups are edited. <br>
 	 * @param signupList List of all Signup objects.
 	 */
 	public static void saveSignups(List<Signup> signupList){
@@ -389,6 +412,11 @@ public class DataHandler {
 		}
 
 	}
+	/**
+	 * Saves the state of all Enquiry objects to csv. <br>
+	 * Called whenever Enquiries are edited. <br>
+	 * @param enquiryList List of all Signup objects.
+	 */
 	public static void saveEnquiries(List<Enquiry> enquiryList){
 		String enquiryFile = "data/enquiries.csv";
 		String line;
@@ -417,7 +445,11 @@ public class DataHandler {
 		}
 
 	}
-
+	/**
+	 * Saves the state of all Suggestion objects to csv. <br>
+	 * Called whenever Suggestions are edited. <br>
+	 * @param suggestionsList List of all Signup objects.
+	 */
 	public static void saveSuggestions(List<Suggestion> suggestionsList){
 		String suggestionsFile = "data/suggestions.csv";
 		String line;

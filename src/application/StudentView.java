@@ -7,8 +7,15 @@ import suggestions.Suggestion;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Contains methods relating to the menus that a Student user interacts with.
+ */
 interface StudentView {
+    /**
+     * Prints the main menu for a Student in CAMs
+     * @param student Student object using CAMs
+     * @param campList List of all Camps
+     */
     public static void printMenu(Student student, List<Camp> campList) {
         System.out.println("Student Portal");
         if (student.getCommittee() == -1) {
@@ -17,9 +24,9 @@ interface StudentView {
             System.out.println("You are currently a committee member of " + Fetcher.getCampfromID(student.committee, campList).getName());//dangerous error possible
         }
         final String first5Options = "1. Change your password.\n" +
-                "2. View eligible camps. (-o,-l,-s,-r,-p,-f)\n" +
+                "2. View eligible camps. (-o,-l,-s,-p,-f)\n" +
                 "3. View your signups.\n" +
-                "4. Sign up for camp. (-o,-l,-s,-r,-p,-f)\n" +
+                "4. Sign up for camp. (-o,-l,-s,-p,-f)\n" +
                 "5. Camp Enquiry Hub";
         System.out.println(first5Options);
         if (student.getCommittee() != -1) {
@@ -28,7 +35,12 @@ interface StudentView {
         final String logOutOptions = "9. Log out\n0. Terminate CAMs";
         System.out.println(logOutOptions);
     }
-
+    /**
+     * View camp menu for CAMs. Allows user to select a camp to see the short summary.
+     * @param student Student object viewing the Camps
+     * @param campList List of all Camps.
+     * @param enquiryList List of all Enquiries.
+     */
     public static void viewCamps(Student student, List<Camp> campList, List<Enquiry> enquiryList) {
         
         List<Camp> eligibleCamps = new ArrayList<>();
@@ -67,7 +79,18 @@ interface StudentView {
             }
         }
     }
-
+    /**
+     * Method to determine functionality for each choice, defined for Student exclusively.
+     * @param student Student user working the menus
+     * @param choice Input integer choice for menu
+     * @param argument Any additional string arguments (used for Camp filters)
+     * @param userList List of all User objects. Passed to other classes.
+     * @param campList List of all Camp objects. Passed to other classes.
+     * @param signupList List of all Signup objects. Passed to other classes.
+     * @param enquiryList List of all Enquiry objects. Passed to other classes.
+     * @param suggestionList List of all Suggestion objects. Passed to other classes.
+     * @return
+     */
     static SessionStatus resolveCAMsMenu(Student student, int choice, String argument,
                                          List<User> userList,
                                          List<Camp> campList,

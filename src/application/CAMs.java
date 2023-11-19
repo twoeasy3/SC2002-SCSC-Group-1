@@ -8,7 +8,19 @@ import suggestions.Suggestion;
 
 import java.util.List;
 
+/**
+ * Defines some statuses for the current session of CAMs.<br>
+ *
+ * CONTINUE - Normal state, CAMs continues with current ActiveUser<br>>
+ * LOGOUT - Logout requested, CAMs will continue to login screen<br>
+ * CLOSE - CAMs will terminate<br>
+ *
+ */
 enum SessionStatus { CONTINUE,LOGOUT,CLOSE}
+
+/**
+ * CAMs is the main interface from which the application is built around
+ */
 public class CAMs {
 	/**
 	 * CAMs main interface. Initialises the program state and provides login for user
@@ -47,9 +59,10 @@ public class CAMs {
 	}
 
 	/**
-	 *
-	 * @param userList
-	 * @return
+	 * The login screen for CAMs. This is called when CAMs is started or when the status is set to LOGOUT. <br>
+	 * Will persist until a successful login. Upon successful login, User.checkForDefaultPass() is called to prompt if User is logging in using "password".
+	 * @param userList List of all User objects
+	 * @return User object of successful login
 	 */
 	public static User resolveLogin(List<User> userList){
 		String response;

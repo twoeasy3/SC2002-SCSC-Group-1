@@ -6,20 +6,32 @@ import suggestions.Suggestion;
 
 import java.util.List;
 
+/**
+ * Contains methods relating to the menus that a Staff user interacts with.
+ */
 public interface StaffView {
+    /**
+     * Prints the main menu for a Staff in CAMs.
+     * @param campList List of all Camps. Required for overriding from the User class.
+     */
     static void printMenu(List<Camp> campList) {
         final String staffMenu = "Staff Portal\n" +
                                     "1. Change your password.\n"+
-                                    "2. View all active camps. (-o,-l,-s,-r,-p,-f)\n"+
-                                    "3. View and Edit your camps. (-o,-l,-s,-r,-p,-f)\n"+
-                                    "4. Camp enquiry hub.\n"+
-                                    "5. Create a camp\n"+
-                                    "6. Camp Admin Hub\n"+
-                                    "9. Log out\n"+
+                                    "2. View all active camps. (-o,-l,-s,-p,-f)\n"+
+                                    "3. View and Edit your camps. (-o,-l,-s,-p,-f)\n"+
+                                    "4. Create a camp\n"+
+                                    "5. Camp Admin Hub\n"+
+                                    "6. Log out\n"+
                                     "0. Terminate CAMs";
         System.out.println(staffMenu);
     }
 
+    /**
+     * View camp menu for CAMs. Allows user to select a camp to see the short summary.
+     * @param staff Staff object viewing the Camps
+     * @param campList List of all Camps.
+     * @param enquiryList List of all Enquiries.
+     */
     static void viewCamps(Staff staff, List<Camp> campList, List<Enquiry> enquiryList) {
         
         boolean endLoop = false;
@@ -37,7 +49,18 @@ public interface StaffView {
         }
 
     }
-
+    /**
+     * Method to determine functionality for each choice, defined for Staff exclusively.
+     * @param staff Staff user working the menus
+     * @param choice Input integer choice for menu
+     * @param argument Any additional string arguments (used for Camp filters)
+     * @param userList List of all User objects. Passed to other classes.
+     * @param campList List of all Camp objects. Passed to other classes.
+     * @param signupList List of all Signup objects. Passed to other classes.
+     * @param enquiryList List of all Enquiry objects. Passed to other classes.
+     * @param suggestionList List of all Suggestion objects. Passed to other classes.
+     * @return SessionStatus to determine which state CAMs should continue with
+     */
     static SessionStatus resolveCAMsMenu(Staff staff, int choice, String argument,
                                          List<User> userList,
                                          List<Camp> campList,
@@ -58,15 +81,12 @@ public interface StaffView {
                 staff.viewOwnedCamps(campList, signupList,userList);
                 return status;
             case 4:
-                //ENQURIES HUB
-                return status;
-            case 5:
                 staff.createCamp(campList);
                 return status;
-            case 6:
+            case 5:
                 staff.adminMenu(campList, staff,suggestionList,enquiryList);
                 return status;
-            case 9:
+            case 6:
                 System.out.println("Logging out from CAMs...");
                 status = SessionStatus.LOGOUT;
                 return status;

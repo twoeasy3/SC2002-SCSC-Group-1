@@ -11,19 +11,47 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Representation of a Staff account in CAMs. Inherits User.
+ */
 public class Staff extends User implements AdminActions, SuggestionResolver {
-	int inCharge; //-1 if not In Char, otherwise put camp.id
-
+	/**
+	 * Constructor for Staff user. Only called when loading program state in from .csv files.
+	 * @param name Name of Staff
+	 * @param id Staff ID (email prefix)
+	 * @param faculty Staff Faculty
+	 * @param password Hashed Password
+	 */
 	public Staff(String name, String id, String faculty, String password) {
 		super(name, id, faculty, password);
-		this.inCharge = -1;
 	}
+
+	/**
+	 * Prints main menu for CAMs. Calls StaffView.printMenu()
+	 * @param campList List of all Camps
+	 */
 	public void printMenu(List<Camp> campList){
 		StaffView.printMenu(campList);
 	}
+	/**
+	 * View camp menu for CAMs. Calls StaffView.viewCamps()
+	 * @param campList List of all Camps
+	 */
 	public void viewCamps(List<Camp> campList, List<Enquiry> enquiryList){
 		StaffView.viewCamps(this,campList,enquiryList);
 	}
+
+	/**
+	 * Resolves menu choice selection for CAMs. Calls StaffView.resolveCAMsMenu()
+	 * @param choice Input integer choice for menu
+	 * @param argument Any additional string arguments (used for Camp filters)
+	 * @param userList List of all User objects. Passed to other classes.
+	 * @param campList List of all Camp objects. Passed to other classes.
+	 * @param signupList List of all Signup objects. Passed to other classes.
+	 * @param enquiryList List of all Enquiry objects. Passed to other classes.
+	 * @param suggestionList List of all Suggestion objects. Passed to other classes.
+	 * @return SessionStatus to determine the state CAMs will continue with
+	 */
 	public SessionStatus resolveCAMsMenu(int choice, String argument,
 										 List<User> userList,
 										 List<Camp> campList,
@@ -34,6 +62,11 @@ public class Staff extends User implements AdminActions, SuggestionResolver {
 									userList,campList,signupList,enquiryList,suggestionList);
 	}
 
+	/**
+	 * Returns a list of all Camp objects that this Staff is incharge of.
+	 * @param campList List of all Camp objects
+	 * @return List of all Camp objects that this Staff is incharge of.
+	 */
 	public List<Camp> getOwnedCamps(List<Camp> campList){
 		int i= 0;
 		List<Camp> ownedCamps = new ArrayList<>();
@@ -52,6 +85,13 @@ public class Staff extends User implements AdminActions, SuggestionResolver {
 		return ownedCamps;
 	}
 
+	/**
+	 * Outputs a list of all Camps this staff is incharge of. <br>
+	 * Also provides the interfacing for selecting a camp to edit.
+	 * @param campList List of all Camp objects.
+	 * @param signupList List of all Signups
+	 * @param userList List of all Users.
+	 */
 	public void viewOwnedCamps(List<Camp> campList, List<Signup> signupList, List<User> userList) {
 		
 		List<Camp> ownedCamps = this.getOwnedCamps(campList);
@@ -82,6 +122,25 @@ public class Staff extends User implements AdminActions, SuggestionResolver {
 		}
 	}
 
+	/**
+	 * UI interface for a Staff to walk through editing a camp. <br>
+	 * The Staff to select a category and then the value to change it to. <br>
+	 * Calls CampEdit.TryEditCamp() first then does CampEdit.DoEditCamp() if the changes are deemed legal <br>
+	 * The following parameters can be edited <br>
+	 * Camp Name<br>
+	 * Venue<br>
+	 * Description<br>
+	 * Maximum Slots (Can't change below current signups)<br>
+	 * Maximum Committee Slots (Can't change below current Committee count)<br>
+	 * Start Date (Can't change if there are signups, or to be before Registration End or after End Date)<br>
+	 * End Date (Can't change if there are signups, or to be before Registration End or before Start Date)<br>
+	 * Registration End Date (Can't change if there are signups, or to be after Start Date or after End Date)<br>
+	 * Set Visibility (Can't turn off if any signups)<br>
+	 * Delete Camp (Can't delete if any signups)<br>
+	 *
+	 * @param camp Camp to be edited
+	 * @param campList List of all camps to save program state.
+	 */
 	public void staffEditCamp(Camp camp, List<Camp> campList) {
 		
 		int maxOptions = 5;
@@ -135,6 +194,23 @@ public class Staff extends User implements AdminActions, SuggestionResolver {
 			}
 
 		}
+
+	/**
+	 * UI interface for a Staff to walk through creating a camp. <br>
+	 * Each input, if relevant will be handed to the relevant InputHelper method to validate.<br>
+	 * The following parameters to be filled in: <br>
+	 * Camp Name<br>
+	 * Faculty-only or Open to all?<br>
+	 * Venue<br>
+	 * Description<br>
+	 * Maximum Slots<br>
+	 * Maximum Committee Slots <br>
+	 * Start Date<br>
+	 * End Date<br>
+	 * Registration End Date<br>
+	 * Set Visibility<br>
+	 * @param campList List of all Camp objects to save the program state
+	 */
 	public void createCamp(List<Camp> campList) {
 		String response;
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");

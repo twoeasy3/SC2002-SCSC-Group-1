@@ -6,14 +6,17 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
+/**
+ * Methods relating to the editing of a Camp. Used in Staff edits or in Suggestions making/resolving
+ */
 public class CampEdit {
     /**
-     * Checks whether the change suggested is legal. Does not edit the camp.
-     * The change is to be supplied as a String, tryEditCamp() will attempt the appropriate conversions.
-     * If illegal, it will print a message to the User explaining why.
-     * Separated from DoEditCamp for use in the Suggestions feature.
-     * When used by Staff, a true return means it is safe to call DoEditCamp with the same parameters
-     * @param camp
+     * Checks whether the change suggested is legal. Does not edit the camp.<br>
+     * The change is to be supplied as a String, tryEditCamp() will attempt the appropriate conversions.<br>
+     * If illegal, it will print a message to the User explaining why.<br>
+     * Separated from DoEditCamp for use in the Suggestions feature.<br>
+     * When used by Staff, a true return means it is safe to call DoEditCamp with the same parameters<br>
+     * @param camp Camp to be edited
      * @param category Category assigned int to change.
      * @param change The change to be made. Regardless of the data type, this is always a String.
      * @return Boolean on whether change is legal. Returns true for legal.
@@ -135,7 +138,7 @@ public class CampEdit {
      * Sibling of tryEditCamp().
      * IMPORTANT: doEditCamp() assumes that the change is legal and possible from tryEditCamp.
      * Fatal error possible if doEditCamp() is called without checking.
-     * @param camp
+     * @param camp Camp to be edited
      * @param category Category assigned int to change.
      * @param change LEGAL change to be made.
      */

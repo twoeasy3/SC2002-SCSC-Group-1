@@ -4,8 +4,15 @@ import application.Student;
 
 import java.util.List;
 
+/**
+ * This class contains the menu for the Enquiries Hub.
+ */
 public class EnquiryHub {
-
+    /**
+     * This method prints the enquiries hub menu and resolves the selection
+     * @param student Active User student object
+     * @param enquiryList List of all enquiries, to be passed in to update program state.
+     */
     public static void hubLanding(Student student , List<Enquiry> enquiryList) {
         while (true) {
             final String menu = "Welcome to student enquiry hub.\n" +

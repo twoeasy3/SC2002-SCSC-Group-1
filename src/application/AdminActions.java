@@ -5,7 +5,7 @@ import enquiry.EnquiryReply;
 import enquiry.EnquiryView;
 import helper.Console;
 import suggestions.Suggestion;
-import suggestions.SuggestionStatus;
+import suggestions.SuggestionHub;
 import suggestions.SuggestionView;
 
 import java.io.BufferedWriter;
@@ -15,7 +15,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.LocalDate;
 
+/**
+ * This contains methods that "Admins" would need to use. <br>
+ * "Admin" classes that implement these methods are Staff and StudentCommittee. *
+ */
 interface AdminActions {
+    /**
+     * This method displays and resolves the options for the Admin menu. <br>
+     * In the main CAMs menu, a check must be done to ensure Student accounts don't call for this method. <br>
+     * This menu behaves differently based on whether the ActiveUser is a Staff or a StudentCommittee.
+     * @param campList List of all Camps. Used in parsing camps that are available for the user to perform admin actions on.
+     * @param activeUser User object of the active user.
+     * @param suggestionList List of all Suggestions. Used to save the state of Suggestions.
+     * @param enquiryList List of all Enquiries. Used to save the state of Enquiries.
+     */
     default void adminMenu(List<Camp> campList, User activeUser, List<Suggestion> suggestionList,List<Enquiry> enquiryList) {
 
         String response;
@@ -48,7 +61,7 @@ interface AdminActions {
         if (activeUser instanceof Staff) {
             System.out.println("3. Approve/Remove suggestions");
         } else {
-            System.out.println("3. Make suggestion");
+            System.out.println("3. Make/Edit suggestion");
 
 
         }
@@ -62,7 +75,7 @@ interface AdminActions {
                 break;
             case 3:
                 if(activeUser instanceof StudentCommittee) {
-                    suggestionMaker(selectedCamp, activeUser, campList, suggestionList);
+                    SuggestionHub.hubLanding((Student) activeUser, suggestionList);
                 }
                 else{
                     ((Staff)activeUser).resolveMenu(campList,activeUser);
@@ -70,36 +83,13 @@ interface AdminActions {
         }
     }
 
-    static void suggestionMaker(Camp selectedCamp, User activeUser, List<Camp> campList, List<Suggestion> suggestionList) {
-        
-        List<String> fieldNames = Arrays.asList("Camp Name", "Venue", "Description", "Max Slots", "Committee Slots");
-        if (activeUser instanceof StudentCommittee) {
-            System.out.println("Please enter a short description of your suggestion");
-            String suggestionDesc = Console.nextString();
-            System.out.println("Which category would your suggestion like to be in?");
-            System.out.println("[1] Camp Name");
-            System.out.println("[2] Venue");
-            System.out.println("[3] Description");
-            System.out.println("[4] Max Slots");
-            System.out.println("[5] Committee Slots");
-            int choice = Console.nextInt();
-            if (choice >= 1 && choice <= 5) {
-                System.out.println("Please enter the new " + fieldNames.get(choice - 1));
-                String change = Console.nextString();
-                if (CampEdit.tryEditCamp(selectedCamp, choice, change)) {
-                    System.out.println("Your suggestion has been posted!");
-                    suggestionList.add(new Suggestion(selectedCamp, (Student) activeUser,
-                            suggestionDesc,  choice, change, SuggestionStatus.PENDING));
-                } else {
-                    System.out.println("Suggestion was not posted");
-                }
-
-            }
-
-        }
-    }
-
-
+    /**
+     * Menu to select report to generate.
+     * Staff can generate 1 additional report, Camp Committee Performance Report.
+     * The files are saved as yyyyMMdd{ReportName}.
+     * @param camp Camp object to generate report for.
+     * @param requestingUser User object generating the report. Used to determine if option 3 should be accessed.
+     */
     static void reportMenu(Camp camp, User requestingUser) {
         
         int response;
@@ -129,6 +119,19 @@ interface AdminActions {
         }
     }
 
+    /**
+     * Parses and saves a .txt report for Attendee Report.
+     * This report prints the following:
+     * CampName, Total Strength out of Max Slots<br>
+     * In-Charge Staff Name<br>
+     * Camp Committee count out of Max Committee.<br>
+     * All Camp Committee member names.<br>
+     * Attendee count out of Max Attendee slots.<br>
+     * All Attendee names.<br>
+     * Blacklisted Student count<br>
+     * All blacklisted student names.<br>
+     * @param camp Camp object to generate the report from.
+     */
     static void printAttendeeReport(Camp camp) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         List<Student> campAttendees = camp.getAttendeeList();
@@ -138,7 +141,7 @@ interface AdminActions {
         String fileName = LocalDate.now().format(formatter) + "AttendeeReport.txt";
         String line;
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            line = String.format("%s (%s) Total Strength: [%d/%d] In-Charge: %s Camp Committee [%d/%d]:", camp.getName(), camp.getFaculty(), (camp.getAttendeeCount() + camp.getCommitteeCount()), camp.getMaxSize(),
+            line = String.format("%s (%s) Total Strength: [%d/%d] In-Charge: %s \nCamp Committee [%d/%d]:\n", camp.getName(), camp.getFaculty(), (camp.getAttendeeCount() + camp.getCommitteeCount()), camp.getMaxSize(),
                     camp.getInCharge(), camp.getCommitteeCount(), camp.getMaxComm());
             writer.write(line);
             for (Student committee : campCommittee) {
@@ -164,7 +167,17 @@ interface AdminActions {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Parses and saves a .txt report for Enquiry Report.
+     * This report prints the following:
+     * CampName, Total Enquiries<br>
+     * In-Charge Staff Name<br>
+     * Every Enquiry still existing related to the Camp<br>
+     * Author of the Enquiry<br>
+     * Reply to the enquiry, or "There was no reply" if no reply<br>
+     * Author of the Reply<br>
+     * @param camp Camp object to generate the report from.
+     */
     static void printEnquiryReport(Camp camp) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         List<Enquiry> enquiryList = camp.getEnquiryList();
@@ -190,8 +203,17 @@ interface AdminActions {
             e.printStackTrace();
         }
     }
-
-    static void printCommitteeReport(Camp camp) { //TODO THIS IS UNIMPLEMENTED!
+    /**
+     * Parses and saves a .txt report for Attendee Report.
+     * This report prints the following:
+     * CampName, Camp Committee count out of Max Committee.<br>
+     * In-Charge Staff Name<br>
+     * One by one, each Camp Committee member<br>
+     * Every Enquiry replied to by that member<br>
+     * Every suggestion still existing by that member<br>
+     * @param camp Camp object to generate the report from.
+     */
+    static void printCommitteeReport(Camp camp) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         List<Enquiry> enquiryList = camp.getEnquiryList();
         List<Suggestion> suggestionList = camp.getSuggestionList();
@@ -206,7 +228,7 @@ interface AdminActions {
         String fileName = LocalDate.now().format(formatter) + "CommitteeReport.txt";
         String line = "";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            line = String.format("%s (%s) Camp Committee [%d/%d] In-Charge: %s", camp.getName(), camp.getFaculty(), camp.getCommitteeCount(), camp.getMaxComm(),
+            line = String.format("%s (%s) Camp Committee [%d/%d] In-Charge: %s \n", camp.getName(), camp.getFaculty(), camp.getCommitteeCount(), camp.getMaxComm(),
                             camp.getInCharge() );
             writer.write(line);
             for (StudentCommittee studComm : committeeListByScore){

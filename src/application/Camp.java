@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The various states that a Camp can be, in real-time.
- * OPEN - Registration date has not passed.
- * CLOSED - Registration date has passed, but Start Date has not passed.
- * ONGOING - Start Date has passed, but End Date has not passed.
+ * The various states that a Camp can be, in real-time.<br>
+ * OPEN - Registration date has not passed.<br>
+ * CLOSED - Registration date has passed, but Start Date has not passed.<br>
+ * ONGOING - Start Date has passed, but End Date has not passed.<br>
  * ENDED - End Date has passed.
  */
 enum CampStatus {
@@ -19,15 +19,15 @@ enum CampStatus {
 
 /**
  * Representation of a camp event.
- * Many-to-Many relation with Student, One-to-Many relation with Staff.
- * Camps/Events last a certain duration in discrete day(s).
- * The Users involved can be a Staff-in-Charge, Attendee or Committee Member.
- * Relations with Students are handled by the Signup class.
+ * Many-to-Many relation with Student, One-to-Many relation with Staff.<br>
+ * Camps/Events last a certain duration in discrete day(s).<br>
+ * The Users involved can be a Staff-in-Charge, Attendee or Committee Member.<br>
+ * Relations with Students are handled by the Signup class.<br>
  */
 public class Camp {
 	/**
 	 * Keeps track of the highest value seen so far.
-	 * When a new Camp is created, it will use this value +1.
+	 * When a new Camp is created, it will use this value +1.<br>
 	 * This means that IDs may be skipped if Camps were deleted after the fact.
 	 *
 	 */
@@ -39,8 +39,8 @@ public class Camp {
 	private String name;
 	/**
 	 * String identifier for the faculty that the camp is open to.
-	 * A full list of faculties in use by CAMs are:
-	 * ADM,ASE,CCEB,CEE,EEE,LKC,MAE,MSE,NBS,NIE,SBS,SCSE,SOH,SPMS,SSS,WKWSCI.
+	 * A full list of faculties in use by CAMs are:<br>
+	 * ADM,ASE,CCEB,CEE,EEE,LKC,MAE,MSE,NBS,NIE,SBS,SCSE,SOH,SPMS,SSS,WKWSCI.<br>
 	 * A value of ALL will indicate any User from any faculty is allowed to be involved.
 	 */
 	private String faculty;
@@ -96,35 +96,47 @@ public class Camp {
 	 */
 	private boolean visible;
 	/**
-	 * A list of enquiries associated with this camp
+	 * A list of enquiries associated with this camp. The Enquiry should still exist in the master EnquiriesList.
  	 */ 
 	private ArrayList<Enquiry> enquiryList;
+	/**
+	 * A list of Suggestions associated with this camp. The Suggestion should still exist in the master SuggestionsList.
+	 */
 	private ArrayList<Suggestion> suggestionList;
+	/**
+	 * List of all Students attending the Camp
+	 */
 	private List<Student> attendeeList;
+	/**
+	 * List of all Students blacklisted from the Camp
+	 */
 	private List<Student> blackList;
+	/**
+	 * List of all Students who are Camp Committee members
+	 */
 	private List<Student> committeeList;
 
 	/**
-	 *
-	 * @param ID
-	 * @param name
-	 * @param faculty
-	 * @param start
-	 * @param end
-	 * @param regEnd
-	 * @param desc
-	 * @param loc
-	 * @param maxSlots
-	 * @param maxComm
-	 * @param creator
-	 * @param visible
+	 * Representation of a Camp in CAMs.
+	 * Each Camp should be added to the master CampList to be parsed properly in CAMs.
+	 * @param ID Integer ID to be assigned to the Camp. Either derived from the data .csv or by getGlobalIDCounter()
+	 * @param name String name to be assigned to the Camp.
+	 * @param faculty String of Faculty code that the Camp is designated.
+	 * @param start LocalDate of the Start date
+	 * @param end LocalDate of the End date
+	 * @param regEnd LocalDate of the Registration End date
+	 * @param desc String description of the camp
+	 * @param loc String location/venue of the camp
+	 * @param maxSlots Integer Max Slots of the camp. This count includes Attendee + Committee
+	 * @param maxComm Integer of how many of the slots are exclusively for Committee members.
+	 * @param creator UserID of the creator of the camp.
+	 * @param visible Boolean on whether the camp is visible to students
 	 */
 	public Camp(int ID, String name, String faculty, LocalDate start, LocalDate end, LocalDate regEnd,
 				String loc, String desc, int maxSlots, int maxComm, String creator, int visible) {
 		this.id = ID;
 		this.name = name;
 		this.faculty = faculty;
-		//TODO code an index for campID
 		this.startDate = start;
 		this.endDate = end;
 		this.regEnd = regEnd;
@@ -144,66 +156,193 @@ public class Camp {
 		}
 	}
 
+	/**
+	 * Returns camp name
+	 * @return String of camp name
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Returns list of all Suggestion items tied to this camp
+	 * @return List of all Suggestion items tied to this camp
+	 */
 	public ArrayList<Suggestion> getSuggestionList() {
 		return suggestionList;
 	}
 
+	/**
+	 * Gets the camp ID number
+	 * @return CampID of this camp
+	 */
 	public int getID() {
 		return this.id;
 	}
 
+	/**
+	 * Sets the location of the camp
+	 * @param location New location string
+	 */
 	public void setLocation(String location) {
 		this.location = location;
 	}
 
+	/**
+	 * Sets the name of the camp
+	 * @param name New Camp Name
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Sets the description of the camp
+	 * @param description New camp description
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	/**
+	 * Sets the max slots of the camp
+	 * @param maxSize New integer max size
+	 */
 	public void setMaxSize(int maxSize) {
 		this.maxSize = maxSize;
 	}
 
+	/**
+	 * Sets the max committee slots of the camp
+	 * @param maxComm New integer max committee slots
+	 */
 	public void setMaxComm(int maxComm) {
 		this.maxComm = maxComm;
 	}
 
+	/**
+	 * Fetches the Start Date of the camp
+	 * @return LocalDate of the Start date
+	 */
 	public LocalDate getStart() {
 		return this.startDate;
 	}
+
+	/**
+	 * Sets the Start Date of the camp
+	 * @param startDate new LocalDate start date
+	 */
 	public void setStart(LocalDate startDate){this.endDate = startDate;}
 
+	/**
+	 * Fetches the End Date of the camp
+	 * @return LocalDate of the End date
+	 */
 	public LocalDate getEnd() {
 		return this.endDate;
 	}
+
+	/**
+	 * Sets the End Date of the camp
+	 * @param endDate new LocalDate end date
+	 */
 	public void setEnd(LocalDate endDate){this.endDate = endDate;}
 
+	/**
+	 * Fetches the Registration End Date of the camp.
+	 * @return LocalDate of the Registration End Date
+	 */
 	public LocalDate getRegEnd() {return regEnd;}
+
+	/**
+	 * Sets the Registration End Date of the Camp
+	 * @param regEnd LocalDate of the new Registration End Date
+	 */
 	public void setRegEnd(LocalDate regEnd){this.regEnd = regEnd;}
+
+	/**
+	 * Fetches the Location of the camp
+	 * @return String name of the location
+	 */
 	public String getLocation()	{return location;}
+
+	/**
+	 * Fetches the Description of the camp
+	 * @return String of the description
+	 */
 	public String getDescription(){return description;}
+
+	/**
+	 * Fetches the max slots of the camp
+	 * @return Integer of the max slots of the camp
+	 */
 	public int getMaxSize(){return maxSize;}
+
+	/**
+	 * Fetches the max committee slots of the camp
+	 * @return Integer of the max committee slots of the camp
+	 */
 	public int getMaxComm(){return maxComm;}
-	public String getFaculty() {
-		return this.faculty;
-	}
+
+	/**
+	 * Fetches the faculty the camp is open to
+	 * @return String of the faculty
+	 */
+	public String getFaculty() {return this.faculty;}
+
+	/**
+	 * Fetches the visibility of the camp
+	 * @return Boolean of the visibility, TRUE for visible
+	 */
 	public boolean isVisible(){return this.visible;}
+
+	/**
+	 * Sets the visibility of the camp
+	 * @param visible Boolean visibility value. TRUE for visible.
+	 */
 	public void setVisibility(boolean visible){this.visible = visible;}
+
+	/**
+	 * Fetches the userID of the Staff in-charge of the camp.
+	 * @return String userID of the Staff in-charge
+	 */
 	public String getInCharge(){return this.inCharge;}
+
+	/**
+	 * Gets the number of Attendees in the camp
+	 * @return Integer value of the attendeeList size
+	 */
 	public int getAttendeeCount(){return attendeeList.size();}
+
+	/**
+	 * Gets the number of Committee in the camp
+	 * @return Integer value of the committeeList size
+	 */
 	public int getCommitteeCount(){return committeeList.size();}
+
+	/**
+	 * Checks if camp is full (for attendees)
+	 * @return Boolean value for camp full, TRUE denotes full
+	 */
 	public boolean isFull(){return (attendeeList.size()>= this.maxSize - this.maxComm);};
+
+	/**
+	 * Checks if camp is full (for committee)
+	 * @return Boolean value for camp committee full, TRUE denotes full
+	 */
 	public boolean isFullCommittee(){return (committeeList.size() >= this.maxComm);}
+
+	/**
+	 * Fetches the current highest global ID count found by CAMs so far.
+	 * @return Integer of the highest camp ID count
+	 */
 	public static int getGlobalIDCounter(){return globalIDCounter;}
-	
+
+	/**
+	 * Checks if a camp is open to a certain faculty.
+	 * @param faculty Faculty to check for
+	 * @return Boolean value on whether that faculty is eligible
+	 */
 	public boolean checkEligibility(String faculty) {
 		if(this.faculty.equals(faculty) || this.faculty.equals("ALL")) {
 			return true;
@@ -212,13 +351,13 @@ public class Camp {
 	}
 
 	/**
-	 * Checks for clashes between this camp and another start and end date.
+	 * Checks for clashes between this camp and another start and end date.<br>
 	 * A Start Date falling on the same day and the other camp's End Date is considered a clash.
 	 * @param start1 Start date of the other camp.
 	 * @param end1 End date of the other camp.
 	 * @return Boolean on whether the camps clash. Returns true for clash.
 	 */
-	public boolean checkClash(LocalDate start1, LocalDate end1) { //TODO check if this is correct
+	public boolean checkClash(LocalDate start1, LocalDate end1) {
 		if(start1.isBefore(this.endDate.plusDays(1)) && //if either start date falls between the duration of the other event
 				start1.isAfter(this.startDate.plusDays(-1))||
 				this.startDate.isBefore(end1.plusDays(1))&&
@@ -229,11 +368,11 @@ public class Camp {
 	}
 
 	/**
-	 * Returns the state that a Camp is in real-time.
-	 * OPEN - Registration date has not passed.
-	 * CLOSED - Registration date has passed, but Start Date has not passed.
-	 * ONGOING - Start Date has passed, but End Date has not passed.
-	 * ENDED - End Date has passed.
+	 * Returns the state that a Camp is in real-time.<br>
+	 * OPEN - Registration date has not passed. <br>
+	 * CLOSED - Registration date has passed, but Start Date has not passed.<br>
+	 * ONGOING - Start Date has passed, but End Date has not passed.<br>
+	 * ENDED - End Date has passed.<br>
 	 * @return The campStatus of the camp
 	 */
 	public CampStatus checkCampStatus(){
@@ -299,22 +438,60 @@ public class Camp {
 	public void addToBlackList(Student student){
 		blackList.add(student);
 	}
+
+	/**
+	 * Fetches the blacklist of students barred from signing up
+	 * @return List of blacklisted students
+	 */
 	public List<Student> getBlackList(){return this.blackList;}
+
+	/**
+	 * Check if a specified Student is in the camp as an Attendee.
+	 * @param student Student to check for
+	 * @return Boolean value of whether they are attending or not.
+	 */
 	public boolean isAttending(Student student){
 		return(attendeeList.contains(student));
 	}
+	/**
+	 * Check if a specified Student is in the camp blacklist.
+	 * @param student Student to check for
+	 * @return Boolean value of whether they are blacklisted or not.
+	 */
 	public boolean isBlacklisted(Student student){
 		return(blackList.contains(student));
 	}
 
-
+	/**
+	 * Fetches the list of Enquiries associated with the camp
+	 * @return enquiryList of all Enquiries associated with this camp
+	 */
 	public ArrayList<Enquiry> getEnquiryList() {
 		return enquiryList;
 	}
+
+	/**
+	 * Fetches the list of Students attending the camp
+	 * @return attendeeList of all Students attending the camp
+	 */
 	public List<Student> getAttendeeList() {return this.attendeeList;}
+
+	/**
+	 * Fetches the list of Committee of the camp
+	 * @return committeeList of all Students part of the camp committee
+	 */
 	public List<Student> getCommitteeList() {return this.committeeList;}
+
+	/**
+	 * Adds an Enquiry to the Camp's internal enquiry list. This is only for CAMs to work on in memory and does not contribute to the saved state.
+	 * @param enquiry Enquiry to be added.
+	 */
 	public void addEnquiry(Enquiry enquiry){
 		enquiryList.add(enquiry);
 	}
+	/**
+	 * Adds a Suggestion to the Camp's internal suggestion list. This is only for CAMs to work on in memory and does not contribute to the saved state.
+	 * @param suggestion Enquiry to be added.
+	 */
 	public void addSuggestion(Suggestion suggestion){suggestionList.add(suggestion);}
 }
