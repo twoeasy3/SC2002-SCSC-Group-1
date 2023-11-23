@@ -36,7 +36,7 @@ public interface SuggestionResolver {
         }
         int choice = Console.nextInt();
         Suggestion activeSuggestion = suggestionList.get(choice - 1);
-        System.out.println("Changing: " + category[activeSuggestion.getChangeCategory()]);
+        System.out.println("Changing: " + category[activeSuggestion.getChangeCategory()-1]);
         System.out.println("to: " + activeSuggestion.getChange());
         System.out.println("Accept? Y/N, any other input to exit without making a decision.");
         int decision = InputChecker.parseUserBoolInput(Console.nextString());

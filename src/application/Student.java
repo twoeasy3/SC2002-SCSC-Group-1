@@ -150,8 +150,7 @@ public class Student extends User implements StudentCampOptions{
 			System.out.println("No camps are currently open for you :(");
 			return;
 		}
-		
-		boolean endLoop = false;
+
 		String listMenu = CampListView.createNumberedCampList(eligibleCamps,this);
 			System.out.println("Showing all camps you can sign up for:");
 			Camp selectedCamp = CampListView.campFromListSelector(eligibleCamps,listMenu);
@@ -176,7 +175,6 @@ public class Student extends User implements StudentCampOptions{
 				else if (input == 1) {
 					StudentCampOptions.joinCamp(this,selectedCamp,signupList);
 					System.out.println("Successfully signed up as attendee!");
-					endLoop = true;
 				} else {
 					System.out.println("Backing out and showing you all eligible camps again...");
 				}

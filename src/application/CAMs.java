@@ -51,16 +51,18 @@ public class CAMs {
 				activeUser.printMenu(campList);
 				//This entire portion allows for arguments in the options like 2-f
 				String response = Console.nextString();
-				int choice;
-				String argument;
-				try {
-					choice = Integer.parseInt(response.substring(0, 1));
-					argument = InputChecker.resolveArgument(response);
-				} catch (NumberFormatException e) {
-					choice = 619;
-					argument = "";
+				if(response.length() != 0) {
+					int choice;
+					String argument;
+					try {
+						choice = Integer.parseInt(response.substring(0, 1));
+						argument = InputChecker.resolveArgument(response);
+					} catch (NumberFormatException e) {
+						choice = 619;
+						argument = "";
+					}
+					sStatus = activeUser.resolveCAMsMenu(choice, argument, userList, campList, signupList, enquiryList, suggestionList);
 				}
-				sStatus = activeUser.resolveCAMsMenu(choice,argument,userList,campList,signupList,enquiryList,suggestionList);
 
 			}
 		}

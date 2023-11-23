@@ -17,11 +17,12 @@ interface StudentView {
      * @param campList List of all Camps
      */
     public static void printMenu(Student student, List<Camp> campList) {
-        System.out.println("Student Portal");
+        System.out.println(student.getName() + " (" + student.getFaculty() + ") Student Portal");
         if (student.getCommittee() == -1) {
             System.out.println("You are not currently a committee member of any camp.");
         } else {
-            System.out.println("You are currently a committee member of " + Fetcher.getCampfromID(student.committee, campList).getName());//dangerous error possible
+            System.out.print("You are currently a committee member of " + Fetcher.getCampfromID(student.committee, campList).getName());
+            System.out.println(", Current Points: " + ((StudentCommittee) student).getPoints() );
         }
         final String first5Options = "1. Change your password.\n" +
                 "2. View eligible camps. (-o,-l,-s,-p,-f)\n" +

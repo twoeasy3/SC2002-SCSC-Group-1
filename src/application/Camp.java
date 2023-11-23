@@ -369,11 +369,8 @@ public class Camp {
 	 * @return Boolean on whether the camps clash. Returns true for clash.
 	 */
 	public boolean checkClash(LocalDate start1, LocalDate end1) {
-		if(start1.isBefore(this.endDate.plusDays(1)) && //if either start date falls between the duration of the other event
-				start1.isAfter(this.startDate.plusDays(-1))||
-				this.startDate.isBefore(end1.plusDays(1))&&
-						this.startDate.isAfter(this.startDate.plusDays(-1))){
-			return true; //this is clash
+		if(start1.isBefore(this.endDate) && this.startDate.isBefore(end1)){
+			return true;
 		}
 		return false;
 	}
