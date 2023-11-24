@@ -156,6 +156,7 @@ interface AdminActions {
             }
             if (!camp.getBlackList().isEmpty()){
                 line = String.format("Blacklisted: [%d]:\n", camp.getBlackList().size());
+                writer.write(line);
                 for (Student student : camp.getBlackList()) {
                     line = String.format("%s (%s)\n", student.getName(), student.getFaculty());
                     writer.write(line);

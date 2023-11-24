@@ -24,33 +24,47 @@ public interface SuggestionResolver {
         ArrayList<Suggestion> suggestionList = new ArrayList<>();
         // create a list of suggestions
         for (Camp camp : inchargeCamps) {
-            for (Suggestion suggestion : camp.getSuggestionList()) {
-                suggestionList.add(suggestion);
-            }
+            suggestionList.addAll(camp.getSuggestionList());
         }
         int i = 0;
-        System.out.println("Select a Suggestion");
-        for (Suggestion suggestion : suggestionList) {
-            i++;
-            System.out.println(i+ ": " + suggestion.getDescription());
-        }
-        int choice = Console.nextInt();
-        Suggestion activeSuggestion = suggestionList.get(choice - 1);
-        System.out.println("Changing: " + category[activeSuggestion.getChangeCategory()-1]);
-        System.out.println("to: " + activeSuggestion.getChange());
-        System.out.println("Accept? Y/N, any other input to exit without making a decision.");
-        int decision = InputChecker.parseUserBoolInput(Console.nextString());
-        if (decision == 1){
-            System.out.println("Suggestion accepted");
-            activeSuggestion.accept();
-        }
-        else if(decision == 0){
-            System.out.println("Suggestion rejected");
-            activeSuggestion.reject();
-        }
-        else{
-            System.out.println("Decision adjourned. Suggestion still remains.");
+        while(true) {
+            if(suggestionList.size() == 0){
+                System.out.println("No pending suggestions for you to rule on\n");
+                return;
             }
-
+            String currentCampName = "";
+            System.out.println("Select a Suggestion");
+            for (Suggestion suggestion : suggestionList) {
+                if(suggestion.getCamp().getName() != currentCampName){
+                    currentCampName = suggestion.getCamp().getName();
+                    System.out.println("========" + currentCampName + "==========");
+                }
+                i++;
+                System.out.println(i + ": ");
+                System.out.println(suggestion.getAuthor().getName() + "'s suggestion: " + suggestion.getDescription());
+            }
+            System.out.println("Enter the number to select a suggestion or enter 0 to return");
+            int choice = Console.nextInt();
+            if (choice == 0) {
+                return;
+            }
+            Suggestion activeSuggestion = suggestionList.get(choice - 1);
+            System.out.println("========" + activeSuggestion.getCamp().getName() + "==========");
+            System.out.println("Changing: " + category[activeSuggestion.getChangeCategory() - 1]);
+            System.out.println("to: " + activeSuggestion.getChange());
+            System.out.println("Accept? Y/N, any other input to exit without making a decision.");
+            int decision = InputChecker.parseUserBoolInput(Console.nextString());
+            if (decision == 1) {
+                System.out.println("Suggestion accepted");
+                activeSuggestion.accept();
+                suggestionList.remove(activeSuggestion);
+            } else if (decision == 0) {
+                System.out.println("Suggestion rejected");
+                activeSuggestion.reject();
+                suggestionList.remove(activeSuggestion);
+            } else {
+                System.out.println("Decision adjourned. Suggestion still remains.");
+            }
+        }
     }
 }

@@ -21,7 +21,7 @@ public interface StaffView {
                                     "3. View and Edit your camps. (-o,-l,-s,-p,-f)\n"+
                                     "4. Create a camp\n"+
                                     "5. Camp Admin Hub\n"+
-                                    "6. Log out\n"+
+                                    "9. Log out\n"+
                                     "0. Terminate CAMs";
         System.out.println(staffMenu);
     }
@@ -86,7 +86,7 @@ public interface StaffView {
             case 5:
                 staff.adminMenu(campList, staff,suggestionList,enquiryList);
                 return status;
-            case 6:
+            case 9:
                 System.out.println("Logging out from CAMs...");
                 status = SessionStatus.LOGOUT;
                 return status;
