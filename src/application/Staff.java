@@ -1,11 +1,10 @@
 package application;
-import enquiry.Enquiry;
 import enquiry.EnquiryAbstract;
 import helper.Console;
 import helper.DataHandler;
 import helper.InputChecker;
 import suggestions.Suggestion;
-import suggestions.SuggestionResolver;
+import suggestions.SuggestionResolverInterface;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -15,7 +14,7 @@ import java.util.List;
 /**
  * Representation of a Staff account in CAMs. Inherits User.
  */
-public class Staff extends User implements AdminActions, SuggestionResolver {
+public class Staff extends User implements AdminActionsInterface, SuggestionResolverInterface{
 	/**
 	 * Constructor for Staff user. Only called when loading program state in from .csv files.
 	 * @param name Name of Staff
@@ -32,14 +31,14 @@ public class Staff extends User implements AdminActions, SuggestionResolver {
 	 * @param campList List of all Camps
 	 */
 	public void printMenu(List<Camp> campList){
-		StaffView.printMenu(campList);
+		StaffViewInterface.printMenu(campList);
 	}
 	/**
 	 * View camp menu for CAMs. Calls StaffView.viewCamps()
 	 * @param campList List of all Camps
 	 */
 	public void viewCamps(List<Camp> campList, List<EnquiryAbstract> enquiryList){
-		StaffView.viewCamps(this,campList,enquiryList);
+		StaffViewInterface.viewCamps(this,campList,enquiryList);
 	}
 
 	/**

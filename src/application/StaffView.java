@@ -1,6 +1,5 @@
 package application;
 
-import enquiry.Enquiry;
 import enquiry.EnquiryAbstract;
 import helper.Console;
 import suggestions.Suggestion;
@@ -8,22 +7,22 @@ import suggestions.Suggestion;
 import java.util.List;
 
 /**
- * Contains methods relating to the menus that a Staff user interacts with.
+ * Contains methods relating to the menus that a Staff user interacts with. Implements the StaffViewInterface.
  */
-public interface StaffView {
+public class StaffView implements StaffViewInterface{
     /**
      * Prints the main menu for a Staff in CAMs.
      * @param campList List of all Camps. Required for overriding from the User class.
      */
     static void printMenu(List<Camp> campList) {
         final String staffMenu = "Staff Portal\n" +
-                                    "1. Change your password.\n"+
-                                    "2. View all active camps. (-o,-l,-s,-p,-f)\n"+
-                                    "3. View and Edit your camps. (-o,-l,-s,-p,-f)\n"+
-                                    "4. Create a camp\n"+
-                                    "5. Camp Admin Hub\n"+
-                                    "9. Log out\n"+
-                                    "0. Terminate CAMs";
+                "1. Change your password.\n"+
+                "2. View all active camps. (-o,-l,-s,-p,-f)\n"+
+                "3. View and Edit your camps. (-o,-l,-s,-p,-f)\n"+
+                "4. Create a camp\n"+
+                "5. Camp Admin Hub\n"+
+                "9. Log out\n"+
+                "0. Terminate CAMs";
         System.out.println(staffMenu);
     }
 
@@ -34,7 +33,7 @@ public interface StaffView {
      * @param enquiryList List of all Enquiries.
      */
     static void viewCamps(Staff staff, List<Camp> campList, List<EnquiryAbstract> enquiryList) {
-        
+
         boolean endLoop = false;
         String listMenu = CampListView.createNumberedCampList(campList, staff);
         while(!endLoop){

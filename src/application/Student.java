@@ -1,5 +1,4 @@
 package application;
-import enquiry.Enquiry;
 import enquiry.EnquiryAbstract;
 import helper.Console;
 import helper.InputChecker;
@@ -13,7 +12,7 @@ import java.util.List;
  * Students exclusively have the rights to join Camps and write enquiries.
  * Students can also sign up to be StudentCommittee, so no Student object should be inititalised as Student. It should be initialied as StudentCommittee and immediately cast up to Student.
  */
-public class Student extends User implements StudentCampOptions{
+public class Student extends User implements StudentCampOptionsInterface {
 	/**
 	 * CampID that the student is a committee member of. -1 if the Student is not a Committee Member
 	 */
@@ -71,7 +70,7 @@ public class Student extends User implements StudentCampOptions{
 	 * @param campList List of all Camp objects
 	 */
 	public void printMenu(List<Camp> campList){
-		StudentView.printMenu(this,campList);
+		StudentViewInterface.printMenu(this,campList);
 	}
 
 	/**
@@ -103,7 +102,7 @@ public class Student extends User implements StudentCampOptions{
 	 * @param enquiryList List of all Enquiry objects
 	 */
 	public void viewCamps(List<Camp> campList, List<EnquiryAbstract> enquiryList){
-		StudentView.viewCamps(this,campList,enquiryList);
+		StudentViewInterface.viewCamps(this,campList,enquiryList);
 	}
 
 	/**
@@ -170,11 +169,11 @@ public class Student extends User implements StudentCampOptions{
 					response = InputChecker.resolveArgument(response);
 				}
 				if (input == 1 && response.equals("c") && this.getCommittee() == -1){
-					StudentCampOptions.joinCommittee(this,selectedCamp, userList,campList);
+					StudentCampOptionsInterface.joinCommittee(this,selectedCamp, userList,campList);
 					System.out.println("Successfully signed up as committee!");
 				}
 				else if (input == 1) {
-					StudentCampOptions.joinCamp(this,selectedCamp,signupList);
+					StudentCampOptionsInterface.joinCamp(this,selectedCamp,signupList);
 					System.out.println("Successfully signed up as attendee!");
 				} else {
 					System.out.println("Backing out and showing you all eligible camps again...");

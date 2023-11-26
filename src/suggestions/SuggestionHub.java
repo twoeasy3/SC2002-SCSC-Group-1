@@ -1,9 +1,6 @@
 package suggestions;
 import application.StudentCommittee;
 import application.User;
-import enquiry.Enquiry;
-import enquiry.EnquiryEditor;
-import enquiry.EnquiryView;
 import helper.Console;
 import application.Student;
 
@@ -28,10 +25,10 @@ public class SuggestionHub {
             int choice = Console.nextInt();
             switch (choice) {
                 case 1:
-                    SuggestionEditor.suggestionMaker(((StudentCommittee) student).getCamp(), (User) student, suggestionList);
+                    SuggestionEditorInterface.suggestionMaker(((StudentCommittee) student).getCamp(), (User) student, suggestionList);
                     break;
                 case 2:
-                    SuggestionEditor.editMenu((StudentCommittee) student, suggestionList);
+                    SuggestionEditorInterface.editMenu((StudentCommittee) student, suggestionList);
                     break;
                 case 0:
                     return;

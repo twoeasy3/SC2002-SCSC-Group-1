@@ -70,7 +70,7 @@ public class EnquiryView {
             System.out.println("No enquiries to show;");
             return;
         }
-        Comparator<Enquiry> enquiryComparator = Comparator
+        Comparator<EnquiryAbstract> enquiryComparator = Comparator
                 .comparing(enquiry -> enquiry.getCamp().getName());
         enquiryList.sort(enquiryComparator);
         String currentCampName = "";

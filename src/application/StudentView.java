@@ -1,16 +1,19 @@
 package application;
 
-import enquiry.*;
+import enquiry.EnquiryAbstract;
+import enquiry.EnquiryEditor;
+import enquiry.EnquiryHub;
 import helper.Console;
 import helper.Fetcher;
 import suggestions.Suggestion;
 
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- * Contains methods relating to the menus that a Student user interacts with.
+ * Contains methods relating to the menus that a Student user interacts with. Implements the StudentViewInterface.
  */
-interface StudentView {
+public class StudentView implements StudentViewInterface {
     /**
      * Prints the main menu for a Student in CAMs
      * @param student Student object using CAMs
@@ -43,7 +46,7 @@ interface StudentView {
      * @param enquiryList List of all Enquiries.
      */
     public static void viewCamps(Student student, List<Camp> campList, List<EnquiryAbstract> enquiryList) {
-        
+
         List<Camp> eligibleCamps = new ArrayList<>();
         for (Camp camp : campList) {
             if (camp.checkEligibility(student.getFaculty()) && camp.isVisible()) {

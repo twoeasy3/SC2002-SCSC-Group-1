@@ -1,26 +1,24 @@
 package application;
 
-import enquiry.Enquiry;
 import enquiry.EnquiryAbstract;
 import enquiry.EnquiryReply;
 import enquiry.EnquiryView;
 import helper.Console;
 import suggestions.Suggestion;
-import suggestions.SuggestionHub;
 import suggestions.SuggestionView;
+import suggestions.SuggestionHub;
+import suggestions.SuggestionViewInterface;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-/**
- * This contains methods that "Admins" would need to use. <br>
- * "Admin" classes that implement these methods are Staff and StudentCommittee. *
- */
-interface AdminActions {
+public class AdminActions implements AdminActionsInterface {
     /**
      * This method displays and resolves the options for the Admin menu. <br>
      * In the main CAMs menu, a check must be done to ensure Student accounts don't call for this method. <br>
@@ -30,7 +28,7 @@ interface AdminActions {
      * @param suggestionList List of all Suggestions. Used to save the state of Suggestions.
      * @param enquiryList List of all Enquiries. Used to save the state of Enquiries.
      */
-    default void adminMenu(List<Camp> campList, User activeUser, List<Suggestion> suggestionList,List<EnquiryAbstract> enquiryList) {
+    public void adminMenu(List<Camp> campList, User activeUser, List<Suggestion> suggestionList, List<EnquiryAbstract> enquiryList) {
 
         String response;
         Camp selectedCamp = null;
@@ -92,7 +90,7 @@ interface AdminActions {
      * @param requestingUser User object generating the report. Used to determine if option 3 should be accessed.
      */
     static void reportMenu(Camp camp, User requestingUser) {
-        
+
         int response;
         System.out.println("Choose the report you want to generate:");
         System.out.println("1: Camp report with the list of students attending the camp.");
@@ -232,7 +230,7 @@ interface AdminActions {
         String line = "";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             line = String.format("%s (%s) Camp Committee [%d/%d] In-Charge: %s \n", camp.getName(), camp.getFaculty(), camp.getCommitteeCount(), camp.getMaxComm(),
-                            camp.getInCharge() );
+                    camp.getInCharge() );
             writer.write(line);
             for (StudentCommittee studComm : committeeListByScore){
                 line = "===================================================\n";
@@ -258,4 +256,3 @@ interface AdminActions {
         }
     }
 }
-

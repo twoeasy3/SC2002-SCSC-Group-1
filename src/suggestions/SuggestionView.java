@@ -1,8 +1,9 @@
 package suggestions;
+
 import application.Camp;
-import helper.Console;
 import application.Student;
 import application.StudentCommittee;
+import helper.Console;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,20 +13,20 @@ import java.util.List;
 /**
  * This class implements all methods that pertain to viewing Suggestions.
  */
-public interface SuggestionView{
+public class SuggestionView implements SuggestionViewInterface{
     /**
      * Returns a preview of a Suggestion to a String. Can be displayed or printed to report.<br>
      * Outputs the following:
-     * 
+     *
      * Suggestion Author (faculty)<br>
      * Suggestion body text<br>
      * Suggestion Category<br>
      * SuggestionStatus of the Suggestion<br>
-     * 
+     *
      * @param suggestion Suggestion to be output
      * @return Readable string output of the suggestion
      */
-    static String singleSuggestionToString(Suggestion suggestion) {
+    public static String singleSuggestionToString(Suggestion suggestion) {
         String printLine = "";
         List<String> fieldNames = Arrays.asList("Camp Name", "Venue", "Description", "Max Slots", "Committee Slots");
         printLine = String.format("%s (%s) suggests changing %s to %s.", suggestion.getAuthor().getName(),
@@ -101,7 +102,6 @@ public interface SuggestionView{
             } else {
                 return relevantSuggestions.get(selection - 1);
             }
-
         }
     }
 }

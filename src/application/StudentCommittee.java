@@ -7,7 +7,7 @@ import suggestions.*;
  * All Students should be constructed as a StudentCommittee, and then immediately upcast as a Student. <br>
  * This is to reflect the fact that all Students have the option to be a StudentCommittee member, while also retaining their Student status for all other camps.
  */
-public class StudentCommittee extends Student implements AdminActions, SuggestionView, SuggestionEditor {
+public class StudentCommittee extends Student implements AdminActionsInterface, SuggestionViewInterface, SuggestionEditorInterface {
     /**
      * Camp object in which the StudentCommittee is a committee member of
      */

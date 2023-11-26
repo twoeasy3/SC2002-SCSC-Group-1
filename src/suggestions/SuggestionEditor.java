@@ -6,10 +6,11 @@ import helper.DataHandler;
 
 import java.util.Arrays;
 import java.util.List;
+
 /**
- * Methods that relate to editing Suggestions are implemented here.
+ * Methods that relate to Suggestion Editor Interface are implemented here.
  */
-public interface SuggestionEditor {
+public class SuggestionEditor implements SuggestionEditorInterface {
     /**
      * This method creates Suggestions. To be used by StudentCommittee. <br>
      * Some restrictions are placed on the StudentCommittee on what they are allowed to suggest. StudentCommittee can only ever suggest in these 5 fields: <br>
@@ -19,7 +20,7 @@ public interface SuggestionEditor {
      * @param activeUser User object making the suggestion
      * @param suggestionList List of all Suggestions
      */
-    static void suggestionMaker(Camp selectedCamp, User activeUser, List<Suggestion> suggestionList) {
+    public static void suggestionMaker(Camp selectedCamp, User activeUser, List<Suggestion> suggestionList) {
 
         List<String> fieldNames = Arrays.asList("Camp Name", "Venue", "Description", "Max Slots", "Committee Slots");
         if (activeUser instanceof StudentCommittee) {
@@ -85,7 +86,7 @@ public interface SuggestionEditor {
         Student student = studComm;
         while(true) {
             Suggestion selectedSuggestion = null;
-            SuggestionView.viewEditableSuggestions(student, SuggestionStatus.PENDING);
+            SuggestionViewInterface.viewEditableSuggestions(student, SuggestionStatus.PENDING);
             selectedSuggestion = SuggestionView.selectSuggestion(student, SuggestionStatus.PENDING);
             if (selectedSuggestion == null) {
                 System.out.println("No pending suggestions found for editing.");
@@ -97,10 +98,10 @@ public interface SuggestionEditor {
             int selection = Console.nextInt();
             switch (selection) {
                 case 1:
-                    SuggestionEditor.editSuggestion(selectedSuggestion, suggestionList);
+                    SuggestionEditorInterface.editSuggestion(selectedSuggestion, suggestionList);
                     return;
                 case 2:
-                    SuggestionEditor.deleteSuggestion(studComm, selectedSuggestion, suggestionList);
+                    SuggestionEditorInterface.deleteSuggestion(studComm, selectedSuggestion, suggestionList);
                     return;
                 case 3:
                     break;
@@ -130,7 +131,7 @@ public interface SuggestionEditor {
             DataHandler.saveSuggestions(SuggestionList);
         }
         else if(selection == 2 ){
-            SuggestionEditor.changeCategoryValue(SuggestionList,suggestion);
+            SuggestionEditorInterface.changeCategoryValue(SuggestionList,suggestion);
         }
         else{
             System.out.println("Unrecognised response, aborting...");
@@ -151,6 +152,5 @@ public interface SuggestionEditor {
         System.out.println("Your Suggestion has been deleted");
         studComm.addPoints(-1);
     }
-
 
 }

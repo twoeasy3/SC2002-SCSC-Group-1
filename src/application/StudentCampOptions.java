@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Methods that deal with Student-Camp interactions are implemented in this class.
  */
-public interface StudentCampOptions {
+public class StudentCampOptions implements StudentCampOptionsInterface {
     /**
      * Adds a Student to the camp committee, then sets the camp to the Student's active committee. <br>
      * Checks not performed here.
@@ -121,7 +121,7 @@ public interface StudentCampOptions {
      * @return Boolean on whether a signup has happened
      */
     static boolean extraSignupOptions(Student student, Camp selectedCamp, List<User> userList, List<Signup> signupList) {
-        
+
         CampView.showSummary(selectedCamp);
         System.out.println("Press Enter to go back.");
         if (student.getCommittee() != selectedCamp.getID()) {
@@ -175,7 +175,4 @@ public interface StudentCampOptions {
         return false;
 
     }
-
-
 }
-

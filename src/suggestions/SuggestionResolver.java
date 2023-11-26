@@ -1,23 +1,26 @@
 package suggestions;
 
-import application.*;
+import application.Camp;
+import application.Staff;
+import application.User;
 import helper.Console;
 import helper.InputChecker;
-
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
- * This class contains the necessary code for resolving suggestions
+ * This class contains the necessary code for resolving suggestions. It implements the suggestion resolver interface.
  */
-public interface SuggestionResolver {
+public class SuggestionResolver implements SuggestionResolverInterface{
     /**
      * This method implements a menu for Staff-In-Charge to resolve Suggestions. <br>
      * Displays all Suggestions to resolve, then allows the Staff to select one and make a verdict<br>
      * @param campList List of all Camps
      * @param activeUser User object of the activeUser
      */
-    default void resolveMenu(List<Camp> campList, User activeUser){
+    public void resolveMenu(List<Camp> campList, User activeUser){
 
         String[] category = {"Name", "Description", "Venue", "Slots", "Committee Slots"};
         List<Camp> inchargeCamps = ((Staff) activeUser).getOwnedCamps(campList);
@@ -28,7 +31,7 @@ public interface SuggestionResolver {
         }
         int i = 0;
         while(true) {
-            if(suggestionList.size() == 0){
+            if(suggestionList.isEmpty()){
                 System.out.println("No pending suggestions for you to rule on\n");
                 return;
             }
