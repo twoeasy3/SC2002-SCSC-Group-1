@@ -1,5 +1,6 @@
 package application;
 import enquiry.Enquiry;
+import enquiry.EnquiryAbstract;
 import suggestions.Suggestion;
 
 import java.time.*;
@@ -109,7 +110,7 @@ public class Camp {
 	/**
 	 * A list of enquiries associated with this camp. The Enquiry should still exist in the master EnquiriesList.
  	 */ 
-	private ArrayList<Enquiry> enquiryList;
+	private ArrayList<EnquiryAbstract> enquiryList;
 	/**
 	 * A list of Suggestions associated with this camp. The Suggestion should still exist in the master SuggestionsList.
 	 */
@@ -157,7 +158,7 @@ public class Camp {
 		this.maxComm = maxComm;
 		this.inCharge = creator;
 		this.visible = (visible==1);
-		this.enquiryList = new ArrayList<Enquiry>(0);
+		this.enquiryList = new ArrayList<EnquiryAbstract>(0);
 		this.suggestionList = new ArrayList<Suggestion>(0);
 		this.attendeeList = new ArrayList<>();
 		this.blackList = new ArrayList<>();
@@ -474,7 +475,7 @@ public class Camp {
 	 * Fetches the list of Enquiries associated with the camp
 	 * @return enquiryList of all Enquiries associated with this camp
 	 */
-	public ArrayList<Enquiry> getEnquiryList() {
+	public ArrayList<EnquiryAbstract> getEnquiryList() {
 		return enquiryList;
 	}
 
@@ -494,7 +495,7 @@ public class Camp {
 	 * Adds an Enquiry to the Camp's internal enquiry list. This is only for CAMs to work on in memory and does not contribute to the saved state.
 	 * @param enquiry Enquiry to be added.
 	 */
-	public void addEnquiry(Enquiry enquiry){
+	public void addEnquiry(EnquiryAbstract enquiry){
 		enquiryList.add(enquiry);
 	}
 	/**

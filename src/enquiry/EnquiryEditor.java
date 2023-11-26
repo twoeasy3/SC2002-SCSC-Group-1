@@ -17,10 +17,10 @@ public class EnquiryEditor {
      * @param student Student editing the enquiry
      * @param enquiryList List of all enquiries to save program state.
      */
-    public static void editMenu(Student student, List<Enquiry> enquiryList ) {
+    public static void editMenu(Student student, List<EnquiryAbstract> enquiryList ) {
         while(true) {
-            Enquiry selectedEnquiry = null;
-            List<Enquiry> eligibleEnquiries = EnquiryView.getRelevantEnquiries(student,false);
+            EnquiryAbstract selectedEnquiry = null;
+            List<EnquiryAbstract> eligibleEnquiries = EnquiryView.getRelevantEnquiries(student,false);
             EnquiryView.viewRelevantEnquiries(eligibleEnquiries);
             selectedEnquiry = EnquiryView.selectEnquiry(eligibleEnquiries);
             if (selectedEnquiry == null) {
@@ -58,11 +58,11 @@ public class EnquiryEditor {
      * @param camp Camp the enquiry pertains to
      * @param enquiryList List of all Enquiries, to store new enquiry and save program state.
      */
-    public static void writeEnquiry(Student student, Camp camp, List<Enquiry> enquiryList){
+    public static void writeEnquiry(Student student, Camp camp, List<EnquiryAbstract> enquiryList){
         
         System.out.println("Enter your enquiry:");
         String response = Console.nextString();
-        Enquiry newEnquiry = new Enquiry(camp,student,response,null,"",false);
+        EnquiryAbstract newEnquiry = new Enquiry(camp,student,response,null,"",false);
         enquiryList.add(newEnquiry);
         DataHandler.saveEnquiries(enquiryList);
     }
@@ -71,7 +71,7 @@ public class EnquiryEditor {
      * Prints an enquiry on-screen and its reply. If unreplied, it will state as such
      * @param enquiry Enquiry to be printed
      */
-    public static void viewEnquiry(Enquiry enquiry) {
+    public static void viewEnquiry(EnquiryAbstract enquiry) {
         System.out.println(enquiry.getDescription());
         if (enquiry.getReply().isEmpty()) {
             System.out.println("This enquiry has not yet been replied");
@@ -87,7 +87,7 @@ public class EnquiryEditor {
      * @param s New body text to be edited
      * @param enquiryList List of all enquiries, to save program state.
      */
-    public static void editEnquiry(Enquiry e, String s, List<Enquiry> enquiryList) {
+    public static void editEnquiry(EnquiryAbstract e, String s, List<EnquiryAbstract> enquiryList) {
         e.setDescription(s + "\n**This enquiry has been edited**");
         DataHandler.saveEnquiries(enquiryList);
         System.out.println("Your enquiry has been edited");
@@ -99,7 +99,7 @@ public class EnquiryEditor {
      * @param e Enquiry to be deleted
      * @param enquiryList List of all enquiries, to save program state.
      */
-    public static void deleteEnquiry(Student student,Enquiry e, List<Enquiry> enquiryList) {
+    public static void deleteEnquiry(Student student,EnquiryAbstract e, List<EnquiryAbstract> enquiryList) {
         student.getEnquiryList().remove(e);
         e.getCamp().getEnquiryList().remove(e);
         enquiryList.remove(e);

@@ -1,12 +1,10 @@
 package enquiry;
-
 import application.Camp;
 import application.Student;
-
 /**
- * Subclass that is inherited from MessageAbstract class.
+ * Superclass that provides a general template for subclasses to use.
  */
-public class Message extends MessageAbstract {
+public abstract class MessageAbstract {
     /**
      * Camp that the Message is pertinent to.
      */
@@ -27,8 +25,10 @@ public class Message extends MessageAbstract {
      * @param description String of the text body for the Message.
      */
 
-    public Message(Camp camp, Student author, String description){
-        super(camp, author, description);
+    public MessageAbstract(Camp camp, Student author, String description){
+        this.camp = camp;
+        this.author = author;
+        this.description = description;
     }
 
     /**
@@ -62,4 +62,5 @@ public class Message extends MessageAbstract {
     public void setDescription(String description){
         this.description = description;
     }
+
 }

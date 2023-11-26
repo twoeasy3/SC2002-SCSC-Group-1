@@ -1,5 +1,6 @@
 package application;
 import enquiry.Enquiry;
+import enquiry.EnquiryAbstract;
 import helper.Console;
 import helper.DataHandler;
 import helper.InputChecker;
@@ -37,7 +38,7 @@ public class Staff extends User implements AdminActions, SuggestionResolver {
 	 * View camp menu for CAMs. Calls StaffView.viewCamps()
 	 * @param campList List of all Camps
 	 */
-	public void viewCamps(List<Camp> campList, List<Enquiry> enquiryList){
+	public void viewCamps(List<Camp> campList, List<EnquiryAbstract> enquiryList){
 		StaffView.viewCamps(this,campList,enquiryList);
 	}
 
@@ -56,7 +57,7 @@ public class Staff extends User implements AdminActions, SuggestionResolver {
 										 List<User> userList,
 										 List<Camp> campList,
 										 List<Signup> signupList,
-										 List<Enquiry> enquiryList,
+										 List<EnquiryAbstract> enquiryList,
 										 List<Suggestion> suggestionList){
 		return StaffView.resolveCAMsMenu(this, choice, argument,
 									userList,campList,signupList,enquiryList,suggestionList);

@@ -1,11 +1,13 @@
 package enquiry;
 
-import application.*;
-
+import application.Camp;
+import application.Student;
+import application.StudentCommittee;
+import application.User;
 /**
- * Enquiries consist of a question for a camp, and a reply if one has been made
+ * Abstract class that provides a general template Enquiry class.
  */
-public class Enquiry extends EnquiryAbstract {
+public abstract class EnquiryAbstract extends MessageAbstract {
 
     /**
      * Reply of the enquiry. Usually an answer
@@ -30,16 +32,13 @@ public class Enquiry extends EnquiryAbstract {
      * @param reply Body text of the reply
      * @param resolved Boolean on whether the enquiry has been replied to
      */
-    public Enquiry(Camp camp, Student author, String description, User replyAuthor,
+    public EnquiryAbstract(Camp camp, Student author, String description, User replyAuthor,
                    String reply, boolean resolved) {
-        super(camp, author, description, replyAuthor, reply, resolved);
-
-        this.getCamp().addEnquiry(this);
-        this.getAuthor().addEnquiry(this);
-        if(!(replyAuthor==null) && replyAuthor instanceof StudentCommittee){
-            ((StudentCommittee) replyAuthor).addPoints(1);
+        super(camp,author,description);
+        this.reply = reply;
+        this.resolved = resolved;
+        this.replyAuthor = replyAuthor;
         }
-    }
 
     /**
      * Fetch the reply to the Enquiry
@@ -89,6 +88,5 @@ public class Enquiry extends EnquiryAbstract {
      * @param status Boolean value to set the enquiry to.
      */
     public void setResolved(boolean status){resolved = status;}
-
 
 }

@@ -1,13 +1,19 @@
-Culinary Arts Camp (ALL) Camp Committee [5/5] In-Charge: ANTON 
-===================================================
-ESTHER (LKC) Score: 0
-===================================================
+Culinary Arts Showcase Camp (ALL) Camp Committee [4/5] In-Charge: ANTON 
 ===================================================
 CHUI HONG (SCSE) Score: 1
 ===================================================
 CHUI HONG (SCSE) suggests changing Camp Name to Overcooked 3.
 I think we could have a more descriptive name
 [REJECTED]
+-----------------------
+===================================================
+ESTHER (LKC) Score: 1
+===================================================
+CLAIRE (SBS): 
+Any restriction on what ingredients to use?
+**This enquiry has been edited**
+ESTHER (LKC) [COMMITTEE]: 
+No raw seafood
 -----------------------
 ===================================================
 DORA (EEE) Score: 2
@@ -34,21 +40,5 @@ LEE (SCSE):
 Can we bring the food home?
 SARAYA (SPMS) [COMMITTEE]: 
 No.
------------------------
-===================================================
-THOMAS  (SCSE) Score: 4
-===================================================
-THOMAS  (SCSE) suggests changing Venue to Koufu.
-I think this venue is more suitable
-[PENDING]
------------------------
-THOMAS  (SCSE) suggests changing Max Slots to 1000.
-We can more people in this event
-[PENDING]
------------------------
-JEFF (SBS): 
-Are the ingredients halal-certified?
-THOMAS  (SCSE) [COMMITTEE]: 
-Yes, NTU requires the food events to be inclusive of our Muslim students.
 -----------------------
 END OF REPORT

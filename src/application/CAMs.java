@@ -1,5 +1,6 @@
 package application;
 import enquiry.Enquiry;
+import enquiry.EnquiryAbstract;
 import helper.Console;
 import helper.DataHandler;
 import helper.Fetcher;
@@ -40,9 +41,9 @@ public class CAMs {
 		List<Camp> campList = DataHandler.getCamps();
 		Fetcher.populateCommittees(userList, campList);
 		List<Signup> signupList = DataHandler.getSignups(userList, campList);
-		List<Enquiry> enquiryList = DataHandler.getEnquiries(userList, campList);
+		List<EnquiryAbstract> enquiryList = DataHandler.getEnquiries(userList, campList);
 		List<Suggestion> suggestionList = DataHandler.getSuggestions(userList, campList);
-		
+
 		SessionStatus sStatus = SessionStatus.LOGOUT;
 		while (sStatus == SessionStatus.LOGOUT) {
 			User activeUser = resolveLogin(userList); //login user

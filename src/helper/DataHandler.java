@@ -1,6 +1,7 @@
 package helper;
 import application.*;
 import enquiry.Enquiry;
+import enquiry.EnquiryAbstract;
 import suggestions.Suggestion;
 import suggestions.SuggestionStatus;
 
@@ -195,8 +196,8 @@ public class DataHandler {
 	 * @param campList List of all Camp objects. Required to pull the correct camp to construct the Enquiry.
 	 * @return List of all Enquiry objects.
 	 */
-	public static List<Enquiry> getEnquiries(List<User> userList, List<Camp> campList) {
-		List<Enquiry> enquiryList = new ArrayList<>();
+	public static List<EnquiryAbstract> getEnquiries(List<User> userList, List<Camp> campList) {
+		List<EnquiryAbstract> enquiryList = new ArrayList<>();
 		String enquiryFile = "data/enquiries.csv";
 		String line;
 		String csvSeparator = "\\|";
@@ -417,13 +418,13 @@ public class DataHandler {
 	 * Called whenever Enquiries are edited. <br>
 	 * @param enquiryList List of all Signup objects.
 	 */
-	public static void saveEnquiries(List<Enquiry> enquiryList){
+	public static void saveEnquiries(List<EnquiryAbstract> enquiryList){
 		String enquiryFile = "data/enquiries.csv";
 		String line;
 		String csvSeparator = "|";
 		String status;
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(enquiryFile))) {
-			for (Enquiry enquiry : enquiryList) {
+			for (EnquiryAbstract enquiry : enquiryList) {
 				if (enquiry.getResolved()){status = "1";}else{status="0";}
 				line =   enquiry.getCamp().getID() + csvSeparator
 						+ enquiry.getAuthor().getID() + csvSeparator

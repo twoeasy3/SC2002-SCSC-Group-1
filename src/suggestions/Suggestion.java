@@ -5,11 +5,12 @@ import application.CampEdit;
 import enquiry.Message;
 import application.Student;
 import application.StudentCommittee;
+import enquiry.MessageAbstract;
 
 /**
  * Suggestion class implementation extends the Message superclass.
  */
-public class Suggestion extends Message {
+public class Suggestion extends MessageAbstract {
     /**
      * The category that the suggestion proposes to change. The following categories are:
      * 1. Camp Name<br>

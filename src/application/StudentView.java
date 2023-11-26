@@ -42,7 +42,7 @@ interface StudentView {
      * @param campList List of all Camps.
      * @param enquiryList List of all Enquiries.
      */
-    public static void viewCamps(Student student, List<Camp> campList, List<Enquiry> enquiryList) {
+    public static void viewCamps(Student student, List<Camp> campList, List<EnquiryAbstract> enquiryList) {
         
         List<Camp> eligibleCamps = new ArrayList<>();
         for (Camp camp : campList) {
@@ -96,7 +96,7 @@ interface StudentView {
                                          List<User> userList,
                                          List<Camp> campList,
                                          List<Signup> signupList,
-                                         List<Enquiry> enquiryList,
+                                         List<EnquiryAbstract> enquiryList,
                                          List<Suggestion> suggestionList){
         SessionStatus status = SessionStatus.CONTINUE;
         switch(choice) {

@@ -22,7 +22,7 @@ public class EnquiryView {
      * @param printNoReplyLine Boolean to toggle whether to output reply line
      * @return Readable String output of the Enquiry
      */
-    public static String singleEnquiryToString(Enquiry enquiry, boolean printNoReplyLine) {
+    public static String singleEnquiryToString(EnquiryAbstract enquiry, boolean printNoReplyLine) {
         String printLine = "";
         printLine += (enquiry.getAuthor().getName() + " (" + enquiry.getAuthor().getFaculty() + "): \n");
         printLine += (enquiry.getDescription() + "\n");
@@ -47,9 +47,9 @@ public class EnquiryView {
      * @param resolvedOrNot Match of status of resolution to pull enquiries from
      * @return List of Enquiries that match the parameters
      */
-    public static List<Enquiry> getRelevantEnquiries(Student student, boolean resolvedOrNot){
-        List<Enquiry> relevantEnquiries = new ArrayList<>();
-        for (Enquiry enquiry : student.getEnquiryList()){
+    public static List<EnquiryAbstract> getRelevantEnquiries(Student student, boolean resolvedOrNot){
+        List<EnquiryAbstract> relevantEnquiries = new ArrayList<>();
+        for (EnquiryAbstract enquiry : student.getEnquiryList()){
             if (enquiry.getResolved()==resolvedOrNot){
                 relevantEnquiries.add(enquiry);
             }
@@ -63,9 +63,9 @@ public class EnquiryView {
      * To be paired with selectEnquiry() for the selection functionality. <br>
      * @param eligibleEnquiries Curated list to output all enquiries, with an index number for each.
      */
-    public static void viewRelevantEnquiries(List<Enquiry> eligibleEnquiries) {
+    public static void viewRelevantEnquiries(List<EnquiryAbstract> eligibleEnquiries) {
 
-        List<Enquiry> enquiryList = eligibleEnquiries;
+        List<EnquiryAbstract> enquiryList = eligibleEnquiries;
         if(enquiryList.size()==0){
             System.out.println("No enquiries to show;");
             return;
@@ -75,7 +75,7 @@ public class EnquiryView {
         enquiryList.sort(enquiryComparator);
         String currentCampName = "";
         int i = 0;
-        for (Enquiry enquiry : enquiryList){
+        for (EnquiryAbstract enquiry : enquiryList){
             if(!currentCampName.equals(enquiry.getCamp().getName())){
                 System.out.println(enquiry.getCamp().getName());
                 currentCampName = enquiry.getCamp().getName();
@@ -93,8 +93,8 @@ public class EnquiryView {
      * @param eligibleEnquiries Curated list of Enquiries to select from.
      * @return Enquiry object selected
      */
-    public static Enquiry selectEnquiry(List<Enquiry> eligibleEnquiries) {
-        List<Enquiry> relevantEnquiries = eligibleEnquiries;
+    public static EnquiryAbstract selectEnquiry(List<EnquiryAbstract> eligibleEnquiries) {
+        List<EnquiryAbstract> relevantEnquiries = eligibleEnquiries;
         if (relevantEnquiries.size() == 0) {
             return null;
         }

@@ -13,7 +13,7 @@ public class EnquiryHub {
      * @param student Active User student object
      * @param enquiryList List of all enquiries, to be passed in to update program state.
      */
-    public static void hubLanding(Student student , List<Enquiry> enquiryList) {
+    public static void hubLanding(Student student , List<EnquiryAbstract> enquiryList) {
         while (true) {
             final String menu = "Welcome to student enquiry hub.\n" +
                     "1: View, Edit or Delete unanswered enquiries\n" +

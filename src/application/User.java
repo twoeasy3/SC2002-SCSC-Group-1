@@ -1,5 +1,6 @@
 package application;
 import enquiry.Enquiry;
+import enquiry.EnquiryAbstract;
 import helper.Console;
 import helper.DataHandler;
 import suggestions.Suggestion;
@@ -170,7 +171,7 @@ public abstract class User {
 	 * @param campList List of all Camp objects.
 	 * @param enquiryList List of all Enquiry objects
 	 */
-	public abstract void viewCamps(List<Camp> campList, List<Enquiry> enquiryList);
+	public abstract void viewCamps(List<Camp> campList, List<EnquiryAbstract> enquiryList);
 
 	/**
 	 * Used to view the list of camps where the User can meaningfully interact with.
@@ -198,7 +199,7 @@ public abstract class User {
 												  List<User> userList,
 												  List<Camp> campList,
 												  List<Signup> signupList,
-												  List<Enquiry> enquiryList,
+												  List<EnquiryAbstract> enquiryList,
 												  List<Suggestion> suggestionList);
 
 }

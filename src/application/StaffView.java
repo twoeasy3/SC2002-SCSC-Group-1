@@ -1,6 +1,7 @@
 package application;
 
 import enquiry.Enquiry;
+import enquiry.EnquiryAbstract;
 import helper.Console;
 import suggestions.Suggestion;
 
@@ -32,7 +33,7 @@ public interface StaffView {
      * @param campList List of all Camps.
      * @param enquiryList List of all Enquiries.
      */
-    static void viewCamps(Staff staff, List<Camp> campList, List<Enquiry> enquiryList) {
+    static void viewCamps(Staff staff, List<Camp> campList, List<EnquiryAbstract> enquiryList) {
         
         boolean endLoop = false;
         String listMenu = CampListView.createNumberedCampList(campList, staff);
@@ -65,7 +66,7 @@ public interface StaffView {
                                          List<User> userList,
                                          List<Camp> campList,
                                          List<Signup> signupList,
-                                         List<Enquiry> enquiryList,
+                                         List<EnquiryAbstract> enquiryList,
                                          List<Suggestion> suggestionList){
         SessionStatus status = SessionStatus.CONTINUE;
         switch(choice) {

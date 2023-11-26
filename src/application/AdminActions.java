@@ -1,6 +1,7 @@
 package application;
 
 import enquiry.Enquiry;
+import enquiry.EnquiryAbstract;
 import enquiry.EnquiryReply;
 import enquiry.EnquiryView;
 import helper.Console;
@@ -29,7 +30,7 @@ interface AdminActions {
      * @param suggestionList List of all Suggestions. Used to save the state of Suggestions.
      * @param enquiryList List of all Enquiries. Used to save the state of Enquiries.
      */
-    default void adminMenu(List<Camp> campList, User activeUser, List<Suggestion> suggestionList,List<Enquiry> enquiryList) {
+    default void adminMenu(List<Camp> campList, User activeUser, List<Suggestion> suggestionList,List<EnquiryAbstract> enquiryList) {
 
         String response;
         Camp selectedCamp = null;
@@ -181,13 +182,13 @@ interface AdminActions {
      */
     static void printEnquiryReport(Camp camp) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        List<Enquiry> enquiryList = camp.getEnquiryList();
+        List<EnquiryAbstract> enquiryList = camp.getEnquiryList();
         String fileName = LocalDate.now().format(formatter) + "EnquiryReport.txt";
         String line;
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             line = String.format("%s (%s) Total Enquiries: [%d] In-Charge: %s\n", camp.getName(), camp.getFaculty(), enquiryList.size(), camp.getInCharge());
             writer.write(line);
-            for (Enquiry enquiry : enquiryList) {
+            for (EnquiryAbstract enquiry : enquiryList) {
                 line = String.format("%s (%s) asked:\n" +
                         "%s\n", enquiry.getAuthor().getName(), enquiry.getAuthor().getFaculty(), enquiry.getDescription());
                 writer.write(line);
@@ -217,7 +218,7 @@ interface AdminActions {
      */
     static void printCommitteeReport(Camp camp) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        List<Enquiry> enquiryList = camp.getEnquiryList();
+        List<EnquiryAbstract> enquiryList = camp.getEnquiryList();
         List<Suggestion> suggestionList = camp.getSuggestionList();
         List<Student> committeeList = camp.getCommitteeList();
         List<StudentCommittee> committeeListByScore = new ArrayList<>();
@@ -244,7 +245,7 @@ interface AdminActions {
                         writer.write(line +"\n");
                     }
                 }
-                for (Enquiry enquiry : enquiryList){
+                for (EnquiryAbstract enquiry : enquiryList){
                     if(enquiry.getReplyAuthor() == (Student)studComm){
                         line = EnquiryView.singleEnquiryToString(enquiry,false);
                         writer.write(line +"\n");

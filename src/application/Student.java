@@ -1,5 +1,6 @@
 package application;
 import enquiry.Enquiry;
+import enquiry.EnquiryAbstract;
 import helper.Console;
 import helper.InputChecker;
 import suggestions.Suggestion;
@@ -20,7 +21,7 @@ public class Student extends User implements StudentCampOptions{
 	/**
 	 * List of all Enquiries that this Student has authored
 	 */
-	private List<Enquiry>  enquiryList= new ArrayList<>();
+	private List<EnquiryAbstract>  enquiryList= new ArrayList<>();
 
 	/**
 	 * Standard constructor for Student object.
@@ -52,7 +53,7 @@ public class Student extends User implements StudentCampOptions{
 	 * Fetches the list of all Enquiries the Student has authored
 	 * @return List of all enquiries that Student has authored
 	 */
-	public List<Enquiry> getEnquiryList() {
+	public List<EnquiryAbstract> getEnquiryList() {
 		return enquiryList;
 	}
 
@@ -60,7 +61,7 @@ public class Student extends User implements StudentCampOptions{
 	 * Adds an Enquiry to the list of Enquiries that the Student has authored
 	 * @param enquiry New Enquiry object to add to the Student's enquiryList
 	 */
-	public void addEnquiry(Enquiry enquiry){
+	public void addEnquiry(EnquiryAbstract enquiry){
 		enquiryList.add(enquiry);
 	}
 
@@ -88,7 +89,7 @@ public class Student extends User implements StudentCampOptions{
 										 List<User> userList,
 										 List<Camp> campList,
 										 List<Signup> signupList,
-										 List<Enquiry> enquiryList,
+										 List<EnquiryAbstract> enquiryList,
 										 List<Suggestion> suggestionList){
 		return StudentView.resolveCAMsMenu(this, choice, argument,
 				userList,campList,signupList,enquiryList,suggestionList);
@@ -101,7 +102,7 @@ public class Student extends User implements StudentCampOptions{
 	 * @param campList List of all Camp objects.
 	 * @param enquiryList List of all Enquiry objects
 	 */
-	public void viewCamps(List<Camp> campList, List<Enquiry> enquiryList){
+	public void viewCamps(List<Camp> campList, List<EnquiryAbstract> enquiryList){
 		StudentView.viewCamps(this,campList,enquiryList);
 	}
 

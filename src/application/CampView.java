@@ -19,7 +19,7 @@ public class CampView {
             System.out.println("No enquiries for this camp yet.");
             return;
         }
-        for(Enquiry enquiry: camp.getEnquiryList()){
+        for(EnquiryAbstract enquiry: camp.getEnquiryList()){
             System.out.println( EnquiryView.singleEnquiryToString(enquiry,true));
         }
     }

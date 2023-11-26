@@ -18,9 +18,9 @@ public class EnquiryReply {
      * @param camp Camp to pull enquiries for
      * @return List of all unreplied enquiries from a camp
      */
-    public static List<Enquiry> getCampEnquiries(Camp camp){
-        List<Enquiry> noReplyEnquiries = new ArrayList<>();
-        for (Enquiry enquiry : camp.getEnquiryList()){
+    public static List<EnquiryAbstract> getCampEnquiries(Camp camp){
+        List<EnquiryAbstract> noReplyEnquiries = new ArrayList<>();
+        for (EnquiryAbstract enquiry : camp.getEnquiryList()){
             if(!enquiry.getResolved()){
                 noReplyEnquiries.add(enquiry);
             }
@@ -35,10 +35,10 @@ public class EnquiryReply {
      * @param activeUser Current user doing the replies
      * @param enquiryList List of all Enquiries, to parse the enquiries from
      */
-    public static void replyMenu(Camp camp, User activeUser, List<Enquiry> enquiryList ) {
+    public static void replyMenu(Camp camp, User activeUser, List<EnquiryAbstract> enquiryList ) {
         while(true) {
-            Enquiry selectedEnquiry = null;
-            List<Enquiry> eligibleEnquiries = EnquiryReply.getCampEnquiries(camp);
+            EnquiryAbstract selectedEnquiry = null;
+            List<EnquiryAbstract> eligibleEnquiries = EnquiryReply.getCampEnquiries(camp);
             EnquiryView.viewRelevantEnquiries(eligibleEnquiries);
             selectedEnquiry = EnquiryView.selectEnquiry(eligibleEnquiries);
             if (selectedEnquiry == null) {
@@ -70,7 +70,7 @@ public class EnquiryReply {
      * @param replyAuthor User who is doing the replying
      * @param enquiryList List of all Enquiries to save program state
      */
-    public static void replyTo(Enquiry enquiry, User replyAuthor, List<Enquiry> enquiryList) {
+    public static void replyTo(EnquiryAbstract enquiry, User replyAuthor, List<EnquiryAbstract> enquiryList) {
         if (enquiry.getResolved()) {
             System.out.println("Reply not possible, enquiry already replied to!");
         } else {
